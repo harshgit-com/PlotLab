@@ -27,6 +27,15 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 @media(max-width:900px){.upcoming-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.upcoming-card:last-child{display:none}}
 @media(max-width:620px){header{height:78px}.brand-logo{width:178px;height:64px}.footer-logo{width:175px;height:64px}.upcoming-grid{grid-template-columns:1fr}.upcoming-card:last-child{display:block}.upcoming-art{height:210px}}
 
+/* Mobile layout: taller cards and readable title sizing */
+@media (max-width: 768px), (pointer: coarse){
+  .movie-card{min-height:230px;aspect-ratio:16/10;border-radius:8px;touch-action:pan-y}
+  .trending-track .movie-card{min-height:250px;aspect-ratio:4/5}
+  .trending-track .movie-card .art-word{font-size:clamp(30px,9vw,54px);max-width:88%;top:9%;left:6%}
+  .trending-track .movie-card .card-info{max-width:90%;padding:20px 6%}
+  .trending-track .movie-card .movie-title{font-size:clamp(22px,6vw,32px)}
+  .trailer-layer iframe,.trailer-layer video{pointer-events:none}
+}
 </style>
 </head>
 <body><div id="app">
@@ -61,7 +70,7 @@ const titles=[
 const genres=['All','Sci-Fi','Adventure','Drama','Thriller','Animation','Action'];let activeGenre='All',trendStart=0,creatorCount=0;
 window.plotlabAudioUnlocked=false;
 document.addEventListener('click',()=>{window.plotlabAudioUnlocked=true;document.querySelectorAll('.local-trailer-video').forEach(v=>{v.muted=false;v.defaultMuted=false;v.play().catch(()=>{});});},{once:true,capture:true});
-function cardHTML(m,i){return `<article class="movie-card" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Preview ${m.title}" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}" onpointerenter="if(event.pointerType!=='touch'){const m=titles.find(x=>x.title===this.dataset.title);if(m)startTrailer(this,m.trailer)}" onpointerleave="stopTrailer(this)"><div class="poster-art"><img src="${m.poster}" alt="${m.title} movie poster" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.year}</span><span>${m.genre}</span><span>Film</span></div></div></article>`}
+function cardHTML(m,i){return `<article class="movie-card" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Preview ${m.title}" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}" onpointerenter="if(event.pointerType!=='touch'){const m=titles.find(x=>x.title===this.dataset.title);if(m)startTrailer(this,m.trailer)}" onpointerleave="if(event.pointerType!=='touch')stopTrailer(this)"><div class="poster-art"><img src="${m.poster}" alt="${m.title} movie poster" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.year}</span><span>${m.genre}</span><span>Film</span></div></div></article>`}
 function startTrailer(card,id){
   if(!card || card.dataset.hoverActive==='1') return;
   const layer=card.querySelector('.trailer-layer');
@@ -128,13 +137,53 @@ function stopTrailer(card){
   }
   card.classList.remove('is-previewing');
 }
+const mobileTrailerTimers=new WeakMap();
+let mobileTrailerObserver=null;
+function setupMobileTrailerAutoplay(root=document){
+  if(!window.matchMedia('(max-width: 768px), (pointer: coarse)').matches || !('IntersectionObserver' in window)) return;
+  if(!mobileTrailerObserver){
+    mobileTrailerObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        const card=entry.target;
+        if(entry.isIntersecting && entry.intersectionRatio>=0.6){
+          card.dataset.mobileInView='1';
+          if(card.dataset.mobileTrailerStarted==='1' || mobileTrailerTimers.has(card)) return;
+          const timer=setTimeout(()=>{
+            mobileTrailerTimers.delete(card);
+            if(card.isConnected && card.dataset.mobileInView==='1'){
+              const movie=titles.find(x=>x.title===card.dataset.title);
+              if(movie) startTrailer(card,movie.trailer);
+              card.dataset.mobileTrailerStarted='1';
+            }
+          },3000);
+          mobileTrailerTimers.set(card,timer);
+        } else {
+          card.dataset.mobileInView='0';
+          const timer=mobileTrailerTimers.get(card);
+          if(timer){clearTimeout(timer);mobileTrailerTimers.delete(card);}
+          if(card.dataset.mobileTrailerStarted==='1'){
+            stopTrailer(card);
+            card.dataset.mobileTrailerStarted='0';
+          }
+        }
+      });
+    },{threshold:[0,0.6,0.85]});
+  }
+  root.querySelectorAll('.movie-card[data-title]').forEach(card=>{
+    if(card.dataset.mobileObserved!=='1'){
+      card.dataset.mobileObserved='1';
+      mobileTrailerObserver.observe(card);
+    }
+  });
+}
 function bindTrailerHover(root=document){
   root.querySelectorAll('.movie-card[data-title]').forEach(card=>{
     if(card.dataset.trailerBound==='1') return;
     card.dataset.trailerBound='1';
     card.addEventListener('focusin',()=>{const m=titles.find(x=>x.title===card.dataset.title);if(m)startTrailer(card,m.trailer)});
-    card.addEventListener('focusout',()=>stopTrailer(card));
+    card.addEventListener('focusout',()=>{if(!window.matchMedia('(max-width: 768px), (pointer: coarse)').matches)stopTrailer(card)});
   });
+  setupMobileTrailerAutoplay(root);
 }
 let idleSlideTimer=null;
 const IDLE_SLIDE_MS=7000;
