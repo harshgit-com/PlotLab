@@ -61,7 +61,7 @@ const titles=[
 const genres=['All','Sci-Fi','Adventure','Drama','Thriller','Animation','Action'];let activeGenre='All',trendStart=0,creatorCount=0;
 window.plotlabAudioUnlocked=false;
 document.addEventListener('click',()=>{window.plotlabAudioUnlocked=true;document.querySelectorAll('.local-trailer-video').forEach(v=>{v.muted=false;v.defaultMuted=false;v.play().catch(()=>{});});},{once:true,capture:true});
-function cardHTML(m,i){return `<article class="movie-card" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Preview ${m.title}" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}" onmouseenter="startTrailer(this,'${m.trailer}')" onmouseleave="stopTrailer(this)"><div class="poster-art"><img src="${m.poster}" alt="${m.title} movie poster" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.year}</span><span>${m.genre}</span><span>Film</span></div></div></article>`}
+function cardHTML(m,i){return `<article class="movie-card" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Preview ${m.title}" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}"><div class="poster-art"><img src="${m.poster}" alt="${m.title} movie poster" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.year}</span><span>${m.genre}</span><span>Film</span></div></div></article>`}
 function startTrailer(card,id){
   if(!card || card.dataset.hoverActive==='1') return;
   const layer=card.querySelector('.trailer-layer');
@@ -102,7 +102,7 @@ function startTrailer(card,id){
     });
   } else {
     const frame=document.createElement('iframe');
-    frame.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?autoplay=1&mute=1&playsinline=1&controls=0&rel=0&loop=1&playlist='+encodeURIComponent(id);
+    const params=new URLSearchParams({autoplay:'1',mute:uiSoundEnabled?'0':'1',playsinline:'1',controls:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1'});if(location.protocol==='http:'||location.protocol==='https:')params.set('origin',location.origin);frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?'+params.toString();
     frame.title='Autoplay trailer preview: '+(card.dataset.title||'movie');
     frame.allow='autoplay; encrypted-media; picture-in-picture';
     frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
@@ -165,7 +165,7 @@ function playUISound(kind='hover'){
     osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+.12);
   }catch(e){}
 }
-function toggleUISound(){uiSoundEnabled=!uiSoundEnabled;document.querySelectorAll('.local-trailer-video').forEach(v=>{v.muted=!uiSoundEnabled;if(uiSoundEnabled){v.play().catch(()=>{});}});const b=document.getElementById('soundToggle');b.classList.toggle('enabled',uiSoundEnabled);b.setAttribute('aria-pressed',String(uiSoundEnabled));b.textContent=uiSoundEnabled?'♫':'♩';if(uiSoundEnabled)playUISound('success');showToast(uiSoundEnabled?'Interface sounds on':'Interface sounds off')}
+function toggleUISound(){uiSoundEnabled=!uiSoundEnabled;document.querySelectorAll('.local-trailer-video').forEach(v=>{v.muted=!uiSoundEnabled;v.defaultMuted=!uiSoundEnabled;if(uiSoundEnabled){v.play().catch(()=>{});}});document.querySelectorAll('.trailer-layer iframe').forEach(frame=>{try{frame.contentWindow.postMessage(JSON.stringify({event:'command',func:uiSoundEnabled?'unMute':'mute',args:[]}), 'https://www.youtube-nocookie.com');frame.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}), 'https://www.youtube-nocookie.com');}catch(e){}});const b=document.getElementById('soundToggle');b.classList.toggle('enabled',uiSoundEnabled);b.setAttribute('aria-pressed',String(uiSoundEnabled));b.textContent=uiSoundEnabled?'♫':'♩';if(uiSoundEnabled)playUISound('success');showToast(uiSoundEnabled?'Interface sounds on':'Interface sounds off')}
 document.addEventListener('click',e=>{if(e.target.closest('button,.genre-chip,.upcoming-card'))playUISound('click')});
 function showToast(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 renderTrending();renderGenres();syncRoute();
