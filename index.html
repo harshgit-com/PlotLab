@@ -68,7 +68,7 @@ const titles=[
  {title:'THE DARK KNIGHT',year:'2008',genre:'Action',tag:'Why so serious?',c1:'#151719',c2:'#9d9d9d',word:'THE DARK KNIGHT',poster:'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',trailer:'EXeTwQWrcwY',desc:'Batman faces the Joker, a criminal mastermind determined to plunge Gotham into anarchy.'}
 ];
 const genres=['All','Sci-Fi','Adventure','Drama','Thriller','Animation','Action'];let activeGenre='All',trendStart=0,creatorCount=0;
-window.plotlabAudioUnlocked=false;
+window.plotlabAudioUnlocked=true;
 document.addEventListener('click',()=>{window.plotlabAudioUnlocked=true;document.querySelectorAll('.local-trailer-video').forEach(v=>{v.muted=false;v.defaultMuted=false;v.play().catch(()=>{});});},{once:true,capture:true});
 function cardHTML(m,i){return `<article class="movie-card" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Preview ${m.title}" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}" onpointerenter="if(event.pointerType!=='touch'){const m=titles.find(x=>x.title===this.dataset.title);if(m)startTrailer(this,m.trailer)}" onpointerleave="if(event.pointerType!=='touch')stopTrailer(this)"><div class="poster-art"><img src="${m.poster}" alt="${m.title} movie poster" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.year}</span><span>${m.genre}</span><span>Film</span></div></div></article>`}
 function startTrailer(card,id){
@@ -111,7 +111,7 @@ function startTrailer(card,id){
     if(p&&p.catch)p.catch(()=>{video.muted=true;video.defaultMuted=true;video.play().catch(err=>{console.warn('Hosted trailer could not play.',err);card.classList.remove('is-previewing');});});
   } else {
     const frame=document.createElement('iframe');
-    const params=new URLSearchParams({autoplay:'1',mute:uiSoundEnabled?'0':'1',playsinline:'1',controls:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1'});
+    const params=new URLSearchParams({autoplay:'1',mute:'0',playsinline:'1',controls:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1'});
     if(location.protocol==='http:'||location.protocol==='https:')params.set('origin',location.origin);
     frame.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?'+params.toString();
     frame.title='Autoplay trailer preview: '+(card.dataset.title||'movie');
