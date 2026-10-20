@@ -48,7 +48,7 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 <div class="modal-backdrop" id="movieModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><button class="modal-close" onclick="closeMovie()" aria-label="Close">×</button><div class="kicker">Plotlab / Title preview</div><h2 id="modalTitle">Title</h2><div class="movie-meta" id="modalMeta"></div><p id="modalDescription"></p><p style="color:#666;font-size:10px;letter-spacing:1px;text-transform:uppercase">Hover over a poster to preview its trailer. The featured slide advances when its trailer finishes or automatically while idle.</p><button class="btn" onclick="closeMovie()">Back to discovery ↗</button></div></div><div class="toast" id="toast"></div>
 <script>
 const titles=[
- {title:'RAMAYANA',year:'2026',genre:'Adventure',tag:'A legend. A world. An epic beyond imagination.',c1:'#382014',c2:'#f07835',word:'RAMAYANA',poster:'https://img.youtube.com/vi/BOJw7TYH-fE/hqdefault.jpg',trailer:'BOJw7TYH-fE',trailerUrl:'',trailerShareUrl:'https://cloud.nordlocker.com/shares/unlock/534cc132-e311-467b-b8df-e9aa83d56471#K_TIwE6JIoevUDCqDNjPFBWkvSzVhBXjjJGaDA6x9qA',desc:'An epic retelling of the timeless Ramayana, brought to life through a grand cinematic vision.'},
+ {title:'RAMAYANA',year:'2026',genre:'Adventure',tag:'A legend. A world. An epic beyond imagination.',c1:'#382014',c2:'#f07835',word:'RAMAYANA',poster:'https://img.youtube.com/vi/BOJw7TYH-fE/hqdefault.jpg',trailer:'BOJw7TYH-fE',trailerUrl:'',trailerEmbedUrl:'https://vewo.io/embed/814812c7b0f6',desc:'An epic retelling of the timeless Ramayana, brought to life through a grand cinematic vision.'},
  {title:'INCEPTION',year:'2010',genre:'Sci-Fi',tag:'Your mind is the scene of the crime',c1:'#252b32',c2:'#9aa6b2',word:'INCEPTION',poster:'https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg',trailer:'YoHD9XEInc0',desc:'A skilled thief enters dreams to steal secrets—and faces one final job that could change everything.'},
  {title:'INTERSTELLAR',year:'2014',genre:'Sci-Fi',tag:'Mankind was born on Earth. It was never meant to die here.',c1:'#18232d',c2:'#9aabb7',word:'INTERSTELLAR',poster:'https://image.tmdb.org/vi/zSWdZVtXT7E/hqdefault.jpg',trailer:'zSWdZVtXT7E',trailerUrl:'',desc:'A team travels beyond this galaxy to discover whether mankind has a future among the stars.'},
  {title:'DUNE',year:'2021',genre:'Adventure',tag:'Fear is the mind-killer',c1:'#4b3020',c2:'#d0a16b',word:'DUNE',poster:'https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg',trailer:'8g18jFHCLXk',desc:'A gifted young man must travel to the most dangerous planet in the universe to secure the future of his people.'},
@@ -69,26 +69,17 @@ function startTrailer(card,id){
   card.dataset.hoverActive='1';
   layer.replaceChildren();
   const movie=titles.find(x=>x.title===card.dataset.title);
-  const shareUrl=movie&&movie.trailerShareUrl;
+  const embedUrl=movie&&movie.trailerEmbedUrl;
   const hostedSrc=card.dataset.trailerUrl;
-  if(shareUrl){
-    const panel=document.createElement('div');
-    panel.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px;text-align:center;background:linear-gradient(135deg,rgba(18,8,30,.96),rgba(70,20,95,.88));color:#fff;pointer-events:auto';
-    const note=document.createElement('div');
-    note.textContent='TRAILER STORED IN NORDLOCKER';
-    note.style.cssText='font-size:11px;letter-spacing:2px;font-weight:800;color:#d9a7ff';
-    const link=document.createElement('a');
-    link.href=shareUrl;
-    link.target='_blank';
-    link.rel='noopener noreferrer';
-    link.textContent='OPEN TRAILER ↗';
-    link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:11px 18px;border-radius:999px;background:#b86cff;color:#160b20;font-weight:900;font-size:12px;letter-spacing:1px;text-decoration:none';
-    link.addEventListener('click',event=>event.stopPropagation());
-    const help=document.createElement('div');
-    help.textContent='Open in NordLocker to watch. This share link cannot be used as a direct hover-video stream.';
-    help.style.cssText='max-width:240px;font-size:11px;line-height:1.5;color:rgba(255,255,255,.75)';
-    panel.append(note,link,help);
-    layer.appendChild(panel);
+  if(embedUrl){
+    const frame=document.createElement('iframe');
+    frame.src=embedUrl;
+    frame.title='Trailer preview: '+(card.dataset.title||'movie');
+    frame.allow='autoplay; fullscreen; picture-in-picture; encrypted-media';
+    frame.setAttribute('allowfullscreen','');
+    frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
+    frame.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;background:#000';
+    layer.appendChild(frame);
   } else if(hostedSrc){
     const video=document.createElement('video');
     video.className='local-trailer-video';
@@ -120,12 +111,10 @@ function startTrailer(card,id){
     frame.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none';
     layer.appendChild(frame);
   }
-  if(!shareUrl){
-    const status=document.createElement('span');
-    status.className='trailer-status';
-    status.textContent=hostedSrc?'TRAILER PREVIEW':'YOUTUBE PREVIEW';
-    layer.appendChild(status);
-  }
+  const status=document.createElement('span');
+  status.className='trailer-status';
+  status.textContent=embedUrl?'TRAILER PREVIEW':(hostedSrc?'TRAILER PREVIEW':'YOUTUBE PREVIEW');
+  layer.appendChild(status);
   card.classList.add('is-previewing');
 }
 function stopTrailer(card){
