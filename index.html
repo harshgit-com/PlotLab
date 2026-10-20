@@ -218,7 +218,28 @@ function playUISound(kind='hover'){
     osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+.12);
   }catch(e){}
 }
-function toggleUISound(){uiSoundEnabled=!uiSoundEnabled;document.querySelectorAll('.local-trailer-video').forEach(v=>{v.muted=!uiSoundEnabled;v.defaultMuted=!uiSoundEnabled;if(uiSoundEnabled){v.play().catch(()=>{});}});document.querySelectorAll('.trailer-layer iframe').forEach(frame=>{try{frame.contentWindow.postMessage(JSON.stringify({event:'command',func:uiSoundEnabled?'unMute':'mute',args:[]}), 'https://www.youtube-nocookie.com');frame.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}), 'https://www.youtube-nocookie.com');}catch(e){}});const b=document.getElementById('soundToggle');b.classList.toggle('enabled',uiSoundEnabled);b.setAttribute('aria-pressed',String(uiSoundEnabled));b.textContent=uiSoundEnabled?'♫':'♩';if(uiSoundEnabled)playUISound('success');showToast(uiSoundEnabled?'Interface sounds on':'Interface sounds off')}
+function toggleUISound(){
+  uiSoundEnabled=!uiSoundEnabled;
+  document.querySelectorAll('.local-trailer-video').forEach(v=>{
+    v.muted=!uiSoundEnabled;
+    v.defaultMuted=!uiSoundEnabled;
+    if(uiSoundEnabled)v.play().catch(()=>{});
+  });
+  document.querySelectorAll('.trailer-layer iframe').forEach(frame=>{
+    try{
+      const targetOrigin=new URL(frame.src,location.href).origin;
+      const command=(func,args=[])=>frame.contentWindow.postMessage(JSON.stringify({event:'command',func,args}),targetOrigin);
+      command(uiSoundEnabled?'unMute':'mute');
+      if(uiSoundEnabled)command('setVolume',[100]);
+    }catch(e){}
+  });
+  const b=document.getElementById('soundToggle');
+  b.classList.toggle('enabled',uiSoundEnabled);
+  b.setAttribute('aria-pressed',String(uiSoundEnabled));
+  b.textContent=uiSoundEnabled?'♫':'♩';
+  if(uiSoundEnabled)playUISound('success');
+  showToast(uiSoundEnabled?'Trailer and interface sound on':'Trailer and interface sound off');
+}
 document.addEventListener('click',e=>{if(e.target.closest('button,.genre-chip,.upcoming-card'))playUISound('click')});
 function showToast(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 renderTrending();renderGenres();syncRoute();
