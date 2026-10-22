@@ -190,7 +190,7 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
         <p id="modalDescription"></p>
         <div class="detail-actions">
           <button class="detail-play-btn" id="playMovieBtn" onclick="playMovieNow()">▶ <span>WATCH MOVIE</span></button>
-          <button class="detail-secondary-btn" onclick="playTrailerFromModal()">▷ PLAY TRAILER</button>
+          
           <button class="detail-watchlater-btn" id="watchLaterBtn" onclick="toggleWatchLater()">＋ WATCH LATER</button>
         </div>
         <div class="detail-hint" id="detailHint">Trailer preview · Choose Watch Movie to begin playback</div>
@@ -411,8 +411,8 @@ function makeTrailerMedia(m,container,withSound){
 }
 function playTrailerFromModal(){
  if(!activeModalMovie)return;
- makeTrailerMedia(activeModalMovie,document.getElementById('detailTrailerBg'),false);
- document.getElementById('detailHint').textContent='Trailer preview is playing in the background · Use Watch Movie to start playback';
+ makeTrailerMedia(activeModalMovie,document.getElementById('detailTrailerBg'),true);
+ document.getElementById('detailHint').textContent='Trailer preview is playing with audio requested · Browser permissions may affect sound';
 }
 function playMovieNow(){
  if(!activeModalMovie)return;
