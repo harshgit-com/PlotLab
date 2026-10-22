@@ -279,7 +279,7 @@ const genres=['All','Sci-Fi','Adventure','Drama','Thriller','Animation','Action'
 window.plotlabAudioUnlocked=true;
 document.addEventListener('pointerdown',()=>{
   window.plotlabAudioUnlocked=true;
-  document.querySelectorAll('.local-trailer-video,.detail-trailer-bg video,.movie-play-stage video').forEach(v=>{v.muted=false;v.defaultMuted=false;v.volume=1;const p=v.play();if(p&&p.catch)p.catch(()=>{});});
+  document.querySelectorAll('.local-trailer-video,.detail-trailer-bg video,.movie-play-stage video').forEach(v=>{v.muted=false;v.defaultMuted=false;v.volume=1;if(v.paused&&!v.ended){const p=v.play();if(p&&p.catch)p.catch(()=>{});}});
   document.querySelectorAll('.trailer-layer iframe,.detail-trailer-bg iframe,.movie-play-stage iframe').forEach(frame=>{
     try{const origin=new URL(frame.src,location.href).origin;frame.contentWindow.postMessage(JSON.stringify({event:'command',func:'unMute',args:[]}),origin);frame.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[100]}),origin);}catch(e){}
   });
