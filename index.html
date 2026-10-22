@@ -158,6 +158,59 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
  .detail-close{top:12px;left:12px;padding:8px 11px}.detail-hero{min-height:92svh}.detail-hero-copy{padding:130px 22px 92px}.detail-hero h2{font-size:clamp(44px,14vw,78px)}.detail-hero-copy>p{font-size:12px}.detail-actions{align-items:stretch;flex-direction:column;max-width:330px}.detail-actions button{width:100%;justify-content:center}.detail-scroll-cue{right:22px;bottom:20px;font-size:8px}.detail-info-section{padding:45px 20px 60px}.detail-cast-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-reviews-grid{grid-template-columns:1fr}.detail-cast-card{min-height:125px}.movie-play-overlay{left:12px;right:12px;bottom:18px;padding:15px;background:linear-gradient(0deg,#050508ed,transparent)}.movie-play-screen .detail-close{position:absolute}.detail-section-heading{align-items:flex-start}.detail-section-index{font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){.movie-detail-screen,.movie-play-screen,.detail-hero-copy,.detail-cast-card,.detail-review-card{animation:none!important}.detail-live-dot,.detail-scroll-cue span{animation:none!important}}
+
+/* Final movie detail polish: logo-aligned ember accents, safer spacing, real cast portraits */
+.movie-detail-screen{--detail-accent:#ff5738;--detail-glow:#ff784f}
+.detail-backdrop{background:radial-gradient(ellipse at 75% 15%,#ff57381b,transparent 42%)}
+.detail-hero{isolation:isolate}
+.detail-trailer-bg{background:radial-gradient(ellipse at 70% 30%,#ff57384a,transparent 40%),linear-gradient(125deg,#0c0909,#24130f 55%,#08080c)}
+.detail-vignette{background:linear-gradient(90deg,#080808f5 0%,#080808c9 38%,#08080855 72%,#08080899 100%),linear-gradient(0deg,#080808 0%,transparent 44%,#08080866 100%)}
+.detail-eyebrow,.detail-section-heading .kicker{color:#ff9b7e}
+.detail-live-dot{background:var(--detail-accent);box-shadow:0 0 14px var(--detail-accent)}
+.detail-hero-copy{max-width:100%;min-width:0;padding-right:clamp(22px,7vw,100px)}
+.detail-hero h2{max-width:100%;overflow-wrap:anywhere;word-break:normal;hyphens:auto;font-size:clamp(42px,8.5vw,112px);line-height:.94;letter-spacing:-.065em}
+.detail-hero-copy>p{overflow-wrap:anywhere}
+.detail-play-btn{background:#ff5738;color:#130806;border-color:#ff5738}
+.detail-play-btn:hover{background:#ff896e;border-color:#ff896e;box-shadow:0 10px 35px #ff573835}
+.detail-secondary-btn:hover,.detail-watchlater-btn:hover{background:#6f3025;border-color:#ff8a6f}
+.detail-watchlater-btn.saved{background:#3a1b16;border-color:#ff8a6f;color:#ffd5ca}
+.detail-scroll-cue{color:#e5b0a2}
+.detail-scroll-cue span{color:#ff8062}
+.detail-cast-grid{grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch}
+.detail-cast-card{padding:0;min-width:0;overflow:hidden;justify-content:flex-start;gap:0;background:linear-gradient(155deg,#1c1514,#0c0b0c);border-color:#ffffff1a}
+.detail-cast-photo-wrap{height:210px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#633026,#171012 72%);flex-shrink:0}
+.detail-cast-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%;filter:saturate(.78);transition:transform .55s cubic-bezier(.2,.8,.2,1),filter .35s}
+.detail-cast-card:hover .detail-cast-photo{transform:scale(1.06);filter:saturate(1)}
+.detail-cast-photo-wrap:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#100c0df0);pointer-events:none}
+.detail-cast-avatar{position:absolute;z-index:1;left:12px;bottom:10px;width:35px;height:35px;background:#1c100ee8;border-color:#ff896f;color:#ffd0c4}
+.detail-cast-copy{padding:15px 14px 17px;min-width:0}
+.detail-cast-card strong{display:block;font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+.detail-cast-card span{display:block;font-size:9px;line-height:1.5;letter-spacing:.8px;color:#b99a93;overflow-wrap:anywhere}
+.detail-review-card{background:linear-gradient(145deg,#171110,#0e0b0b)}
+.detail-review-stars{color:#ff8a6f}
+.detail-section-heading h3{line-height:1.08}
+.detail-info-section{overflow:hidden}
+@media(max-width:1000px){.detail-cast-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.detail-cast-photo-wrap{height:230px}}
+@media(max-width:760px){
+ .detail-hero{min-height:100svh;min-height:100dvh}
+ .detail-hero-copy{width:100%;padding:115px 20px 86px}
+ .detail-hero h2{font-size:clamp(40px,12vw,72px);line-height:.98;letter-spacing:-.055em;margin:22px 0 17px}
+ .detail-meta{gap:6px;font-size:9px;letter-spacing:1px}
+ .detail-meta span{padding:6px 8px}
+ .detail-hero-copy>p{font-size:12px;line-height:1.7;margin:17px 0 21px}
+ .detail-actions{width:100%;max-width:100%;gap:8px}
+ .detail-actions button{min-height:46px;padding:0 12px;font-size:9px;letter-spacing:1px}
+ .detail-scroll-cue{left:20px;right:auto;bottom:17px}
+ .detail-section-heading{align-items:flex-start;flex-direction:column;gap:10px}
+ .detail-cast-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .detail-cast-photo-wrap{height:clamp(150px,54vw,230px)}
+ .detail-cast-copy{padding:12px}
+ .detail-cast-card strong{font-size:11px}
+ .detail-cast-card span{font-size:8px}
+ .detail-reviews-grid{grid-template-columns:1fr}
+ .detail-review-card{min-height:0;padding:18px}
+}
+@media(max-width:360px){.detail-cast-grid{grid-template-columns:1fr 1fr}.detail-cast-photo-wrap{height:145px}.detail-hero-copy{padding-left:16px;padding-right:16px}.detail-close span{font-size:8px}}
 </style>
 </head>
 <body><div id="app">
@@ -391,7 +444,48 @@ function openMovie(name){
 function renderMovieDetail(m){
  const bg=document.getElementById('detailTrailerBg');bg.replaceChildren();
  const casts=movieCast[m.title]||[];
- document.getElementById('detailCast').innerHTML=casts.map((c,i)=>`<article class="detail-cast-card" style="animation-delay:${i*70}ms"><div class="detail-cast-avatar">${c[0].split(' ').map(x=>x[0]).slice(0,2).join('')}</div><div><strong>${c[0]}</strong><span>${c[1]}</span></div></article>`).join('')||'<p>Cast information will be added soon.</p>';
+ const castPhotos={
+ 'Ranbir Kapoor':'Ranbir_Kapoor_at_the_33rd_Pune_International_Film_Festival.jpg',
+ 'Sai Pallavi':'Sai_Pallavi_at_Maari_2_press_meet.jpg',
+ 'Yash':'Yash_at_KGF_Chapter_2_trailer_launch.jpg',
+ 'Sunny Deol':'Sunny_Deol_at_the_screening_of_Ghayal_Once_Again.jpg',
+ 'Leonardo DiCaprio':'Leonardo_DiCaprio_2016.jpg',
+ 'Joseph Gordon-Levitt':'Joseph_Gordon-Levitt_2012.jpg',
+ 'Elliot Page':'Elliot_Page_2023.jpg',
+ 'Tom Hardy':'Tom_Hardy_by_Gage_Skidmore.jpg',
+ 'Marion Cotillard':'Marion_Cotillard_Cannes_2016.jpg',
+ 'Matthew McConaughey':'Matthew_McConaughey_2019.jpg',
+ 'Anne Hathaway':'Anne_Hathaway_at_The_Intern_premiere.jpg',
+ 'Jessica Chastain':'Jessica_Chastain_2016.jpg',
+ 'Michael Caine':'Michael_Caine_-_2008.jpg',
+ 'Timothée Chalamet':'Timothee_Chalamet_2019.jpg',
+ 'Zendaya':'Zendaya_at_the_2019_MTV_Movie_and_TV_Awards.png',
+ 'Rebecca Ferguson':'Rebecca_Ferguson_2018.jpg',
+ 'Oscar Isaac':'Oscar_Isaac_by_Gage_Skidmore.jpg',
+ 'Javier Bardem':'Javier_Bardem_2018.jpg',
+ 'Cillian Murphy':'Cillian_Murphy_by_Gage_Skidmore.jpg',
+ 'Emily Blunt':'Emily_Blunt_at_the_2019_Toronto_International_Film_Festival.jpg',
+ 'Matt Damon':'Matt_Damon_TIFF_2015.jpg',
+ 'Robert Downey Jr.':'Robert_Downey_Jr_2014_Comic_Con.jpg',
+ 'Florence Pugh':'Florence_Pugh_at_the_2023_Berlin_International_Film_Festival.jpg',
+ 'Robert Pattinson':'Robert_Pattinson_by_Gage_Skidmore.jpg',
+ 'Zoë Kravitz':'Zoe_Kravitz_2011.jpg',
+ 'Paul Dano':'Paul_Dano_2014.jpg',
+ 'Jeffrey Wright':'Jeffrey_Wright_2019.jpg',
+ 'Colin Farrell':'Colin_Farrell_2016.jpg',
+ 'Shameik Moore':'Shameik_Moore_by_Gage_Skidmore.jpg',
+ 'Hailee Steinfeld':'Hailee_Steinfeld_by_Gage_Skidmore.jpg',
+ 'Brian Tyree Henry':'Brian_Tyree_Henry_2019.jpg',
+ 'Joaquin Phoenix':'Joaquin_Phoenix_2018.jpg',
+ 'Robert De Niro':'Robert_De_Niro_KVIFF_portrait.jpg',
+ 'Zazie Beetz':'Zazie_Beetz_2018.jpg',
+ 'Christian Bale':'Christian_Bale-2012.jpg',
+ 'Heath Ledger':'Heath_Ledger_(2006).jpg',
+ 'Aaron Eckhart':'Aaron_Eckhart_2011.jpg',
+ 'Gary Oldman':'Gary_Oldman_2014.jpg',
+ 'Maggie Gyllenhaal':'Maggie_Gyllenhaal_2010.jpg'
+};
+document.getElementById('detailCast').innerHTML=casts.map((c,i)=>{const file=castPhotos[c[0]];const photo=file?'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width=500':'';const initials=c[0].split(' ').map(x=>x[0]).slice(0,2).join('');return `<article class="detail-cast-card" style="animation-delay:${i*70}ms"><div class="detail-cast-photo-wrap">${photo?`<img class="detail-cast-photo" src="${photo}" alt="${c[0]}" loading="lazy" onerror="this.style.display='none'">`:''}<div class="detail-cast-avatar">${initials}</div></div><div class="detail-cast-copy"><strong>${c[0]}</strong><span>${c[1]}</span></div></article>`;}).join('')||'<p>Cast information will be added soon.</p>';
  document.getElementById('detailReviews').innerHTML=demoReviews.map((r,i)=>`<article class="detail-review-card" style="animation-delay:${i*90}ms"><div class="detail-review-stars">${r.stars}</div><p>“${r.quote}”</p><small>${r.by} · SAMPLE REVIEW</small></article>`).join('');
  const b=document.getElementById('watchLaterBtn'),saved=watchLaterItems.includes(m.title);b.classList.toggle('saved',saved);b.innerHTML=saved?'✓ SAVED TO WATCH LATER':'＋ WATCH LATER';
  document.getElementById('detailHint').textContent=m.trailerUrl?'Trailer preview is playing · Sound depends on your browser autoplay permission':'YouTube trailer preview is playing · Sound depends on your browser autoplay permission';
