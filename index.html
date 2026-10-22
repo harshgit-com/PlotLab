@@ -68,6 +68,34 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
   .modal-actions{display:grid;grid-template-columns:1fr}
   .modal-actions .btn,.modal-back-btn{width:100%;text-align:center;justify-content:center}
 }
+
+/* PlotLab mobile layout hardening + trailer source labels */
+.trailer-status{top:12px;bottom:auto;left:12px;right:auto;max-width:calc(100% - 24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.modal-player .modal-trailer-status{z-index:5}
+@media(max-width:768px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .wrap{width:calc(100% - 28px);max-width:100%}
+  header .nav{gap:10px;min-width:0}
+  .brand{min-width:0;max-width:55vw}
+  .brand-logo{max-width:100%;object-fit:contain}
+  .navlinks{max-width:100%;flex-wrap:wrap}
+  .hero,.hero-inner,.section,.section-head,.trending-track,.genre-grid,.upcoming-grid{min-width:0;max-width:100%}
+  .hero h1,.section-head h2,.movie-title,.art-word{overflow-wrap:anywhere;word-break:normal}
+  .trending-track{width:100%;overflow:hidden}
+  .trending-track .movie-card{width:100%;min-width:0;max-width:100%;height:auto;min-height:0;aspect-ratio:4/5}
+  .trending-track .movie-card .poster-art,.trending-track .movie-card .trailer-layer{position:absolute;inset:0}
+  .trending-track .movie-card .card-info{left:0;right:0;bottom:0;width:100%;box-sizing:border-box}
+  .genre-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .genre-grid .movie-card{width:100%;min-width:0;min-height:0;height:auto;aspect-ratio:3/4}
+  .genre-grid .poster-art,.genre-grid .trailer-layer{position:absolute;inset:0}
+  .genre-grid .card-info{left:0;right:0;bottom:0;width:100%;box-sizing:border-box}
+  .movie-meta{flex-wrap:wrap;row-gap:5px}
+  .modal-backdrop{padding:10px;box-sizing:border-box;align-items:center}
+  .modal{width:100%;max-width:100%;box-sizing:border-box;max-height:90dvh;overflow-y:auto;padding:22px 16px}
+  .modal-player{width:100%;aspect-ratio:16/9;min-height:0}
+  .modal-player iframe,.modal-player video{width:100%;height:100%;object-fit:contain}
+}
+
 </style>
 </head>
 <body><div id="app">
@@ -137,8 +165,8 @@ function startTrailer(card,id){
     video.className='local-trailer-video';
     video.src=hostedSrc;
     video.autoplay=true;
-    video.muted=!window.plotlabAudioUnlocked;
-    video.defaultMuted=video.muted;
+    video.muted=false;
+    video.defaultMuted=false;
     video.loop=false;
     video.addEventListener('ended',()=>{if(card.closest('#trendingTrack')) moveTrending(1);},{once:true});
     video.addEventListener('error',()=>{console.warn('Hosted trailer failed to load. Check that the URL points directly to a playable video asset.');card.classList.remove('is-previewing');},{once:true});
@@ -153,7 +181,7 @@ function startTrailer(card,id){
     if(p&&p.catch)p.catch(()=>{video.muted=true;video.defaultMuted=true;video.play().catch(err=>{console.warn('Hosted trailer could not play.',err);card.classList.remove('is-previewing');});});
   } else {
     const frame=document.createElement('iframe');
-    const params=new URLSearchParams({autoplay:'1',mute:'0',playsinline:'1',controls:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1'});
+    const params=new URLSearchParams({autoplay:'1',mute:'0',playsinline:'1',controls:'0',disablekb:'1',fs:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1',iv_load_policy:'3'});
     if(location.protocol==='http:'||location.protocol==='https:')params.set('origin',location.origin);
     frame.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?'+params.toString();
     frame.title='Autoplay trailer preview: '+(card.dataset.title||'movie');
@@ -257,18 +285,19 @@ function playTrailerFromModal(){
   player.hidden=false;
   if(m.trailerUrl){
     const v=document.createElement('video');
-    v.src=m.trailerUrl;v.controls=true;v.autoplay=true;v.playsInline=true;v.muted=false;v.volume=1;
+    v.src=m.trailerUrl;v.controls=false;v.autoplay=true;v.playsInline=true;v.muted=false;v.defaultMuted=false;v.volume=1;
     v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
     player.appendChild(v);
     v.play().catch(()=>{v.controls=true;});
   }else{
     const frame=document.createElement('iframe');
-    const params=new URLSearchParams({autoplay:'1',mute:'0',playsinline:'1',controls:'1',rel:'0',enablejsapi:'1',modestbranding:'1'});
+    const params=new URLSearchParams({autoplay:'1',mute:'0',playsinline:'1',controls:'0',disablekb:'1',fs:'0',rel:'0',enablejsapi:'1',modestbranding:'1',iv_load_policy:'3'});
     if(location.protocol==='http:'||location.protocol==='https:')params.set('origin',location.origin);
     frame.src='https://www.youtube.com/embed/'+encodeURIComponent(m.trailer)+'?'+params.toString();
-    frame.title='Trailer: '+m.title;frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.setAttribute('allowfullscreen','');
+    frame.title='Trailer: '+m.title;frame.allow='autoplay; encrypted-media';frame.setAttribute('referrerpolicy','strict-origin-when-cross-origin');
     player.appendChild(frame);
   }
+  const sourceLabel=document.createElement('span');sourceLabel.className='trailer-status modal-trailer-status';sourceLabel.textContent=m.trailerUrl?'TRAILER PREVIEW':'YOUTUBE PREVIEW';player.appendChild(sourceLabel);
   document.getElementById('playTrailerBtn').textContent='↻ Restart trailer';
 }
 function stopModalTrailer(){
