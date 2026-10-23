@@ -417,6 +417,31 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .movie-play-stage .movie-controls-row>.quality-toggle{right:50px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important}
 }
 
+
+/* Clean player: no control container; centre transport only, edge-to-edge timeline */
+.movie-play-stage .movie-skip-controls{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;padding:0!important;margin:0!important}
+.movie-play-stage .movie-timeline{position:absolute!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;padding:0 0 max(12px,env(safe-area-inset-bottom))!important;margin:0!important;gap:5px!important;background:linear-gradient(180deg,transparent,#0008 50%,#000b)!important}
+.movie-play-stage .movie-time-readout{padding:0 12px!important}
+.movie-play-stage .movie-controls-row{position:absolute!important;left:50%!important;top:50%!important;bottom:auto!important;transform:translate(-50%,-50%)!important;display:flex!important;gap:clamp(18px,3vw,34px)!important;align-items:center!important;justify-content:center!important;width:auto!important}
+.movie-play-stage .movie-controls-row>.skip-back,.movie-play-stage .movie-controls-row>.pause-toggle,.movie-play-stage .movie-controls-row>.skip-forward{position:relative!important;inset:auto!important;display:flex!important;flex:none!important;min-width:0!important;width:auto!important;min-height:0!important;padding:12px!important;gap:0!important;border:0!important;border-radius:50%!important;background:#1119!important;color:#fff!important;box-shadow:none!important}
+.movie-play-stage .movie-controls-row>.skip-back .control-label,.movie-play-stage .movie-controls-row>.skip-forward .control-label{display:none!important}
+.movie-play-stage .movie-controls-row>.skip-back .control-symbol,.movie-play-stage .movie-controls-row>.skip-forward .control-symbol{font-size:34px!important;color:#fff!important}
+.movie-play-stage .movie-controls-row>.pause-toggle{width:58px!important;height:58px!important;justify-content:center!important;background:#ff704d!important;color:#170905!important}
+.movie-play-stage .movie-controls-row>.pause-toggle .control-symbol{font-size:28px!important;color:#170905!important}
+.movie-play-stage .movie-controls-row>.pause-toggle .control-label{display:none!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle{position:fixed!important;right:12px!important;bottom:calc(18px + env(safe-area-inset-bottom))!important;top:auto!important;left:auto!important;min-width:40px!important;min-height:40px!important;padding:8px!important;background:#1118!important;border:0!important;box-shadow:none!important}
+.movie-play-stage .movie-controls-row>.quality-toggle{position:fixed!important;right:58px!important;bottom:calc(18px + env(safe-area-inset-bottom))!important;top:auto!important;left:auto!important;min-width:42px!important;min-height:40px!important;padding:8px!important;background:#1118!important;border:0!important;box-shadow:none!important}
+.movie-play-stage .movie-controls-row>.quality-toggle .control-label{display:inline!important;font-size:10px!important;color:#fff!important}
+.movie-play-stage .movie-controls-row>.quality-toggle .quality-menu{top:auto!important;bottom:100%!important}
+@media(max-width:768px){
+.movie-play-stage .movie-timeline{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
+.movie-play-stage .movie-controls-row{gap:16px!important}
+.movie-play-stage .movie-controls-row>.skip-back .control-symbol,.movie-play-stage .movie-controls-row>.skip-forward .control-symbol{font-size:29px!important}
+.movie-play-stage .movie-controls-row>.pause-toggle{width:52px!important;height:52px!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle{right:8px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important}
+.movie-play-stage .movie-controls-row>.quality-toggle{right:50px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important}
+}
+
 </style>
 </head>
 <body><div id="app">
