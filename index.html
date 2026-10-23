@@ -464,6 +464,11 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .movie-play-stage .movie-controls-row>.quality-toggle{right:52px!important;bottom:calc(48px + env(safe-area-inset-bottom))!important}
 }
 
+
+/* Use the browser's standard video controls; play immediately after Watch Movie */
+#moviePlayStage .movie-skip-controls{display:none!important}
+#moviePlayStage .plotlab-movie-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+
 </style>
 </head>
 <body><div id="app">
@@ -719,7 +724,7 @@ function playMovieNow(){
   intro.classList.add('hide');
   const video=document.createElement('video');
   video.className='plotlab-movie-video';video.src='https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
-  video.preload='auto';video.playsInline=true;video.controls=false;video.autoplay=true;video.volume=1;
+  video.preload='auto';video.playsInline=true;video.controls=true;video.autoplay=true;video.volume=1;
   video.setAttribute('aria-label','Jai Jai Ram movie');
   const controls=document.createElement('div');controls.className='movie-skip-controls';
   const timeline=document.createElement('div');timeline.className='movie-timeline';
