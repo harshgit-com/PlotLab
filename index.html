@@ -260,6 +260,26 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
  .detail-hint{margin-top:12px}
 }
 
+
+/* PlotLab playback and responsive detail refinements */
+#playTrailerBtn{display:none!important}
+.detail-trailer-bg{background:linear-gradient(180deg,#080808a6 0%,#08080865 35%,#080808e8 100%),#080808!important}
+.detail-trailer-bg video,.detail-trailer-bg iframe{opacity:.22!important;filter:brightness(.48) saturate(.65)!important}
+.detail-trailer-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#080808d9 0%,#08080880 55%,#08080835 100%),linear-gradient(0deg,#080808 0%,transparent 72%);pointer-events:none}
+.detail-close{position:fixed!important;top:18px!important;left:18px!important;width:44px!important;height:44px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid #ffffff45!important;border-radius:50%!important;background:#080808d9!important;color:#fff!important;font-size:27px!important;line-height:1!important;z-index:100!important}
+.detail-close span{display:none!important}
+.detail-close:hover{background:#ff5738!important;border-color:#ff5738!important;color:#080808!important;transform:scale(1.04)!important}
+.movie-play-screen{position:fixed;inset:0;z-index:1000;background:#000;display:none;align-items:center;justify-content:center;overflow:hidden}
+.movie-play-screen.show{display:flex}
+.movie-play-stage{position:absolute;inset:0;width:100%;height:100%;background:#000}
+.movie-play-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.movie-intro-logo{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:#050505;opacity:1;visibility:visible;transition:opacity .35s ease,visibility .35s ease;pointer-events:none}
+.movie-intro-logo img{width:min(240px,52vw);max-height:180px;object-fit:contain}
+.movie-intro-logo.hide{opacity:0;visibility:hidden}
+.play-screen-close{top:18px!important;left:auto!important;right:18px!important}
+@media(max-width:768px){.detail-close{top:12px!important;left:12px!important;width:40px!important;height:40px!important}.play-screen-close{left:auto!important;right:12px!important}.detail-hero-copy{padding-top:155px!important;padding-bottom:105px!important}.detail-actions{gap:9px!important;flex-wrap:wrap!important}.detail-play-btn,.detail-watchlater-btn{min-height:44px!important;padding:0 13px!important;font-size:9px!important}}
+@media(min-width:769px) and (max-width:1100px){.detail-hero-copy{padding-top:185px!important}.detail-close{top:14px!important;left:14px!important}}
+
 </style>
 </head>
 <body><div id="app">
@@ -292,7 +312,6 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
         <p id="modalDescription"></p>
         <div class="detail-actions">
           <button class="detail-play-btn" id="playMovieBtn" onclick="playMovieNow()">▶ <span>WATCH MOVIE</span></button>
-          <button class="detail-secondary-btn" id="playTrailerBtn" onclick="playTrailerFromModal()">▷ <span>PLAY TRAILER</span></button>
           <button class="detail-watchlater-btn" id="watchLaterBtn" onclick="toggleWatchLater()">＋ WATCH LATER</button>
         </div>
         <div class="detail-hint" id="detailHint">Trailer preview plays in the background · Sound depends on your browser autoplay permission</div>
@@ -308,9 +327,9 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
   </div>
 </div>
 <div class="movie-play-screen" id="moviePlayScreen" aria-label="Movie playback" role="dialog" aria-modal="true">
-  <button class="detail-close play-screen-close" onclick="closeMoviePlayer()">× <span>BACK TO MOVIE</span></button>
+  <button class="detail-close play-screen-close" aria-label="Close movie player" onclick="closeMoviePlayer()">×</button>
   <div class="movie-play-stage" id="moviePlayStage"></div>
-  <div class="movie-play-overlay"><div class="kicker">PLOTLAB / NOW PLAYING</div><h2 id="moviePlayTitle"></h2><p id="moviePlayMessage">Playing the available trailer preview. A licensed full-film source has not been added for this title yet.</p><button class="detail-secondary-btn" onclick="closeMoviePlayer()">← MOVIE DETAILS</button></div>
+  <div class="movie-intro-logo" id="movieIntroLogo" aria-label="PlotLab"><img alt="PlotLab logo"></div>
 </div><div class="toast" id="toast"></div>
 <script>
 const titles=[
@@ -539,14 +558,20 @@ function playTrailerFromModal(){
 }
 function playMovieNow(){
  if(!activeModalMovie)return;
- const m=activeModalMovie,screen=document.getElementById('moviePlayScreen'),stage=document.getElementById('moviePlayStage');
- stopModalTrailer();
- stage.replaceChildren();document.getElementById('moviePlayTitle').textContent=m.title;
- document.getElementById('moviePlayMessage').textContent='Playing the available trailer preview. A licensed full-film source has not been added for this title yet.';
- screen.classList.add('show');document.getElementById('movieModal').classList.remove('show');
- makeTrailerMedia(m,stage,true);
- const media=stage.querySelector('video');if(media){media.loop=false;media.muted=false;media.volume=1;media.currentTime=0;media.play().catch(()=>{media.muted=true;media.play().catch(()=>{});document.getElementById('moviePlayMessage').textContent='Your browser blocked autoplay with sound. Tap the video area or use a licensed film source when connected.';});}
- document.body.style.overflow='hidden';
+ const screen=document.getElementById('moviePlayScreen'),stage=document.getElementById('moviePlayStage'),intro=document.getElementById('movieIntroLogo');
+ stopModalTrailer();stage.replaceChildren();
+ const logo=document.querySelector('.brand-logo'),logoImg=intro.querySelector('img');
+ if(logo&&logoImg)logoImg.src=logo.src;
+ intro.classList.remove('hide');screen.classList.add('show');
+ document.getElementById('movieModal').classList.remove('show');document.body.style.overflow='hidden';
+ window.setTimeout(()=>{
+  if(!screen.classList.contains('show'))return;
+  intro.classList.add('hide');
+  const frame=document.createElement('iframe');
+  frame.src='https://player.cloudinary.com/embed/?cloud_name=h56ve1kv&public_id=jai_jai_Ram';
+  frame.title='Jai Jai Ram';frame.allow='autoplay; fullscreen; encrypted-media; picture-in-picture';frame.allowFullscreen=true;frame.setAttribute('frameborder','0');
+  stage.replaceChildren(frame);
+ },2500);
 }
 function toggleWatchLater(){
  if(!activeModalMovie)return;
