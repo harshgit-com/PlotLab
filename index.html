@@ -286,25 +286,40 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .detail-vignette{background:linear-gradient(90deg,#08080cdd 0%,#08080ca8 32%,#08080c32 70%,#08080c55 100%),linear-gradient(0deg,#08080c 0%,transparent 48%,#08080c30 100%)!important}
 .detail-trailer-bg:after{background:linear-gradient(90deg,#08080c88 0%,#08080c35 58%,transparent 100%),linear-gradient(0deg,#08080cbb 0%,transparent 72%)!important}
 .movie-play-stage .plotlab-movie-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
-.movie-skip-controls{position:absolute;z-index:8;left:50%;bottom:78px;transform:translateX(-50%);display:flex;align-items:center;gap:14px}
-.movie-control-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-width:86px;padding:12px 16px;overflow:hidden;border:1px solid #ff704d77;border-radius:16px;background:linear-gradient(135deg,#171719ed,#29201fed);color:#fff;font:800 11px/1 Arial,sans-serif;letter-spacing:1.2px;cursor:pointer;backdrop-filter:blur(12px);box-shadow:0 5px 22px #0008,inset 0 1px #ffffff20;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease}
+.movie-skip-controls{position:absolute;z-index:8;left:50%;bottom:clamp(16px,4vh,48px);transform:translate(-50%,0);display:flex;flex-direction:column;gap:12px;width:min(620px,calc(100% - 44px));padding:16px 18px 13px;border:1px solid #ffffff1c;border-radius:22px;background:linear-gradient(140deg,#111113eF,#171113d9);backdrop-filter:blur(18px);box-shadow:0 18px 60px #0008;opacity:1;visibility:visible;transition:opacity .35s ease,transform .35s ease,visibility .35s}
+.movie-skip-controls.controls-hidden{opacity:0;visibility:hidden;transform:translate(-50%,14px);pointer-events:none}
+.movie-skip-controls.controls-visible{animation:controlsArrive .42s cubic-bezier(.2,.85,.25,1) both}
+@keyframes controlsArrive{0%{opacity:0;transform:translate(-50%,16px) scale(.97)}70%{opacity:1;transform:translate(-50%,-2px) scale(1.005)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+.movie-timeline{width:100%;display:flex;flex-direction:column;gap:7px}
+.movie-time-readout{display:flex;justify-content:space-between;align-items:center;color:#ffffffb8;font:600 11px/1.2 Arial,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.4px}
+.movie-current-time{color:#ff876b}
+.movie-seek-track{position:relative;height:5px;border-radius:10px;background:#ffffff35;transition:height .16s ease}
+.movie-seek-track:before{content:"";position:absolute;inset:0 auto 0 0;width:var(--seek-progress,0%);border-radius:10px;background:linear-gradient(90deg,#ff5738,#ffb18b);box-shadow:0 0 12px #ff573866;pointer-events:none}
+.movie-seek{position:absolute;inset:-9px 0;width:100%;height:23px;margin:0;appearance:none;-webkit-appearance:none;background:transparent;cursor:pointer;z-index:2;touch-action:pan-y}
+.movie-seek::-webkit-slider-runnable-track{height:5px;background:transparent}
+.movie-seek::-moz-range-track{height:5px;background:transparent}
+.movie-seek::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;margin-top:-4px;border-radius:50%;background:#fff;border:3px solid #ff704d;box-shadow:0 0 0 4px #ff704d22;transition:transform .15s ease}
+.movie-seek::-moz-range-thumb{width:9px;height:9px;border-radius:50%;background:#fff;border:3px solid #ff704d;box-shadow:0 0 0 4px #ff704d22}
+.movie-seek:active::-webkit-slider-thumb{transform:scale(1.25)}
+.movie-controls-row{display:flex;align-items:center;justify-content:center;gap:clamp(10px,2vw,18px)}
+.movie-control-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;min-width:94px;padding:12px 17px;overflow:hidden;border:1px solid #ff704d66;border-radius:15px;background:linear-gradient(135deg,#222124ed,#171719ed);color:#fff;font:800 10px/1 Arial,sans-serif;letter-spacing:1.1px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 22px #0006,inset 0 1px #ffffff1a;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease}
 .movie-control-btn:before{content:"";position:absolute;inset:0;transform:translateX(-130%) skewX(-18deg);background:linear-gradient(90deg,transparent,#ff795544,transparent);transition:transform .5s ease}
-.movie-control-btn:hover{transform:translateY(-4px) scale(1.04);border-color:#ff704d;box-shadow:0 10px 30px #ff573833,inset 0 1px #ffffff35;background:linear-gradient(135deg,#30201e,#171719)}
-.movie-control-btn:hover:before{transform:translateX(130%) skewX(-18deg)}
-.movie-control-btn:active{transform:scale(.94)}
-.movie-control-btn .control-symbol{position:relative;font-size:20px;line-height:1;color:#ff7656;transition:transform .25s ease}
-.movie-control-btn:hover .control-symbol{transform:scale(1.18) rotate(-6deg)}
+.movie-control-btn:hover{transform:translateY(-3px) scale(1.035);border-color:#ff704d;box-shadow:0 10px 28px #ff573833,inset 0 1px #ffffff35}
+.movie-control-btn:hover:before,.movie-control-btn:focus-visible:before{transform:translateX(130%) skewX(-18deg)}
+.movie-control-btn:active{transform:scale(.93)}
+.movie-control-btn .control-symbol{position:relative;font-size:21px;line-height:1;color:#ff876b;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.movie-control-btn:hover .control-symbol{transform:scale(1.2) rotate(-7deg)}
 .movie-control-btn .control-label{position:relative;white-space:nowrap}
-.movie-control-btn.pause-toggle{min-width:104px;border-radius:20px;background:linear-gradient(135deg,#ff704d,#b93625);color:#160907;border-color:#ff9b7f;box-shadow:0 6px 26px #ff573844}
-.movie-control-btn.pause-toggle .control-symbol{color:#160907}
-.movie-control-btn.pause-toggle:hover{background:linear-gradient(135deg,#ff9478,#ff5738);box-shadow:0 10px 34px #ff573866}
-.movie-control-btn.pause-toggle.is-paused{background:linear-gradient(135deg,#272326,#171719);color:#fff;border-color:#ff704d}
-.movie-control-btn.pause-toggle.is-paused .control-symbol{color:#ff7656}
-.movie-control-btn.control-pulse{animation:controlPulse .35s ease-out}
-@keyframes controlPulse{0%{box-shadow:0 0 0 0 #ff704d99;transform:scale(.94)}100%{box-shadow:0 0 0 13px #ff704d00;transform:scale(1)}}
-@media(prefers-reduced-motion:reduce){.movie-control-btn,.movie-control-btn:before{transition:none}.movie-control-btn.control-pulse{animation:none}}
+.movie-control-btn.pause-toggle{min-width:116px;border-radius:18px;background:linear-gradient(135deg,#ff8a68,#e94c30);color:#1a0805;border-color:#ffb29b;box-shadow:0 6px 26px #ff573833}
+.movie-control-btn.pause-toggle .control-symbol{color:#1a0805}
+.movie-control-btn.pause-toggle:hover{background:linear-gradient(135deg,#ffab8f,#ff5738);box-shadow:0 10px 34px #ff573866}
+.movie-control-btn.pause-toggle.is-paused{background:linear-gradient(135deg,#292528,#171719);color:#fff;border-color:#ff704d}
+.movie-control-btn.pause-toggle.is-paused .control-symbol{color:#ff876b}
+.movie-control-btn.control-pulse{animation:controlPulse .42s cubic-bezier(.16,1,.3,1)}
+@keyframes controlPulse{0%{box-shadow:0 0 0 0 #ff704daa;transform:scale(.92)}65%{box-shadow:0 0 0 12px #ff704d00;transform:scale(1.04)}100%{box-shadow:0 0 0 0 #ff704d00;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.movie-control-btn,.movie-control-btn:before,.movie-skip-controls{transition:none;animation:none}}
 .movie-source-error{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;color:#fff;background:#080808;font-size:15px;line-height:1.7}
-@media(max-width:768px){.movie-skip-controls{bottom:72px;gap:8px;width:max-content;max-width:96vw}.movie-control-btn{min-width:68px;padding:10px 11px;gap:5px;font-size:9px;letter-spacing:.7px}.movie-control-btn .control-symbol{font-size:18px}.movie-control-btn.pause-toggle{min-width:82px}}
+@media(max-width:768px){.movie-skip-controls{bottom:max(14px,env(safe-area-inset-bottom));width:calc(100% - 24px);padding:12px 11px 10px;gap:10px;border-radius:18px}.movie-controls-row{gap:9px}.movie-control-btn{min-width:0;flex:1;padding:12px 8px;gap:6px;font-size:9px;letter-spacing:.5px;border-radius:13px}.movie-control-btn .control-symbol{font-size:19px}.movie-control-btn.pause-toggle{min-width:0;flex:1.15}.movie-time-readout{font-size:10px}.movie-seek{height:28px;inset:-11px 0}.movie-seek::-webkit-slider-thumb{width:15px;height:15px}.movie-play-stage .plotlab-movie-video{object-fit:contain}}
 
 </style>
 </head>
@@ -563,15 +578,33 @@ function playMovieNow(){
   video.preload='auto';video.playsInline=true;video.controls=false;video.autoplay=true;video.volume=1;
   video.setAttribute('aria-label','Jai Jai Ram movie');
   const controls=document.createElement('div');controls.className='movie-skip-controls';
+  const timeline=document.createElement('div');timeline.className='movie-timeline';
+  const timeReadout=document.createElement('div');timeReadout.className='movie-time-readout';timeReadout.innerHTML='<span class="movie-current-time">0:00</span><span class="movie-duration">0:00</span>';
+  const seek=document.createElement('input');seek.type='range';seek.className='movie-seek';seek.min='0';seek.max='1000';seek.value='0';seek.step='1';seek.setAttribute('aria-label','Movie timeline');
+  const seekTrack=document.createElement('div');seekTrack.className='movie-seek-track';seekTrack.appendChild(seek);
+  timeline.append(timeReadout,seekTrack);
+  const row=document.createElement('div');row.className='movie-controls-row';
   const back=document.createElement('button');back.type='button';back.className='movie-control-btn skip-back';back.innerHTML='<span class="control-symbol">↶</span><span class="control-label">10 SEC</span>';back.setAttribute('aria-label','Go back 10 seconds');back.title='Back 10 seconds';
   const pause=document.createElement('button');pause.type='button';pause.className='movie-control-btn pause-toggle';pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.title='Pause or play';
   const forward=document.createElement('button');forward.type='button';forward.className='movie-control-btn skip-forward';forward.innerHTML='<span class="control-symbol">↷</span><span class="control-label">10 SEC</span>';forward.setAttribute('aria-label','Go forward 10 seconds');forward.title='Forward 10 seconds';
-  back.addEventListener('click',()=>{video.currentTime=Math.max(0,video.currentTime-10);back.classList.remove('control-pulse');void back.offsetWidth;back.classList.add('control-pulse')});
-  forward.addEventListener('click',()=>{video.currentTime=Number.isFinite(video.duration)?Math.min(video.duration,video.currentTime+10):video.currentTime+10;forward.classList.remove('control-pulse');void forward.offsetWidth;forward.classList.add('control-pulse')});
-  pause.addEventListener('click',()=>{if(video.paused){video.play().catch(()=>{});pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')}else{video.pause();pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')}});
+  const fmt=t=>{if(!Number.isFinite(t)||t<0)t=0;const h=Math.floor(t/3600),m=Math.floor(t%3600/60),sec=Math.floor(t%60).toString().padStart(2,'0');return h? h+':'+m.toString().padStart(2,'0')+':'+sec:m+':'+sec};
+  const updateTimeline=()=>{const duration=Number.isFinite(video.duration)?video.duration:0;timeReadout.querySelector('.movie-current-time').textContent=fmt(video.currentTime);timeReadout.querySelector('.movie-duration').textContent=fmt(duration);if(duration&&!seek.matches(':active'))seek.value=String(Math.round(video.currentTime/duration*1000));seekTrack.style.setProperty('--seek-progress',(duration?video.currentTime/duration*100:0)+'%')};
+  seek.addEventListener('input',()=>{if(Number.isFinite(video.duration)&&video.duration>0){video.currentTime=video.duration*(Number(seek.value)/1000);updateTimeline()}});
+  video.addEventListener('timeupdate',updateTimeline);video.addEventListener('loadedmetadata',updateTimeline);video.addEventListener('durationchange',updateTimeline);
+  back.addEventListener('click',()=>{video.currentTime=Math.max(0,video.currentTime-10);back.classList.remove('control-pulse');void back.offsetWidth;back.classList.add('control-pulse');showPlayerControls()});
+  forward.addEventListener('click',()=>{video.currentTime=Number.isFinite(video.duration)?Math.min(video.duration,video.currentTime+10):video.currentTime+10;forward.classList.remove('control-pulse');void forward.offsetWidth;forward.classList.add('control-pulse');showPlayerControls()});
+  pause.addEventListener('click',()=>{if(video.paused){video.play().catch(()=>{});pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')}else{video.pause();pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')}showPlayerControls()});
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
-  video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')});
-  controls.append(back,pause,forward);stage.replaceChildren(video,controls);
+  video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
+  row.append(back,pause,forward);controls.append(timeline,row);stage.replaceChildren(video,controls);
+  let hideControlsTimer=null;
+  function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},3200)}
+  function togglePlayerControls(){if(controls.classList.contains('controls-hidden')||!controls.classList.contains('controls-visible'))showPlayerControls();else{if(hideControlsTimer)clearTimeout(hideControlsTimer);controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')}}
+  stage.addEventListener('click',e=>{if(e.target.closest('.movie-skip-controls'))return;if(e.target===video||e.target===stage)togglePlayerControls()});
+  stage.addEventListener('touchend',e=>{if(e.target.closest('.movie-skip-controls'))return;if(e.target===video||e.target===stage){showPlayerControls()}},{passive:true});
+  seek.addEventListener('focus',()=>{if(hideControlsTimer)clearTimeout(hideControlsTimer);controls.classList.remove('controls-hidden');controls.classList.add('controls-visible')});
+  seek.addEventListener('blur',()=>showPlayerControls());
+  showPlayerControls();updateTimeline();
   video.play().catch(()=>{});
   video.addEventListener('error',()=>{stage.innerHTML='<div class="movie-source-error">The direct video URL could not be loaded. Please provide the Cloudinary video delivery URL ending in .mp4 to play it without Cloudinary branding.</div>';});
  },2500);
