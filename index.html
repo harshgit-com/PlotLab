@@ -321,6 +321,16 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .movie-source-error{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;color:#fff;background:#080808;font-size:15px;line-height:1.7}
 @media(max-width:768px){.movie-skip-controls{bottom:max(14px,env(safe-area-inset-bottom));width:calc(100% - 24px);padding:12px 11px 10px;gap:10px;border-radius:18px}.movie-controls-row{gap:9px}.movie-control-btn{min-width:0;flex:1;padding:12px 8px;gap:6px;font-size:9px;letter-spacing:.5px;border-radius:13px}.movie-control-btn .control-symbol{font-size:19px}.movie-control-btn.pause-toggle{min-width:0;flex:1.15}.movie-time-readout{font-size:10px}.movie-seek{height:28px;inset:-11px 0}.movie-seek::-webkit-slider-thumb{width:15px;height:15px}.movie-play-stage .plotlab-movie-video{object-fit:contain}}
 
+
+/* PlotLab UI polish: stronger circular controls, clear focus, and poster-first typography */
+.slider-controls button,.mobile-menu,.sound-toggle,.modal-close,.close-btn,.detail-close,.nav-icon-button{border-width:2px!important;border-color:#ff795477!important;box-shadow:0 0 0 2px #080808,0 4px 16px #0008;transition:transform .22s ease,background .22s ease,border-color .22s ease,box-shadow .22s ease}
+.slider-controls button:hover,.mobile-menu:hover,.sound-toggle:hover,.modal-close:hover,.close-btn:hover,.detail-close:hover,.nav-icon-button:hover{border-color:#ff8b70!important;box-shadow:0 0 0 2px #080808,0 0 0 5px #ff704d22,0 6px 20px #0009;transform:scale(1.06)}
+.movie-skip-controls{border:1px solid #ff795466;box-shadow:0 18px 60px #000b,0 0 0 2px #080808,0 0 28px #ff704d12}
+.movie-control-btn{border-width:2px;border-color:#ff795588}
+.movie-control-btn.fullscreen-toggle{min-width:130px}
+.movie-control-btn.fullscreen-toggle .control-symbol{font-size:24px}
+@media(max-width:768px){.movie-controls-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.movie-control-btn{padding:12px 4px;min-height:48px;font-size:8px;letter-spacing:.2px}.movie-control-btn .control-symbol{font-size:19px}.movie-control-btn.fullscreen-toggle{min-width:0}.movie-control-btn .control-label{font-size:8px}}
+
 </style>
 </head>
 <body><div id="app">
@@ -587,6 +597,9 @@ function playMovieNow(){
   const back=document.createElement('button');back.type='button';back.className='movie-control-btn skip-back';back.innerHTML='<span class="control-symbol">↶</span><span class="control-label">10 SEC</span>';back.setAttribute('aria-label','Go back 10 seconds');back.title='Back 10 seconds';
   const pause=document.createElement('button');pause.type='button';pause.className='movie-control-btn pause-toggle';pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.title='Pause or play';
   const forward=document.createElement('button');forward.type='button';forward.className='movie-control-btn skip-forward';forward.innerHTML='<span class="control-symbol">↷</span><span class="control-label">10 SEC</span>';forward.setAttribute('aria-label','Go forward 10 seconds');forward.title='Forward 10 seconds';
+  const fullscreen=document.createElement('button');fullscreen.type='button';fullscreen.className='movie-control-btn fullscreen-toggle';fullscreen.innerHTML='<span class="control-symbol">⛶</span><span class="control-label">FULL SCREEN</span>';fullscreen.setAttribute('aria-label','Enter full screen');fullscreen.title='Enter full screen';
+  fullscreen.addEventListener('click',async()=>{try{if(!document.fullscreenElement){if(screen.requestFullscreen)await screen.requestFullscreen();else if(stage.requestFullscreen)await stage.requestFullscreen();}else await document.exitFullscreen();}catch(e){/* Fullscreen may be blocked by the browser. */}showPlayerControls()});
+  document.addEventListener('fullscreenchange',()=>{const active=!!document.fullscreenElement;fullscreen.innerHTML=active?'<span class="control-symbol">⛶</span><span class="control-label">EXIT FULL SCREEN</span>':'<span class="control-symbol">⛶</span><span class="control-label">FULL SCREEN</span>';fullscreen.setAttribute('aria-label',active?'Exit full screen':'Enter full screen');});
   const fmt=t=>{if(!Number.isFinite(t)||t<0)t=0;const h=Math.floor(t/3600),m=Math.floor(t%3600/60),sec=Math.floor(t%60).toString().padStart(2,'0');return h? h+':'+m.toString().padStart(2,'0')+':'+sec:m+':'+sec};
   const updateTimeline=()=>{const duration=Number.isFinite(video.duration)?video.duration:0;timeReadout.querySelector('.movie-current-time').textContent=fmt(video.currentTime);timeReadout.querySelector('.movie-duration').textContent=fmt(duration);if(duration&&!seek.matches(':active'))seek.value=String(Math.round(video.currentTime/duration*1000));seekTrack.style.setProperty('--seek-progress',(duration?video.currentTime/duration*100:0)+'%')};
   seek.addEventListener('input',()=>{if(Number.isFinite(video.duration)&&video.duration>0){video.currentTime=video.duration*(Number(seek.value)/1000);updateTimeline()}});
@@ -596,7 +609,7 @@ function playMovieNow(){
   pause.addEventListener('click',()=>{if(video.paused){video.play().catch(()=>{});pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')}else{video.pause();pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')}showPlayerControls()});
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
-  row.append(back,pause,forward);controls.append(timeline,row);stage.replaceChildren(video,controls);
+  row.append(back,pause,forward,fullscreen);controls.append(timeline,row);stage.replaceChildren(video,controls);
   let hideControlsTimer=null;
   function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},3200)}
   function togglePlayerControls(){if(controls.classList.contains('controls-hidden')||!controls.classList.contains('controls-visible'))showPlayerControls();else{if(hideControlsTimer)clearTimeout(hideControlsTimer);controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')}}
