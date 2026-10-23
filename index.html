@@ -638,7 +638,7 @@ function playMovieNow(){
   pause.addEventListener('click',()=>{if(video.paused){video.play().catch(()=>{});pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')}else{video.pause();pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')}showPlayerControls()});
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
-  row.append(pause,fullscreen,quality);controls.append(timeline,row);
+  row.append(back,pause,forward,fullscreen,quality);controls.append(timeline,row);
   const centerToggle=document.createElement('button');centerToggle.type='button';centerToggle.className='center-play-toggle';centerToggle.setAttribute('aria-label','Pause movie');centerToggle.innerHTML='<span class="center-play-icon">Ⅱ</span>';centerToggle.title='Play or pause';
   stage.replaceChildren(video,centerToggle,controls);
   let hideControlsTimer=null;let centerToggleTimer=null;
