@@ -645,7 +645,7 @@ function playMovieNow(){
   function flashCenterToggle(){centerToggle.classList.remove('center-toggle-hide','center-toggle-pop');void centerToggle.offsetWidth;centerToggle.classList.add('center-toggle-pop');if(centerToggleTimer)clearTimeout(centerToggleTimer);centerToggleTimer=setTimeout(()=>centerToggle.classList.add('center-toggle-hide'),2500)}
   function syncCenterToggle(){const paused=video.paused;centerToggle.innerHTML=paused?'<span class="center-play-icon">▶</span>':'<span class="center-play-icon">Ⅱ</span>';centerToggle.setAttribute('aria-label',paused?'Play movie':'Pause movie');centerToggle.classList.toggle('center-toggle-paused',paused)}
   centerToggle.addEventListener('click',e=>{e.stopPropagation();if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle();showPlayerControls()});
-  video.addEventListener('play',syncCenterToggle);video.addEventListener('pause',()=>{syncCenterToggle();flashCenterToggle()});
+  video.addEventListener('play',()=>{syncCenterToggle();flashCenterToggle()});video.addEventListener('pause',()=>{syncCenterToggle();flashCenterToggle()});
   video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle()});
   let hideControlsTimer=null;
   function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},2700)}
