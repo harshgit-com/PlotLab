@@ -442,6 +442,28 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .movie-play-stage .movie-controls-row>.quality-toggle{right:50px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important}
 }
 
+
+/* Player refinement: restore animated controls, keep transport centred and utility buttons below */
+.movie-play-stage .movie-skip-controls{transition:opacity .32s ease,visibility .32s ease!important}
+.movie-play-stage .movie-skip-controls.controls-visible{animation:controlsArrive .42s cubic-bezier(.2,.85,.25,1) both!important}
+.movie-play-stage .movie-controls-row{transition:opacity .22s ease,visibility .22s ease,transform .22s ease!important}
+.movie-play-stage .movie-controls-row>.skip-back,.movie-play-stage .movie-controls-row>.pause-toggle,.movie-play-stage .movie-controls-row>.skip-forward{transition:transform .22s cubic-bezier(.2,.8,.2,1),background .22s ease,opacity .22s ease!important}
+.movie-play-stage .movie-controls-row>.skip-back:hover,.movie-play-stage .movie-controls-row>.skip-forward:hover{transform:scale(1.12)!important;background:#ffffff25!important}
+.movie-play-stage .movie-controls-row>.pause-toggle:hover{transform:scale(1.09)!important;background:#ff896b!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle,.movie-play-stage .movie-controls-row>.quality-toggle{position:absolute!important;top:auto!important;bottom:calc(54px + env(safe-area-inset-bottom))!important;z-index:12!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle{right:12px!important}
+.movie-play-stage .movie-controls-row>.quality-toggle{right:60px!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle:hover,.movie-play-stage .movie-controls-row>.quality-toggle:hover{background:#ffffff24!important;transform:scale(1.06)!important}
+.movie-play-stage .movie-timeline{z-index:11!important}
+.movie-play-stage .movie-controls-row{z-index:12!important}
+.movie-play-stage .movie-skip-controls.controls-hidden .movie-controls-row{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translate(-50%,8px)!important}
+.movie-play-stage .movie-skip-controls.controls-hidden .movie-timeline{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.movie-play-stage .movie-skip-controls.controls-visible .movie-controls-row,.movie-play-stage .movie-skip-controls.controls-visible .movie-timeline{opacity:1!important;visibility:visible!important}
+@media(max-width:768px){
+.movie-play-stage .movie-controls-row>.fullscreen-toggle{right:8px!important;bottom:calc(48px + env(safe-area-inset-bottom))!important}
+.movie-play-stage .movie-controls-row>.quality-toggle{right:52px!important;bottom:calc(48px + env(safe-area-inset-bottom))!important}
+}
+
 </style>
 </head>
 <body><div id="app">
