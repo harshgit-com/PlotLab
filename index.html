@@ -647,7 +647,6 @@ function playMovieNow(){
   centerToggle.addEventListener('click',e=>{e.stopPropagation();if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle();showPlayerControls()});
   video.addEventListener('play',()=>{syncCenterToggle();flashCenterToggle()});video.addEventListener('pause',()=>{syncCenterToggle();flashCenterToggle()});
   video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle()});
-  let hideControlsTimer=null;
   function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},2700)}
   function togglePlayerControls(){if(controls.classList.contains('controls-hidden')||!controls.classList.contains('controls-visible'))showPlayerControls();else{if(hideControlsTimer)clearTimeout(hideControlsTimer);controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')}}
   stage.addEventListener('click',e=>{if(e.target.closest('.movie-skip-controls'))return;if(e.target===video||e.target===stage)togglePlayerControls()});
