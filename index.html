@@ -342,6 +342,33 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .quality-toggle{position:relative}.quality-menu{position:absolute;display:none;right:0;bottom:calc(100% + 9px);min-width:84px;padding:5px;background:#171719;border:1px solid #ffffff32;border-radius:10px;box-shadow:0 8px 24px #0009;z-index:20}.quality-menu.quality-menu-open{display:flex;flex-direction:column}.quality-menu button{border:0;background:transparent;color:#fff;text-align:left;padding:9px 10px;border-radius:6px;font-size:11px;cursor:pointer}.quality-menu button:hover{background:#ffffff18}
 /* Remove the duplicate oversized artwork title in Find Your Genre; retain the clean title beneath each poster. */
 #genreGrid .art-word{display:none!important}
+/* Standard edge-to-edge player controls */
+.movie-skip-controls{left:0;right:0;bottom:0;transform:none;width:100%;padding:0 22px max(16px,env(safe-area-inset-bottom));gap:0;border:0;border-radius:0;background:linear-gradient(180deg,transparent,#000b 36%,#000e);backdrop-filter:none;box-shadow:none}
+.movie-timeline{width:100%;gap:4px}
+.movie-time-readout{display:flex;justify-content:space-between;padding:0 2px;font-size:11px}
+.movie-seek-track{height:4px;background:#ffffff55}
+.movie-seek-track:before{background:#fff;box-shadow:none}
+.movie-seek{height:24px;inset:-10px 0}
+.movie-seek::-webkit-slider-thumb{width:13px;height:13px;background:#fff;border:0;box-shadow:none}
+.movie-controls-row{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;gap:clamp(22px,5vw,48px);width:auto}
+.movie-controls-row .movie-control-btn{border:0;background:transparent;box-shadow:none;min-width:44px;padding:8px;color:#fff}
+.movie-controls-row .movie-control-btn:hover{background:#ffffff1a;transform:scale(1.05)}
+.movie-controls-row .movie-control-btn .control-symbol{font-size:clamp(25px,3vw,38px)}
+.movie-controls-row .movie-control-btn .control-label{font-size:9px}
+.movie-controls-row .fullscreen-toggle,.movie-controls-row .quality-toggle{position:fixed;top:auto;bottom:calc(18px + env(safe-area-inset-bottom));min-width:42px;padding:7px}
+.movie-controls-row .fullscreen-toggle{right:22px}
+.movie-controls-row .quality-toggle{right:72px}
+.movie-controls-row .quality-menu{bottom:100%;top:auto}
+.movie-skip-controls.controls-hidden .movie-timeline,.movie-skip-controls.controls-hidden .movie-controls-row{opacity:0;visibility:hidden}
+.movie-skip-controls .movie-timeline,.movie-skip-controls .movie-controls-row{transition:opacity .2s ease,visibility .2s ease}
+@media(max-width:768px){
+.movie-skip-controls{left:0;right:0;bottom:0;width:100%;padding:0 12px max(12px,env(safe-area-inset-bottom));border:0;border-radius:0}
+.movie-controls-row{gap:18px}
+.movie-controls-row .movie-control-btn{min-width:40px;min-height:42px;padding:6px}
+.movie-controls-row .movie-control-btn .control-symbol{font-size:28px}
+.movie-controls-row .fullscreen-toggle{right:12px;bottom:calc(12px + env(safe-area-inset-bottom))}
+.movie-controls-row .quality-toggle{right:58px;bottom:calc(12px + env(safe-area-inset-bottom))}
+}
 @media(max-width:768px){.movie-skip-controls{bottom:max(10px,env(safe-area-inset-bottom));width:calc(100% - 20px);padding:8px 10px;border-radius:12px}.movie-controls-row{display:flex;justify-content:center;gap:10px}.movie-control-btn{flex:0 0 auto;min-width:46px;min-height:42px;padding:8px 10px;font-size:9px}.movie-control-btn.fullscreen-toggle{min-width:46px}.movie-control-btn.quality-toggle{min-width:65px}.movie-play-screen:fullscreen .movie-play-stage,.movie-play-screen:fullscreen .plotlab-movie-video{width:100vw;height:100dvh}.movie-play-screen:fullscreen .plotlab-movie-video{object-fit:contain}}
 
 
