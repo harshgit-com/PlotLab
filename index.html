@@ -226,6 +226,19 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 .detail-live-dot{background:#ff5738!important;box-shadow:0 0 14px #ff5738!important}
 .detail-eyebrow,.detail-section-heading .kicker{color:#ff9b7e!important}
 .detail-review-stars{color:#ff784f!important}
+
+/* Detail-page spacing and clean trailer overlay */
+.detail-close{top:18px!important;left:18px!important;z-index:20!important;max-width:calc(100vw - 36px);white-space:nowrap}
+.detail-hero-copy{padding-top:clamp(150px,18vh,205px)!important;padding-bottom:115px!important}
+.detail-trailer-bg .trailer-status{display:none!important}
+.detail-scroll-cue{z-index:3;pointer-events:none}
+@media(max-width:768px){
+ .detail-close{top:12px!important;left:12px!important;padding:8px 11px!important;gap:8px!important}
+ .detail-close span{font-size:8px!important;letter-spacing:1px!important}
+ .detail-hero-copy{padding:125px 7vw 100px!important}
+ .detail-scroll-cue{right:7vw;bottom:18px;font-size:8px}
+}
+
 </style>
 </head>
 <body><div id="app">
@@ -301,7 +314,6 @@ document.addEventListener('pointerdown',()=>{
 function cardHTML(m,i,section='genre'){return `<article class="movie-card" data-section="${section}" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Open ${m.title} details" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}" onpointerenter="if(this.dataset.section==='trending'&&event.pointerType!=='touch'){const m=titles.find(x=>x.title===this.dataset.title);if(m)startTrailer(this,m.trailer)}" onpointerleave="if(this.dataset.section==='trending'&&event.pointerType!=='touch')stopTrailer(this)"><div class="poster-art"><img src="${m.poster}" alt="${m.title} movie poster" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.year}</span><span>${m.genre}</span><span>Film</span></div></div></article>`}
 function startTrailer(card,id){
   if(!card || card.dataset.hoverActive==='1') return;
-  if(!card || card.dataset.hoverActive==='1') return;
   const layer=card.querySelector('.trailer-layer');
   if(!layer) return;
   card.dataset.hoverActive='1';
@@ -324,8 +336,8 @@ function startTrailer(card,id){
     video.className='local-trailer-video';
     video.src=hostedSrc;
     video.autoplay=true;
-    video.muted=false;
-    video.defaultMuted=false;
+    video.muted=true;
+    video.defaultMuted=true;
     video.loop=false;
     video.addEventListener('ended',()=>{video.pause();try{video.currentTime=Math.max(0,video.duration||0)}catch(e){};},{once:true});
     video.addEventListener('error',()=>{console.warn('Hosted trailer failed to load. Check that the URL points directly to a playable video asset.');card.classList.remove('is-previewing');},{once:true});
@@ -340,7 +352,7 @@ function startTrailer(card,id){
     if(p&&p.catch)p.catch(()=>{video.muted=true;video.defaultMuted=true;video.play().catch(err=>{console.warn('Hosted trailer could not play.',err);card.classList.remove('is-previewing');});});
   } else {
     const frame=document.createElement('iframe');
-    const params=new URLSearchParams({autoplay:'1',mute:'0',playsinline:'1',controls:'0',disablekb:'1',fs:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1',iv_load_policy:'3'});
+    const params=new URLSearchParams({autoplay:'1',mute:'1',playsinline:'1',controls:'0',disablekb:'1',fs:'0',rel:'0',loop:'1',playlist:id,enablejsapi:'1',modestbranding:'1',iv_load_policy:'3'});
     if(location.protocol==='http:'||location.protocol==='https:')params.set('origin',location.origin);
     frame.src='https://www.youtube.com/embed/'+encodeURIComponent(id)+'?'+params.toString();
     frame.title='Autoplay trailer preview: '+(card.dataset.title||'movie');
@@ -410,9 +422,16 @@ function bindTrailerHover(root=document){
   root.querySelectorAll('.movie-card[data-title]').forEach(card=>{
     if(card.dataset.trailerBound==='1') return;
     card.dataset.trailerBound='1';
+    const desktopHover=()=>!window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
     if(card.dataset.section==='trending'){
-      card.addEventListener('focusin',()=>{const m=titles.find(x=>x.title===card.dataset.title);if(m)startTrailer(card,m.trailer)});
-      card.addEventListener('focusout',()=>{if(!window.matchMedia('(max-width: 768px), (pointer: coarse)').matches)stopTrailer(card)});
+      card.addEventListener('focusin',()=>{if(!desktopHover())return;const m=titles.find(x=>x.title===card.dataset.title);if(m)startTrailer(card,m.trailer)});
+      card.addEventListener('focusout',()=>{if(desktopHover())stopTrailer(card)});
+    }else{
+      // Genre cards preview only on mouse/trackpad hover; never auto-play these on mobile.
+      card.addEventListener('pointerenter',event=>{if(event.pointerType==='touch'||!desktopHover())return;const m=titles.find(x=>x.title===card.dataset.title);if(m)startTrailer(card,m.trailer)});
+      card.addEventListener('pointerleave',event=>{if(event.pointerType==='touch'||!desktopHover())return;stopTrailer(card)});
+      card.addEventListener('focusin',()=>{if(!desktopHover())return;const m=titles.find(x=>x.title===card.dataset.title);if(m)startTrailer(card,m.trailer)});
+      card.addEventListener('focusout',()=>{if(desktopHover())stopTrailer(card)});
     }
   });
   setupMobileTrailerAutoplay(root);
