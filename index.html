@@ -718,4 +718,20 @@ function toggleUISound(){
 document.addEventListener('click',e=>{if(e.target.closest('button,.genre-chip,.upcoming-card'))playUISound('click')});
 function showToast(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
 renderTrending();renderGenres();syncRoute();
+function forceTrendingVisible(){
+  const home=document.getElementById('homePage');
+  const section=document.getElementById('trending');
+  if(!home||!section)return;
+  section.hidden=false;
+  section.style.setProperty('display','block','important');
+  section.style.setProperty('visibility','visible','important');
+  section.style.setProperty('opacity','1','important');
+  section.style.setProperty('height','auto','important');
+  section.style.setProperty('min-height','1px','important');
+  section.style.setProperty('overflow','visible','important');
+}
+forceTrendingVisible();
+window.addEventListener('load',forceTrendingVisible);
+setTimeout(forceTrendingVisible,250);
+setTimeout(forceTrendingVisible,1200);
 </script></body></html>
