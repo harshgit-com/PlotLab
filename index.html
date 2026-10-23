@@ -382,6 +382,41 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 @keyframes centerTogglePop{from{transform:translate(-50%,-50%) scale(.78);opacity:.4}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
 @media(max-width:768px){.center-play-toggle{width:66px;height:66px}.center-play-icon{font-size:25px}}
 
+
+/* Final player layout: native-video-style controls, no duplicate centre overlay */
+.movie-play-stage{position:relative;overflow:hidden}
+.movie-play-stage .movie-skip-controls{position:absolute!important;inset:0!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;height:100%!important;max-width:none!important;padding:0!important;margin:0!important;display:block!important;gap:0!important;border:0!important;border-radius:0!important;background:transparent!important;backdrop-filter:none!important;box-shadow:none!important;overflow:visible!important;pointer-events:none!important;opacity:1;visibility:visible}
+.movie-play-stage .movie-timeline{position:absolute!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;box-sizing:border-box!important;padding:0 0 max(12px,env(safe-area-inset-bottom))!important;margin:0!important;gap:5px!important;pointer-events:auto!important;background:linear-gradient(180deg,transparent,#000b 45%,#000e)!important}
+.movie-play-stage .movie-time-readout{padding:0 12px!important;color:#fff!important}
+.movie-play-stage .movie-seek-track{height:4px!important;border-radius:0!important;background:#ffffff65!important}
+.movie-play-stage .movie-seek-track:before{background:#fff!important;box-shadow:none!important}
+.movie-play-stage .movie-seek{height:26px!important;inset:-11px 0!important}
+.movie-play-stage .movie-seek::-webkit-slider-thumb{width:13px!important;height:13px!important;background:#fff!important;border:0!important;box-shadow:none!important}
+.movie-play-stage .movie-controls-row{position:absolute!important;left:50%!important;top:50%!important;bottom:auto!important;transform:translate(-50%,-50%)!important;display:flex!important;align-items:center!important;justify-content:center!important;width:auto!important;gap:clamp(20px,4vw,42px)!important;pointer-events:none!important}
+.movie-play-stage .movie-controls-row>.skip-back,.movie-play-stage .movie-controls-row>.pause-toggle,.movie-play-stage .movie-controls-row>.skip-forward{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:flex!important;flex:none!important;min-width:48px!important;width:auto!important;min-height:48px!important;padding:8px!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:0!important;border-radius:50%!important;background:#111a!important;color:#fff!important;box-shadow:none!important;pointer-events:auto!important}
+.movie-play-stage .movie-controls-row>.skip-back .control-symbol,.movie-play-stage .movie-controls-row>.pause-toggle .control-symbol,.movie-play-stage .movie-controls-row>.skip-forward .control-symbol{font-size:30px!important;color:#fff!important}
+.movie-play-stage .movie-controls-row>.skip-back .control-label,.movie-play-stage .movie-controls-row>.pause-toggle .control-label,.movie-play-stage .movie-controls-row>.skip-forward .control-label{font-size:8px!important;letter-spacing:0!important}
+.movie-play-stage .movie-controls-row>.pause-toggle{background:#ffffff!important;color:#111!important}
+.movie-play-stage .movie-controls-row>.pause-toggle .control-symbol{color:#111!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle,.movie-play-stage .movie-controls-row>.quality-toggle{position:fixed!important;top:auto!important;bottom:calc(14px + env(safe-area-inset-bottom))!important;min-width:38px!important;width:auto!important;min-height:38px!important;padding:7px!important;border:0!important;border-radius:5px!important;background:#1118!important;color:#fff!important;box-shadow:none!important;pointer-events:auto!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle{right:12px!important}
+.movie-play-stage .movie-controls-row>.quality-toggle{right:58px!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle .control-symbol{font-size:24px!important;color:#fff!important}
+.movie-play-stage .movie-controls-row>.quality-toggle .control-label{font-size:10px!important;color:#fff!important}
+.movie-play-stage .movie-controls-row>.quality-toggle .quality-menu{top:auto!important;bottom:100%!important}
+.movie-play-stage .movie-skip-controls.controls-hidden .movie-timeline,.movie-play-stage .movie-skip-controls.controls-hidden .movie-controls-row{opacity:0!important;visibility:hidden!important}
+.movie-play-stage .movie-skip-controls.controls-hidden{pointer-events:none!important}
+.movie-play-stage .movie-skip-controls.controls-visible .movie-timeline,.movie-play-stage .movie-skip-controls.controls-visible .movie-controls-row{opacity:1!important;visibility:visible!important}
+.movie-play-stage .center-play-toggle{display:none!important}
+@media(max-width:768px){
+.movie-play-stage .movie-timeline{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
+.movie-play-stage .movie-controls-row{gap:16px!important}
+.movie-play-stage .movie-controls-row>.skip-back,.movie-play-stage .movie-controls-row>.pause-toggle,.movie-play-stage .movie-controls-row>.skip-forward{min-width:44px!important;min-height:44px!important;padding:5px!important}
+.movie-play-stage .movie-controls-row>.skip-back .control-symbol,.movie-play-stage .movie-controls-row>.pause-toggle .control-symbol,.movie-play-stage .movie-controls-row>.skip-forward .control-symbol{font-size:26px!important}
+.movie-play-stage .movie-controls-row>.fullscreen-toggle{right:8px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important}
+.movie-play-stage .movie-controls-row>.quality-toggle{right:50px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important}
+}
+
 </style>
 </head>
 <body><div id="app">
@@ -666,14 +701,9 @@ function playMovieNow(){
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
   row.append(back,pause,forward,fullscreen,quality);controls.append(timeline,row);
-  const centerToggle=document.createElement('button');centerToggle.type='button';centerToggle.className='center-play-toggle';centerToggle.setAttribute('aria-label','Pause movie');centerToggle.innerHTML='<span class="center-play-icon">Ⅱ</span>';centerToggle.title='Play or pause';
-  stage.replaceChildren(video,centerToggle,controls);
-  let hideControlsTimer=null;let centerToggleTimer=null;
-  function flashCenterToggle(){centerToggle.classList.remove('center-toggle-hide','center-toggle-pop');void centerToggle.offsetWidth;centerToggle.classList.add('center-toggle-pop');if(centerToggleTimer)clearTimeout(centerToggleTimer);centerToggleTimer=setTimeout(()=>centerToggle.classList.add('center-toggle-hide'),2500)}
-  function syncCenterToggle(){const paused=video.paused;centerToggle.innerHTML=paused?'<span class="center-play-icon">▶</span>':'<span class="center-play-icon">Ⅱ</span>';centerToggle.setAttribute('aria-label',paused?'Play movie':'Pause movie');centerToggle.classList.toggle('center-toggle-paused',paused)}
-  centerToggle.addEventListener('click',e=>{e.stopPropagation();if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle();showPlayerControls()});
-  video.addEventListener('play',()=>{syncCenterToggle();flashCenterToggle()});video.addEventListener('pause',()=>{syncCenterToggle();flashCenterToggle()});
-  video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle()});
+  stage.replaceChildren(video,controls);
+  let hideControlsTimer=null;
+  video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();showPlayerControls()});
   function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},2700)}
   function togglePlayerControls(){if(controls.classList.contains('controls-hidden')||!controls.classList.contains('controls-visible'))showPlayerControls();else{if(hideControlsTimer)clearTimeout(hideControlsTimer);controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')}}
   stage.addEventListener('click',e=>{if(e.target.closest('.movie-skip-controls'))return;if(e.target===video||e.target===stage)togglePlayerControls()});
