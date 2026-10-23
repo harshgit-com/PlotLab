@@ -344,6 +344,17 @@ header{height:92px} .brand-logo{width:238px;height:86px;filter:drop-shadow(0 0 1
 #genreGrid .art-word{display:none!important}
 @media(max-width:768px){.movie-skip-controls{bottom:max(10px,env(safe-area-inset-bottom));width:calc(100% - 20px);padding:8px 10px;border-radius:12px}.movie-controls-row{display:flex;justify-content:center;gap:10px}.movie-control-btn{flex:0 0 auto;min-width:46px;min-height:42px;padding:8px 10px;font-size:9px}.movie-control-btn.fullscreen-toggle{min-width:46px}.movie-control-btn.quality-toggle{min-width:65px}.movie-play-screen:fullscreen .movie-play-stage,.movie-play-screen:fullscreen .plotlab-movie-video{width:100vw;height:100dvh}.movie-play-screen:fullscreen .plotlab-movie-video{object-fit:contain}}
 
+
+/* YouTube-style centered play/pause feedback for desktop and mobile */
+.center-play-toggle{position:absolute;z-index:7;left:50%;top:50%;width:76px;height:76px;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%) scale(1);border:1px solid #ffffff75;border-radius:50%;background:#09090bc9;color:#fff;backdrop-filter:blur(8px);box-shadow:0 5px 25px #0008;cursor:pointer;opacity:1;visibility:visible;transition:opacity .25s ease,visibility .25s ease,background .2s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.center-play-toggle:hover{background:#18181de8;border-color:#fff}
+.center-play-icon{font:700 28px/1 Arial,sans-serif;margin-left:0;pointer-events:none}
+.center-play-toggle.center-toggle-paused .center-play-icon{margin-left:4px}
+.center-play-toggle.center-toggle-hide{opacity:0;visibility:hidden;pointer-events:none}
+.center-play-toggle.center-toggle-pop{animation:centerTogglePop .22s ease-out both}
+@keyframes centerTogglePop{from{transform:translate(-50%,-50%) scale(.78);opacity:.4}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@media(max-width:768px){.center-play-toggle{width:66px;height:66px}.center-play-icon{font-size:25px}}
+
 </style>
 </head>
 <body><div id="app">
@@ -627,9 +638,17 @@ function playMovieNow(){
   pause.addEventListener('click',()=>{if(video.paused){video.play().catch(()=>{});pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')}else{video.pause();pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')}showPlayerControls()});
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
-  row.append(pause,fullscreen,quality);controls.append(timeline,row);stage.replaceChildren(video,controls);
+  row.append(pause,fullscreen,quality);controls.append(timeline,row);
+  const centerToggle=document.createElement('button');centerToggle.type='button';centerToggle.className='center-play-toggle';centerToggle.setAttribute('aria-label','Pause movie');centerToggle.innerHTML='<span class="center-play-icon">Ⅱ</span>';centerToggle.title='Play or pause';
+  stage.replaceChildren(video,centerToggle,controls);
+  let hideControlsTimer=null;let centerToggleTimer=null;
+  function flashCenterToggle(){centerToggle.classList.remove('center-toggle-hide','center-toggle-pop');void centerToggle.offsetWidth;centerToggle.classList.add('center-toggle-pop');if(centerToggleTimer)clearTimeout(centerToggleTimer);centerToggleTimer=setTimeout(()=>centerToggle.classList.add('center-toggle-hide'),2500)}
+  function syncCenterToggle(){const paused=video.paused;centerToggle.innerHTML=paused?'<span class="center-play-icon">▶</span>':'<span class="center-play-icon">Ⅱ</span>';centerToggle.setAttribute('aria-label',paused?'Play movie':'Pause movie');centerToggle.classList.toggle('center-toggle-paused',paused)}
+  centerToggle.addEventListener('click',e=>{e.stopPropagation();if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle();showPlayerControls()});
+  video.addEventListener('play',syncCenterToggle);video.addEventListener('pause',()=>{syncCenterToggle();flashCenterToggle()});
+  video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();syncCenterToggle();flashCenterToggle()});
   let hideControlsTimer=null;
-  function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},3200)}
+  function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},2700)}
   function togglePlayerControls(){if(controls.classList.contains('controls-hidden')||!controls.classList.contains('controls-visible'))showPlayerControls();else{if(hideControlsTimer)clearTimeout(hideControlsTimer);controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')}}
   stage.addEventListener('click',e=>{if(e.target.closest('.movie-skip-controls'))return;if(e.target===video||e.target===stage)togglePlayerControls()});
   stage.addEventListener('touchend',e=>{if(e.target.closest('.movie-skip-controls'))return;if(e.target===video||e.target===stage){showPlayerControls()}},{passive:true});
