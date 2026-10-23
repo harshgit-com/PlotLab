@@ -724,9 +724,9 @@ function playMovieNow(){
   intro.classList.add('hide');
   const video=document.createElement('video');
   video.className='plotlab-movie-video';video.src='https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
-  video.preload='auto';video.playsInline=true;video.controls=true;video.autoplay=true;video.volume=1;
+  video.preload='auto';video.playsInline=true;video.controls=true;video.autoplay=true;video.volume=1;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
   video.setAttribute('aria-label','Jai Jai Ram movie');
-  const controls=document.createElement('div');controls.className='movie-skip-controls';
+  const controls=document.createElement('div');controls.className='movie-skip-controls';controls.style.display='none';
   const timeline=document.createElement('div');timeline.className='movie-timeline';
   const timeReadout=document.createElement('div');timeReadout.className='movie-time-readout';timeReadout.innerHTML='<span class="movie-current-time">0:00</span><span class="movie-duration">0:00</span>';
   const seek=document.createElement('input');seek.type='range';seek.className='movie-seek';seek.min='0';seek.max='1000';seek.value='0';seek.step='1';seek.setAttribute('aria-label','Movie timeline');
@@ -753,7 +753,7 @@ function playMovieNow(){
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
   row.append(back,pause,forward,fullscreen,quality);controls.append(timeline,row);
-  stage.replaceChildren(video,controls);
+  stage.replaceChildren(video);
   let hideControlsTimer=null;
   video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();showPlayerControls()});
   function showPlayerControls(){controls.classList.remove('controls-hidden');controls.classList.add('controls-visible');if(hideControlsTimer)clearTimeout(hideControlsTimer);if(!video.paused&&!seek.matches(':focus'))hideControlsTimer=setTimeout(()=>{controls.classList.add('controls-hidden');controls.classList.remove('controls-visible')},2700)}
