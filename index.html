@@ -600,42 +600,89 @@ input,select,textarea{font-size:14px;line-height:1.4}
 
 </style>
 <style id="plotlab-player-polish">
-#moviePlayStage .movie-skip-controls{left:50%!important;right:auto!important;top:auto!important;bottom:clamp(22px,4.5vh,48px)!important;width:min(760px,calc(100% - 48px))!important;padding:14px 22px 12px!important;gap:14px!important;display:flex!important;flex-direction:column!important;border:1px solid #ffffff20!important;border-radius:18px!important;background:linear-gradient(180deg,rgba(22,22,27,.88),rgba(7,7,10,.94))!important;box-shadow:0 16px 50px #0008!important;backdrop-filter:blur(18px)!important;transform:translateX(-50%)!important}
-#moviePlayStage .movie-skip-controls.controls-hidden{transform:translate(-50%,18px)!important}
-#moviePlayStage .movie-controls-row{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(16px,3vw,28px)!important}
-#moviePlayStage .movie-control-btn{display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid #ffffff2c!important;background:rgba(255,255,255,.055)!important;color:#f7f4ff!important;box-shadow:0 4px 14px #0003!important;transition:background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease!important}
-#moviePlayStage .movie-control-btn:hover{background:rgba(255,255,255,.12)!important;border-color:#b6a0ff88!important;transform:translateY(-2px)!important;box-shadow:0 8px 22px #0005!important}
+/* One consistent layout: transport in the visual centre, timeline at the bottom, fullscreen in its own corner. */
+#moviePlayStage .movie-skip-controls{
+ position:absolute!important;inset:0!important;left:0!important;right:0!important;top:0!important;bottom:0!important;
+ width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;
+ display:block!important;overflow:hidden!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+ transform:none!important;pointer-events:none!important;opacity:1!important;visibility:visible!important;
+ transition:opacity .22s ease,visibility .22s ease!important;
+}
+#moviePlayStage .movie-skip-controls.controls-hidden{opacity:0!important;visibility:hidden!important;transform:none!important;pointer-events:none!important}
+#moviePlayStage .movie-controls-row{
+ position:absolute!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+ width:auto!important;max-width:calc(100% - 32px)!important;margin:0!important;padding:0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ gap:clamp(16px,3vw,28px)!important;transform:translate(-50%,-50%)!important;
+ opacity:1!important;visibility:visible!important;pointer-events:auto!important;z-index:3!important;
+}
+#moviePlayStage .movie-control-btn{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ border:1px solid #ffffff38!important;background:rgba(18,18,24,.78)!important;color:#fff!important;
+ box-shadow:0 6px 22px #0005!important;backdrop-filter:blur(12px)!important;
+ transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease!important;
+}
+#moviePlayStage .movie-control-btn:hover{background:rgba(45,38,62,.92)!important;border-color:#bba4ff!important;transform:scale(1.05)!important;box-shadow:0 8px 26px #0007!important}
 #moviePlayStage .movie-control-btn:active{transform:scale(.96)!important}
-#moviePlayStage .movie-control-btn.skip-back,#moviePlayStage .movie-control-btn.skip-forward{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;border-radius:50%!important;flex-direction:column!important;gap:0!important;position:relative!important;overflow:hidden!important;background:rgba(255,255,255,.045)!important}
+#moviePlayStage .movie-control-btn.skip-back,#moviePlayStage .movie-control-btn.skip-forward{
+ width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;
+ padding:0!important;border-radius:50%!important;flex-direction:column!important;gap:1px!important;overflow:hidden!important;
+}
 #moviePlayStage .movie-control-btn.skip-back .control-symbol,#moviePlayStage .movie-control-btn.skip-forward .control-symbol{font-size:27px!important;line-height:1!important}
-#moviePlayStage .movie-control-btn.skip-back .control-label,#moviePlayStage .movie-control-btn.skip-forward .control-label{display:block!important;position:static!important;transform:none!important;left:auto!important;bottom:auto!important;margin-top:2px!important;font-size:10px!important;font-weight:700!important;letter-spacing:0!important;color:#fff!important}
-#moviePlayStage .movie-control-btn.pause-toggle{width:72px!important;height:72px!important;min-width:72px!important;min-height:72px!important;padding:0!important;border-radius:50%!important;flex-direction:row!important;background:linear-gradient(145deg,#b9a0ff,#8c6bff)!important;border:1px solid #d4c6ff!important;color:#171020!important;box-shadow:0 0 0 6px #a98aff18,0 8px 24px #0006!important}
-#moviePlayStage .movie-control-btn.pause-toggle:hover{background:linear-gradient(145deg,#d0c0ff,#a48aff)!important;box-shadow:0 0 0 8px #a98aff22,0 10px 28px #0007!important}
+#moviePlayStage .movie-control-btn.skip-back .control-label,#moviePlayStage .movie-control-btn.skip-forward .control-label{
+ display:block!important;position:static!important;left:auto!important;bottom:auto!important;transform:none!important;
+ margin-top:1px!important;color:#fff!important;font-size:10px!important;line-height:1!important;letter-spacing:0!important;font-weight:700!important;
+}
+#moviePlayStage .movie-control-btn.pause-toggle{
+ width:74px!important;height:74px!important;min-width:74px!important;min-height:74px!important;
+ padding:0!important;border-radius:50%!important;background:linear-gradient(145deg,#c8b4ff,#9675ff)!important;
+ border:1px solid #e0d5ff!important;color:#171020!important;box-shadow:0 0 0 6px #a88aff20,0 8px 26px #0006!important;
+}
+#moviePlayStage .movie-control-btn.pause-toggle:hover{background:linear-gradient(145deg,#d9ccff,#aa91ff)!important}
 #moviePlayStage .movie-control-btn.pause-toggle .control-symbol{font-size:25px!important;line-height:1!important}
-#moviePlayStage .movie-timeline{order:2!important;width:100%!important;gap:8px!important}
-#moviePlayStage .movie-time-readout{font-size:10px!important;color:#ffffff9c!important}
-#moviePlayStage .movie-current-time{color:#c9b7ff!important}
-#moviePlayStage .movie-seek-track{height:4px!important;background:#ffffff24!important}
-#moviePlayStage .movie-seek-track:before{background:linear-gradient(90deg,#8e6aff,#d3c3ff)!important;box-shadow:0 0 10px #a88aff55!important}
-#moviePlayStage .movie-seek::-webkit-slider-thumb{width:12px!important;height:12px!important;border-color:#c4afff!important;box-shadow:0 0 0 4px #a88aff20!important}
-#moviePlayStage .movie-fullscreen-corner{position:absolute!important;top:max(22px,env(safe-area-inset-top))!important;right:max(22px,env(safe-area-inset-right))!important;bottom:auto!important;left:auto!important;z-index:125!important;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;border-radius:13px!important;padding:0!important;background:#111116cc!important;border:1px solid #ffffff38!important;backdrop-filter:blur(12px)!important;transform:none!important;box-shadow:0 5px 20px #0005!important}
-#moviePlayStage .movie-fullscreen-corner:hover{transform:scale(1.04)!important;background:#26212f!important;border-color:#c1aaff!important}
+#moviePlayStage .movie-timeline{
+ position:absolute!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;
+ width:100%!important;max-width:none!important;margin:0!important;padding:18px 24px max(18px,env(safe-area-inset-bottom))!important;
+ display:flex!important;flex-direction:column!important;gap:8px!important;box-sizing:border-box!important;
+ border:0!important;border-radius:0!important;background:linear-gradient(0deg,rgba(0,0,0,.82),rgba(0,0,0,.25),transparent)!important;
+ backdrop-filter:none!important;z-index:2!important;opacity:1!important;visibility:visible!important;
+ pointer-events:auto!important;transform:none!important;
+}
+#moviePlayStage .movie-time-readout{padding:0 2px!important;font-size:10px!important;color:#ffffffb5!important}
+#moviePlayStage .movie-current-time{color:#cbb8ff!important}
+#moviePlayStage .movie-seek-track{height:4px!important;background:#ffffff42!important}
+#moviePlayStage .movie-seek-track:before{background:linear-gradient(90deg,#9270ff,#d9cbff)!important;box-shadow:0 0 10px #a88aff55!important}
+#moviePlayStage .movie-seek::-webkit-slider-thumb{width:12px!important;height:12px!important;border:3px solid #c6b2ff!important;box-shadow:0 0 0 4px #a88aff20!important}
+#moviePlayStage .movie-fullscreen-corner{
+ position:absolute!important;left:auto!important;top:max(22px,env(safe-area-inset-top))!important;
+ right:max(22px,env(safe-area-inset-right))!important;bottom:auto!important;z-index:125!important;
+ width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;
+ padding:0!important;border-radius:12px!important;background:rgba(15,15,21,.78)!important;
+ border:1px solid #ffffff45!important;color:#fff!important;backdrop-filter:blur(12px)!important;
+ transform:none!important;box-shadow:0 5px 20px #0005!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important;
+}
+#moviePlayStage .movie-fullscreen-corner:hover{transform:scale(1.04)!important;background:#282235!important;border-color:#c1aaff!important}
 #moviePlayStage .movie-fullscreen-corner .control-symbol{font-size:22px!important}
-#moviePlayStage .movie-fullscreen-corner.controls-hidden{opacity:1!important;visibility:visible!important}
-#moviePlayStage .movie-skip-controls.controls-visible{animation:playerControlsSettle .32s cubic-bezier(.2,.75,.25,1) both!important}
-@keyframes playerControlsSettle{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+#moviePlayStage .movie-fullscreen-corner.controls-hidden{opacity:0!important;visibility:hidden!important}
+#moviePlayStage .movie-skip-controls.controls-visible .movie-controls-row{animation:playerControlsSettle .24s ease-out both}
+@keyframes playerControlsSettle{from{opacity:.6;transform:translate(-50%,calc(-50% + 8px))}to{opacity:1;transform:translate(-50%,-50%)}}
 .plotlab-ticket-overlay{background:radial-gradient(ellipse at 50% 44%,#21152f 0%,#0c0912 48%,#030304 100%)!important;animation:ticketBackdropIn .7s ease-out both!important}
-.plotlab-ticket{filter:drop-shadow(0 26px 55px #0009)!important;animation:ticketFloatIn .72s cubic-bezier(.18,.78,.22,1) both!important}
 .ticket-main,.ticket-left,.ticket-right{backface-visibility:hidden}
-@keyframes ticketFloatIn{0%{opacity:0;transform:translateY(28px) scale(.94) rotateX(7deg);filter:blur(5px)}70%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1) rotateX(0)}}
 .ticket-tearing .ticket-main{animation:ticketTearMain 1s cubic-bezier(.65,0,.85,.35) both!important}
 .ticket-tearing .ticket-left{animation:ticketStubLeft 1s cubic-bezier(.65,0,.85,.35) both!important}
 .ticket-tearing .ticket-right{animation:ticketStubRight 1s cubic-bezier(.65,0,.85,.35) both!important}
 @keyframes ticketTearMain{0%{clip-path:inset(0);opacity:1;transform:translateX(0) rotate(0)}20%{clip-path:polygon(0 0,100% 0,96% 48%,100% 100%,0 100%);transform:translateX(-3px)}100%{clip-path:polygon(0 0,100% 0,94% 45%,100% 100%,0 100%);opacity:0;transform:translate(-38vw,-5vh) rotate(-7deg)}}
 @keyframes ticketStubLeft{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translate(-30vw,-10vh) rotate(-12deg)}}
 @keyframes ticketStubRight{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translate(30vw,10vh) rotate(12deg)}}
-@media(max-width:600px){#moviePlayStage .movie-skip-controls{width:calc(100% - 24px)!important;bottom:max(14px,env(safe-area-inset-bottom))!important;padding:11px 12px 10px!important;gap:11px!important}#moviePlayStage .movie-controls-row{gap:clamp(14px,5vw,24px)!important}#moviePlayStage .movie-control-btn.skip-back,#moviePlayStage .movie-control-btn.skip-forward{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important}#moviePlayStage .movie-control-btn.pause-toggle{width:62px!important;height:62px!important;min-width:62px!important;min-height:62px!important}#moviePlayStage .movie-fullscreen-corner{top:max(14px,env(safe-area-inset-top))!important;right:max(14px,env(safe-area-inset-right))!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important}}
-@media(prefers-reduced-motion:reduce){#moviePlayStage .movie-skip-controls.controls-visible,.plotlab-ticket,.plotlab-ticket-overlay{animation:none!important}}
+@media(max-width:600px){
+ #moviePlayStage .movie-controls-row{gap:clamp(14px,5vw,22px)!important;max-width:calc(100% - 24px)!important}
+ #moviePlayStage .movie-control-btn.skip-back,#moviePlayStage .movie-control-btn.skip-forward{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important}
+ #moviePlayStage .movie-control-btn.pause-toggle{width:64px!important;height:64px!important;min-width:64px!important;min-height:64px!important}
+ #moviePlayStage .movie-timeline{padding:16px 14px max(14px,env(safe-area-inset-bottom))!important}
+ #moviePlayStage .movie-fullscreen-corner{top:max(14px,env(safe-area-inset-top))!important;right:max(14px,env(safe-area-inset-right))!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important}
+}
+@media(prefers-reduced-motion:reduce){#moviePlayStage .movie-skip-controls.controls-visible .movie-controls-row,.plotlab-ticket-overlay{animation:none!important}}
 </style>
 </head>
 <body><div id="app">
