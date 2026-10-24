@@ -1112,10 +1112,24 @@ if (configured) {
     ]);
     const records = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     const settings = settingsSnap.exists() ? settingsSnap.data() : null;
-    if (records.length && window.plotlabApplyCatalog) window.plotlabApplyCatalog(records, settings);
+    console.info("[PlotLab] Published Firebase movies found:", records.length, records.map(m => ({id:m.id,title:m.title,genre:m.genre,published:m.published})));
+    if (window.plotlabApplyCatalog) window.plotlabApplyCatalog(records, settings);
+    if (!records.length) showCatalogNotice("Firebase connected, but no published movies were found. In Admin, edit your movie and enable “Published on site”.");
   } catch (error) {
-    console.warn("PlotLab Firebase catalogue is not connected yet; showing built-in catalogue.", error);
+    console.error("[PlotLab] Firebase catalogue load failed:", error);
+    showCatalogNotice("Could not load published movies from Firebase: " + (error.code || error.message || "unknown error") + ". Check Firestore rules and the browser console.");
   }
+}
+function showCatalogNotice(message) {
+  let note = document.getElementById("plotlabCatalogNotice");
+  if (!note) {
+    note = document.createElement("div");
+    note.id = "plotlabCatalogNotice";
+    note.style.cssText = "position:relative;z-index:9999;margin:12px auto;padding:12px 16px;max-width:1100px;background:#211714;border:1px solid #ff5738;color:#ffd9d0;font:14px/1.5 Arial,sans-serif;border-radius:8px";
+    const target = document.querySelector("main") || document.body;
+    target.prepend(note);
+  }
+  note.textContent = message;
 }
 </script>
 </body></html>
