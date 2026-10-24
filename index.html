@@ -921,7 +921,7 @@ function playMovieNow(){
   window.setTimeout(()=>{ticket.classList.add('ticket-tearing');window.setTimeout(()=>{
   ticket.remove();
   const video=document.createElement('video');
-  video.className='plotlab-movie-video';video.src='https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
+  video.className='plotlab-movie-video';video.src=activeModalMovie.movieUrl||'https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
   video.preload='auto';video.playsInline=true;video.controls=false;video.autoplay=true;video.volume=1;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
   video.setAttribute('aria-label','Jai Jai Ram movie');
   const controls=document.createElement('div');controls.className='movie-skip-controls';
@@ -1040,7 +1040,85 @@ forceTrendingVisible();
 window.addEventListener('load',forceTrendingVisible);
 setTimeout(forceTrendingVisible,250);
 setTimeout(forceTrendingVisible,1200);
-</script></body></html>
+
+// Called by the Firebase module below after it reads published catalogue records.
+window.plotlabApplyCatalog = function(records, siteSettings) {
+  if (!Array.isArray(records) || !records.length) return;
+  const convert = r => ({
+    title: String(r.title || 'Untitled').toUpperCase(),
+    year: r.year || '',
+    genre: r.genre || 'Drama',
+    tag: r.tag || '',
+    c1: r.c1 || '#18232d',
+    c2: r.c2 || '#ff5738',
+    word: String(r.title || 'Untitled').toUpperCase(),
+    poster: r.posterUrl || r.poster || '',
+    backdropUrl: r.backdropUrl || '',
+    trailer: r.trailer || '',
+    trailerUrl: r.trailerUrl || '',
+    trailerEmbedUrl: r.trailerEmbedUrl || '',
+    movieUrl: r.movieUrl || '',
+    desc: r.desc || r.description || '',
+    featured: !!r.featured,
+    trending: !!r.trending,
+    id: r.id || ''
+  });
+  const remote = records.map(convert);
+  const map = new Map(remote.map(m => [m.title, m]));
+  const merged = titles.map(old => map.get(old.title) || old);
+  const known = new Set(merged.map(m => m.title));
+  remote.forEach(m => { if (!known.has(m.title)) merged.push(m); });
+  titles.splice(0, titles.length, ...merged);
+  if (siteSettings && Array.isArray(siteSettings.genres) && siteSettings.genres.length) {
+    const next = ['All', ...siteSettings.genres.filter(g => g && g !== 'All')];
+    genres.splice(0, genres.length, ...[...new Set(next)]);
+  } else {
+    const dynamic = [...new Set(titles.map(m => m.genre).filter(Boolean))];
+    genres.splice(0, genres.length, 'All', ...dynamic);
+  }
+  if (siteSettings && Array.isArray(siteSettings.trendingIds) && siteSettings.trendingIds.length) {
+    const ordered = siteSettings.trendingIds.map(id => remote.find(m => m.id === id)).filter(Boolean);
+    const used = new Set(ordered.map(m => m.title));
+    titles.sort((a,b) => {
+      const ai = ordered.findIndex(m => m.title === a.title);
+      const bi = ordered.findIndex(m => m.title === b.title);
+      if (ai >= 0 || bi >= 0) return (ai < 0 ? 9999 : ai) - (bi < 0 ? 9999 : bi);
+      return 0;
+    });
+    trendStart = 0;
+  } else if (remote.some(m => m.trending)) {
+    titles.sort((a,b) => Number(!!b.trending)-Number(!!a.trending));
+    trendStart = 0;
+  }
+  renderTrending();
+  renderGenres();
+};
+
+// Public catalogue read only. Firestore rules allow visitors to read published records only.
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+const configured = Object.values(firebaseConfig).every(v => typeof v === "string" && v.length && !v.includes("REPLACE_"));
+if (configured) {
+  try {
+    const app = initializeApp(firebaseConfig, "plotlab-public-catalogue");
+    const db = getFirestore(app);
+    const q = query(collection(db, "movies"), where("published", "==", true));
+    const [snap, settingsSnap] = await Promise.all([
+      getDocs(q),
+      getDoc(doc(db, "siteSettings", "public"))
+    ]);
+    const records = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const settings = settingsSnap.exists() ? settingsSnap.data() : null;
+    if (records.length && window.plotlabApplyCatalog) window.plotlabApplyCatalog(records, settings);
+  } catch (error) {
+    console.warn("PlotLab Firebase catalogue is not connected yet; showing built-in catalogue.", error);
+  }
+}
+</script>
+</body></html>
 
 
 /* Temporarily disable the movie ticket intro */
