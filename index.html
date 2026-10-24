@@ -574,30 +574,33 @@ input,select,textarea{font-size:14px;line-height:1.4}
 @media(max-width:600px){.movie-skip-controls{gap:16px!important}.movie-control-btn.pause-toggle{width:68px!important;height:68px!important;min-width:68px!important;min-height:68px!important}.movie-control-btn.skip-back,.movie-control-btn.skip-forward{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important}.movie-timeline{width:calc(100vw - 32px)!important}.movie-fullscreen-corner{right:12px!important;bottom:12px!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important}}
 
 
-/* Cinematic admission ticket sequence */
-.plotlab-ticket-overlay{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at center,#2a1b2eaa 0%,#050508f2 72%);perspective:1200px;animation:ticketBackdropIn .65s ease both}
-.plotlab-ticket-overlay:before{content:"";position:absolute;width:min(850px,95vw);height:min(500px,75vh);border-radius:50%;background:#b88cff16;filter:blur(70px);pointer-events:none}
-.ticket-main,.ticket-half{position:relative;z-index:1;min-height:290px;background:linear-gradient(135deg,#f8efd9,#e6d5b4);color:#19121d;box-shadow:0 28px 90px #0009,inset 0 0 0 1px #fff9}
-.ticket-main{width:min(530px,68vw);padding:clamp(24px,4vw,44px);display:flex;flex-direction:column;justify-content:center;border-top:1px solid #fff}
-.ticket-half{width:clamp(74px,12vw,118px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:28px 10px;background:linear-gradient(155deg,#e8d8b9,#c9b58f)}
-.ticket-left{border-radius:12px 0 0 12px;border-right:1px dashed #6c5a4b88}.ticket-right{border-radius:0 12px 12px 0;border-left:1px dashed #6c5a4b88}
-.ticket-kicker,.ticket-eyebrow,.ticket-serial{font:800 9px/1.4 Arial,sans-serif;letter-spacing:2px}
-.ticket-stamp{writing-mode:vertical-rl;transform:rotate(180deg);font:900 13px/1 Georgia,serif;letter-spacing:3px;border:1px solid #322437;padding:12px 8px}
-.ticket-main h2{font:900 clamp(27px,5vw,56px)/.98 Georgia,serif;letter-spacing:-1.8px;margin:15px 0 18px;overflow-wrap:anywhere}
-.ticket-rule{height:1px;background:#31253655;margin-bottom:18px}.ticket-meta{display:flex;gap:clamp(12px,3vw,28px);flex-wrap:wrap}.ticket-meta span{display:flex;flex-direction:column;gap:5px}
-.ticket-meta small{font:800 8px/1 Arial,sans-serif;letter-spacing:1.5px;color:#806b7c}.ticket-meta b{font:800 11px/1.2 Arial,sans-serif;text-transform:uppercase}
-.ticket-cast{font:500 10px/1.5 Arial,sans-serif;color:#655568;margin:16px 0 18px}
-.ticket-barcode{height:27px;display:flex;gap:3px;align-items:stretch;width:100%;opacity:.8}.ticket-barcode i{display:block;background:#211727;width:3px}.ticket-barcode i:nth-child(3n){width:6px}.ticket-barcode i:nth-child(4n){width:2px}
-.ticket-serial{margin-top:8px;font-size:8px;color:#78687a}.ticket-seat{text-align:center;font:800 8px/1.6 Arial,sans-serif;letter-spacing:2px}.ticket-seat b{font:900 29px/1 Georgia,serif}.ticket-perforation{height:70%;border-left:1px dashed #6c5a4b99}
-.ticket-tearing .ticket-main{animation:ticketTearMain .92s cubic-bezier(.6,.02,.8,.4) both;transform-origin:center right}.ticket-tearing .ticket-left{animation:ticketStubLeft .92s cubic-bezier(.6,.02,.8,.4) both;transform-origin:right center}.ticket-tearing .ticket-right{animation:ticketStubRight .92s cubic-bezier(.6,.02,.8,.4) both;transform-origin:left center}
-@keyframes ticketBackdropIn{from{opacity:0;backdrop-filter:blur(14px)}to{opacity:1;backdrop-filter:blur(0)}}
-@keyframes ticketTearMain{0%{clip-path:inset(0);opacity:1;transform:translateX(0) rotate(0)}25%{clip-path:polygon(0 0,100% 0,97% 50%,100% 100%,0 100%);transform:translateX(-5px)}100%{clip-path:polygon(0 0,100% 0,95% 45%,100% 100%,0 100%);opacity:0;transform:translateX(-65vw) rotate(-10deg)}}
-@keyframes ticketStubLeft{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translate(-55vw,-12vh) rotate(-18deg)}}@keyframes ticketStubRight{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translate(55vw,12vh) rotate(18deg)}}
-.movie-fullscreen-corner{position:absolute!important;right:max(18px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;left:auto!important;top:auto!important;z-index:120!important;display:flex!important;align-items:center!important;justify-content:center!important;transform:none!important;pointer-events:auto!important}
-.movie-fullscreen-corner:hover{transform:scale(1.06)!important}.movie-skip-controls{z-index:110!important}
-@media(max-width:600px){.plotlab-ticket-overlay{padding:10px}.ticket-main{width:calc(100vw - 150px);min-height:250px;padding:18px 14px}.ticket-half{width:60px;min-height:250px;padding:18px 5px}.ticket-main h2{font-size:clamp(22px,6vw,34px);letter-spacing:-.8px}.ticket-kicker,.ticket-eyebrow{font-size:7px;letter-spacing:1px}.ticket-stamp{font-size:10px}.ticket-cast{font-size:8px}.movie-fullscreen-corner{right:max(10px,env(safe-area-inset-right))!important;bottom:max(10px,env(safe-area-inset-bottom))!important}}
-@media(prefers-reduced-motion:reduce){.plotlab-ticket-overlay,.ticket-tearing .ticket-main,.ticket-tearing .ticket-left,.ticket-tearing .ticket-right{animation-duration:.01ms!important}}
-
+/* PlotLab cinematic ticket: 70% stays, the lower 30% tears away */
+.plotlab-ticket-overlay{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(ellipse at center,#17191fef 0%,#050608f8 76%);perspective:1400px;animation:ticketBackdropIn .55s ease both;overflow:hidden}
+.plotlab-ticket-card{position:relative;z-index:1;width:min(640px,88vw);height:clamp(270px,48vh,370px);display:flex;flex-direction:column;border-radius:14px;background:#f4ead6;color:#17191f;box-shadow:0 35px 100px #000b,0 0 0 1px #fff7;overflow:visible;transform-origin:center}
+.ticket-top{height:70%;min-height:0;position:relative;display:flex;flex-direction:column;justify-content:center;padding:clamp(22px,4vw,42px);background:linear-gradient(120deg,#fbf3e4 0%,#e9dbc0 100%);border-radius:14px 14px 0 0;overflow:hidden}
+.ticket-top:before{content:"PL";position:absolute;right:22px;top:-35px;font:900 clamp(110px,20vw,190px)/1 Georgia,serif;letter-spacing:-14px;color:#d86a4b12;pointer-events:none}
+.ticket-brand{font:800 9px/1.3 Arial,sans-serif;letter-spacing:3px;color:#b74f36;display:flex;align-items:center;gap:9px}
+.ticket-brand:before{content:"";width:22px;height:2px;background:#c95e42}
+.ticket-top h2{position:relative;z-index:1;font:900 clamp(29px,5vw,57px)/.98 Georgia,"Times New Roman",serif;letter-spacing:-1.8px;margin:14px 0 13px;max-width:90%;overflow-wrap:anywhere}
+.ticket-subline{font:700 9px/1.4 Arial,sans-serif;letter-spacing:1.8px;text-transform:uppercase;color:#756758}
+.ticket-bottom{height:30%;min-height:76px;position:relative;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px clamp(22px,4vw,42px);background:linear-gradient(110deg,#d7c4a1,#ead9b8);border-radius:0 0 14px 14px;border-top:1px dashed #89745b;transform-origin:top center;overflow:hidden}
+.ticket-bottom:before,.ticket-bottom:after{content:"";position:absolute;top:-9px;width:18px;height:18px;border-radius:50%;background:#08090c}
+.ticket-bottom:before{left:-9px}.ticket-bottom:after{right:-9px}
+.ticket-stub-label{font:900 8px/1.4 Arial,sans-serif;letter-spacing:2px;color:#6b5948}
+.ticket-stub-seat{font:900 23px/1 Georgia,serif;color:#24201d;margin-top:3px}
+.ticket-stub-code{font:800 8px/1.4 Arial,sans-serif;letter-spacing:1.5px;color:#665746;margin-top:4px}
+.ticket-barcode{height:34px;width:clamp(85px,17vw,140px);display:flex;gap:2px;align-items:stretch;flex-shrink:0;opacity:.9}
+.ticket-barcode i{display:block;flex:1;background:#27221d}.ticket-barcode i:nth-child(3n){flex:2}.ticket-barcode i:nth-child(4n){flex:.6}
+.ticket-stub-perf{position:absolute;left:0;top:9px;bottom:9px;border-left:1px dashed #8c765b}
+.ticket-tearing .ticket-bottom{animation:ticketDropThirty .95s cubic-bezier(.22,.72,.2,1) forwards}
+.ticket-tearing .ticket-top{animation:ticketTopHold .95s ease forwards}
+.ticket-tearing .plotlab-ticket-card{animation:ticketCardExit 1s ease forwards}
+@keyframes ticketBackdropIn{from{opacity:0;backdrop-filter:blur(12px)}to{opacity:1;backdrop-filter:blur(0)}}
+@keyframes ticketDropThirty{0%{transform:translateY(0) rotateX(0) rotateZ(0);opacity:1}20%{transform:translateY(5px) rotateZ(-1deg)}45%{transform:translateY(35px) rotateZ(4deg)}100%{transform:translateY(115vh) rotateZ(13deg);opacity:0}}
+@keyframes ticketTopHold{0%,70%{opacity:1}100%{opacity:0;transform:translateY(-12px) scale(.985)}}
+@keyframes ticketCardExit{0%,65%{filter:drop-shadow(0 35px 60px #0008)}100%{filter:drop-shadow(0 0 0 transparent)}}
+@media(max-width:600px){.plotlab-ticket-overlay{padding:12px}.plotlab-ticket-card{width:92vw;height:clamp(245px,43vh,320px)}.ticket-top{padding:20px 18px}.ticket-top h2{font-size:clamp(25px,7vw,38px);max-width:100%}.ticket-bottom{padding:12px 18px;gap:8px}.ticket-stub-seat{font-size:19px}.ticket-barcode{width:76px;height:28px}}
+@media(prefers-reduced-motion:reduce){.plotlab-ticket-overlay,.ticket-tearing .ticket-bottom,.ticket-tearing .ticket-top,.ticket-tearing .plotlab-ticket-card{animation-duration:.01ms!important}}
 </style>
 <style id="plotlab-player-polish">
 /* PlotLab brand-matched player: black base, original logo accents, separated controls. */
@@ -909,7 +912,7 @@ function playMovieNow(){
   intro.classList.add('hide');
   const ticket=document.createElement('div');ticket.className='plotlab-ticket-overlay';
   const cast=(movieCast[activeModalMovie.title]||[]).slice(0,3).map(x=>x[0]).join(' · ')||'PlotLab Selection';
-  ticket.innerHTML='<div class="ticket-half ticket-left"><span class="ticket-kicker">PLOTLAB CINEMA</span><span class="ticket-stamp">ADMIT ONE</span></div><div class="ticket-main"><span class="ticket-eyebrow">YOUR FEATURE PRESENTATION</span><h2></h2><div class="ticket-rule"></div><div class="ticket-meta"><span><small>YEAR</small><b class="ticket-year"></b></span><span><small>GENRE</small><b class="ticket-genre"></b></span><span><small>FORMAT</small><b>FEATURE</b></span></div><p class="ticket-cast"></p><div class="ticket-barcode"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="ticket-serial">PL · '+String(Date.now()).slice(-6)+'</span></div><div class="ticket-half ticket-right"><span class="ticket-perforation"></span><span class="ticket-seat">SCREEN<br><b>01</b></span></div>';
+  ticket.innerHTML='<div class="plotlab-ticket-card"><section class="ticket-top"><div class="ticket-brand">PLOTLAB CINEMA · PRESENTS</div><h2></h2><div class="ticket-subline"></div></section><section class="ticket-bottom"><span class="ticket-stub-perf"></span><div><div class="ticket-stub-label">ADMIT ONE · FEATURE PRESENTATION</div><div class="ticket-stub-seat">SCREEN 01</div><div class="ticket-stub-code"></div></div><div class="ticket-barcode"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section></div>';
   ticket.querySelector('h2').textContent=activeModalMovie.title;
   ticket.querySelector('.ticket-year').textContent=activeModalMovie.year||'—';
   ticket.querySelector('.ticket-genre').textContent=activeModalMovie.genre||'Film';
