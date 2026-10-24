@@ -3,7 +3,7 @@
 // This file contains public client configuration only, NEVER service-account credentials.
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyDpZNPZ7WxtspEIbpODiyeO7k_YugO62WQ",
+  apiKey: "AIzaSyDpZnZP7WxtspEIbpODiyeO7k_YugO62WQ",
   authDomain: "plotlab-22f4b.firebaseapp.com",
   projectId: "plotlab-22f4b",
   storageBucket: "plotlab-22f4b.firebasestorage.app",
