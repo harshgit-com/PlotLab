@@ -664,7 +664,7 @@ input,select,textarea{font-size:14px;line-height:1.4}
 <main>
 <section class="page active" id="homePage">
 <section class="section wrap" id="trending"><div class="section-head"><div><div class="kicker">PLOTLAB / NOW PLAYING</div><h2>Trending now<span style="color:#777">.</span></h2></div><div class="slider-controls"><button aria-label="Previous trending titles" onclick="moveTrending(-1)">←</button><button aria-label="Next trending titles" onclick="moveTrending(1)">→</button></div></div><div class="trending-shell"><div class="trending-track" id="trendingTrack"></div><div class="slider-progress"><span id="progress"></span></div></div><div style="display:flex;justify-content:space-between;margin-top:12px;color:#666;font-size:9px;letter-spacing:1.5px;text-transform:uppercase"><span></span><span id="slideCount">01 — 04</span></div></section>
-<section class="section wrap" id="upcoming"><div class="section-head"><div><div class="kicker">02 / On the horizon</div><h2>Coming soon<span style="color:var(--accent)">.</span></h2></div><div class="section-sub">Upcoming stories and originals.</div></div><div class="upcoming-grid"><article class="upcoming-card"><div class="upcoming-art ua-one"><span>01 / EPIC</span><b>RAMAYANA</b><small>THE LEGEND RETURNS</small></div><div class="upcoming-copy"><strong>Ramayana</strong><span>Epic · In development</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-two"><span>02 / SCI-FI</span><b>BEYOND<br>THE STARS</b><small>THE UNKNOWN CALLS</small></div><div class="upcoming-copy"><strong>Beyond the Stars</strong><span>Science fiction · Coming soon</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-three"><span>03 / ORIGINAL</span><b>AFTER<br>MIDNIGHT</b><small>EVERY SECRET HAS A SHADOW</small></div><div class="upcoming-copy"><strong>After Midnight</strong><span>Mystery · In the lab</span></div></article></div></section>
+<section class="section wrap" id="upcoming"><div class="section-head"><div><div class="kicker">02 / On the horizon</div><h2>Coming soon<span style="color:var(--accent)">.</span></h2></div><div class="section-sub">Upcoming stories and originals.</div></div><div class="upcoming-grid" id="upcomingGrid"><article class="upcoming-card"><div class="upcoming-art ua-one"><span>01 / EPIC</span><b>RAMAYANA</b><small>THE LEGEND RETURNS</small></div><div class="upcoming-copy"><strong>Ramayana</strong><span>Epic · In development</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-two"><span>02 / SCI-FI</span><b>BEYOND<br>THE STARS</b><small>THE UNKNOWN CALLS</small></div><div class="upcoming-copy"><strong>Beyond the Stars</strong><span>Science fiction · Coming soon</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-three"><span>03 / ORIGINAL</span><b>AFTER<br>MIDNIGHT</b><small>EVERY SECRET HAS A SHADOW</small></div><div class="upcoming-copy"><strong>After Midnight</strong><span>Mystery · In the lab</span></div></article></div></section>
 <section class="section wrap" id="genres"><div class="section-head"><div><div class="kicker">02 / Pick your mood</div><h2>Find your genre<span style="color:#777">.</span></h2></div><div class="section-sub">Browse by genre.</div></div><div class="genre-nav" id="genreNav"></div><div class="genre-grid" id="genreGrid"></div></section>
 <section class="join-band"><div class="wrap join-band-inner"><div><div class="eyebrow">Your story belongs here</div><h2>Don't just<br>watch the story.<br><em style="font-family:Georgia,serif;font-weight:400">Make it.</em></h2><p>Writers, actors, directors, editors, cinematographers. Whatever your role, the next great collaboration could start here.</p><button class="btn solid" onclick="navigate('join')">Join the Lab ↗</button></div><div class="join-symbol" aria-hidden="true">✳</div></div></section>
 <section class="section wrap" id="creators"><div class="section-head"><div><div class="kicker">03 / People make the picture</div><h2>Meet the makers<span style="color:#777">.</span></h2></div><button class="btn" onclick="navigate('join')">Find your people ↗</button></div><div class="creator-strip"><article class="creator"><div class="avatar">W</div><strong>Writers' room</strong><small>Write the next story</small><button onclick="joinRole('Writer')">Join as a writer ↗</button></article><article class="creator"><div class="avatar">D</div><strong>Directors' circle</strong><small>Bring a vision to life</small><button onclick="joinRole('Director')">Join as a director ↗</button></article><article class="creator"><div class="avatar">A</div><strong>Actors' collective</strong><small>Step into a role</small><button onclick="joinRole('Actor')">Join as an actor ↗</button></article><article class="creator"><div class="avatar">E</div><strong>Post-production</strong><small>Shape the final cut</small><button onclick="joinRole('Editor')">Join as an editor ↗</button></article><article class="creator"><div class="avatar">C</div><strong>Camera department</strong><small>Create the look</small><button onclick="joinRole('Cinematographer')">Join the crew ↗</button></article></div></section>
@@ -855,7 +855,7 @@ function openMovie(name){
 }
 function renderMovieDetail(m){
  const bg=document.getElementById('detailTrailerBg');bg.replaceChildren();
- const casts=movieCast[m.title]||[];
+ const casts=Array.isArray(m.castCrew)&&m.castCrew.length?m.castCrew.map(p=>[p.name||'Crew member',p.role||'Cast & crew',p.photoUrl||'']):(movieCast[m.title]||[]);
  document.getElementById('detailCast').innerHTML=casts.map((c,i)=>{const initials=c[0].split(' ').map(x=>x[0]).slice(0,2).join('');return `<article class="detail-cast-card" style="animation-delay:${i*70}ms"><div class="detail-cast-photo-wrap"><img class="detail-cast-photo" data-actor="${c[0]}" alt="${c[0]}" loading="lazy" style="display:none"><div class="detail-cast-avatar">${initials}</div></div><div class="detail-cast-copy"><strong>${c[0]}</strong><span>${c[1]}</span></div></article>`;}).join('')||'<p>Cast information will be added soon.</p>';
  loadCastPortraits(casts);
  document.getElementById('detailReviews').innerHTML=demoReviews.map((r,i)=>`<article class="detail-review-card" style="animation-delay:${i*90}ms"><div class="detail-review-stars">${r.stars}</div><p>“${r.quote}”</p><small>${r.by} · SAMPLE REVIEW</small></article>`).join('');
@@ -1064,6 +1064,7 @@ window.plotlabApplyCatalog = function(records, siteSettings) {
     id: r.id || ''
   });
   const remote = records.map(convert);
+  remote.forEach((m,i)=>{const raw=records[i]||{};m.upcoming=!!raw.upcoming;m.releaseDate=raw.releaseDate||'';m.releaseLabel=raw.releaseLabel||'';m.castCrew=Array.isArray(raw.castCrew)?raw.castCrew:[];});
   const map = new Map(remote.map(m => [m.title, m]));
   const merged = titles.map(old => map.get(old.title) || old);
   const known = new Set(merged.map(m => m.title));
@@ -1092,6 +1093,22 @@ window.plotlabApplyCatalog = function(records, siteSettings) {
   }
   renderTrending();
   renderGenres();
+  renderUpcoming(remote);
+};
+
+function renderUpcoming(records){
+  const grid=document.getElementById('upcomingGrid');
+  if(!grid)return;
+  const items=(records||[]).filter(m=>m.upcoming);
+  if(!items.length)return;
+  grid.innerHTML=items.map((m,i)=>{
+    const date=m.releaseDate?new Date(m.releaseDate+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):(m.releaseLabel||'Coming soon');
+    const poster=m.poster||m.backdropUrl||'';
+    const style=poster?'background-image:linear-gradient(0deg,#080808dd,#08080822),url('+JSON.stringify(poster)+');background-size:cover;background-position:center':'';
+    const title=String(m.title||'Untitled');
+    return '<article class="upcoming-card" data-upcoming-title="'+title.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'"><div class="upcoming-art ua-'+['one','two','three'][i%3]+'" style="'+style+'"><span>'+String(i+1).padStart(2,'0')+' / '+(m.genre||'UPCOMING')+'</span><b>'+title+'</b><small>'+(m.tag||'COMING SOON')+'</small></div><div class="upcoming-copy"><strong>'+title+'</strong><span>'+(m.genre||'Film')+' · '+date+'</span></div></article>';
+  }).join('');
+  grid.querySelectorAll('[data-upcoming-title]').forEach(card=>card.addEventListener('click',()=>openMovie(card.getAttribute('data-upcoming-title'))));
 };
 
 // Public catalogue read only. Firestore rules allow visitors to read published records only.
