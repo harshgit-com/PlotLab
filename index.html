@@ -917,6 +917,7 @@ function playMovieNow(){
   ticket.querySelector('.ticket-subline').textContent=[activeModalMovie.year||'—',activeModalMovie.genre||'FILM',cast].join('  ·  ');
   ticket.querySelector('.ticket-stub-code').textContent='PL · '+String(activeModalMovie.year||'2026')+' · '+Math.random().toString(36).slice(2,8).toUpperCase();
   screen.appendChild(ticket);
+  ticket.remove(); // Ticket intro disabled; continue directly to the movie player.
   window.setTimeout(()=>{ticket.classList.add('ticket-tearing');window.setTimeout(()=>{
   ticket.remove();
   const video=document.createElement('video');
