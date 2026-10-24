@@ -819,8 +819,8 @@ let idleSlideTimer=null;
 const IDLE_SLIDE_MS=7000;
 function stopIdleSlide(){if(idleSlideTimer){clearTimeout(idleSlideTimer);idleSlideTimer=null}}
 function scheduleIdleSlide(){stopIdleSlide();const track=document.getElementById('trendingTrack');if(!track||document.hidden||track.matches(':hover')||track.querySelector('.movie-card:focus')||track.querySelector('.movie-card.is-previewing'))return;idleSlideTimer=setTimeout(()=>{if(track.querySelector('.movie-card.is-previewing'))return;if(!track.matches(':hover'))moveTrending(1);else scheduleIdleSlide()},IDLE_SLIDE_MS)}
-function renderTrending(){const track=document.getElementById('trendingTrack');const m=titles[trendStart%titles.length];track.innerHTML=cardHTML(m,trendStart,'trending');bindTrailerHover(track);track.onpointerenter=()=>stopIdleSlide();track.onpointerleave=()=>scheduleIdleSlide();document.getElementById('slideCount').textContent=String(trendStart+1).padStart(2,'0')+' / '+String(titles.length).padStart(2,'0');document.getElementById('progress').style.width=((trendStart+1)/titles.length*100)+'%';scheduleIdleSlide()}
-function moveTrending(n){const track=document.getElementById('trendingTrack');stopIdleSlide();if(track.classList.contains('transitioning'))return;track.classList.add('transitioning');setTimeout(()=>{const old=track.querySelector('.movie-card');if(old)stopTrailer(old);trendStart=(trendStart+n+titles.length)%titles.length;renderTrending();track.classList.remove('transitioning');scheduleIdleSlide()},260)}
+function getTrendingMovies(){const ordered=window.plotlabTrendingOrder;if(Array.isArray(ordered)&&ordered.length){const used=new Set(ordered.map(m=>m.title));return [...ordered,...titles.filter(m=>!used.has(m.title))]}return titles}\nfunction renderTrending(){const track=document.getElementById('trendingTrack');const list=getTrendingMovies();if(!list.length)return;trendStart=((trendStart%list.length)+list.length)%list.length;const m=list[trendStart];track.innerHTML=cardHTML(m,trendStart,'trending');bindTrailerHover(track);track.onpointerenter=()=>stopIdleSlide();track.onpointerleave=()=>scheduleIdleSlide();document.getElementById('slideCount').textContent=String(trendStart+1).padStart(2,'0')+' / '+String(list.length).padStart(2,'0');document.getElementById('progress').style.width=((trendStart+1)/list.length*100)+'%';scheduleIdleSlide()}
+function moveTrending(n){const track=document.getElementById('trendingTrack');const list=getTrendingMovies();stopIdleSlide();if(track.classList.contains('transitioning')||!list.length)return;track.classList.add('transitioning');setTimeout(()=>{const old=track.querySelector('.movie-card');if(old)stopTrailer(old);trendStart=(trendStart+n+list.length)%list.length;renderTrending();track.classList.remove('transitioning');scheduleIdleSlide()},260)}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopIdleSlide();else scheduleIdleSlide()});
 function renderGenres(){document.getElementById('genreNav').innerHTML=genres.map(g=>`<button class="genre-chip ${g===activeGenre?'active':''}" onclick="setGenre('${g}')">${g}</button>`).join('');let list=activeGenre==='All'?titles:titles.filter(t=>t.genre===activeGenre);document.getElementById('genreGrid').innerHTML=list.map((m,i)=>cardHTML(m,i,'genre')).join('')||'<div class="empty">More stories are coming soon.</div>';bindTrailerHover(document.getElementById('genreGrid'))}
 function setGenre(g){activeGenre=g;renderGenres()}
@@ -1078,17 +1078,11 @@ window.plotlabApplyCatalog = function(records, siteSettings) {
     genres.splice(0, genres.length, 'All', ...dynamic);
   }
   if (siteSettings && Array.isArray(siteSettings.trendingIds) && siteSettings.trendingIds.length) {
-    const ordered = siteSettings.trendingIds.map(id => remote.find(m => m.id === id)).filter(Boolean);
-    const used = new Set(ordered.map(m => m.title));
-    titles.sort((a,b) => {
-      const ai = ordered.findIndex(m => m.title === a.title);
-      const bi = ordered.findIndex(m => m.title === b.title);
-      if (ai >= 0 || bi >= 0) return (ai < 0 ? 9999 : ai) - (bi < 0 ? 9999 : bi);
-      return 0;
-    });
+    const ordered = siteSettings.trendingIds.map(value => remote.find(m => m.id === value || m.title.toLowerCase() === String(value).toLowerCase())).filter(Boolean);
+    window.plotlabTrendingOrder = [...new Map(ordered.map(m => [m.title,m])).values()];
     trendStart = 0;
-  } else if (remote.some(m => m.trending)) {
-    titles.sort((a,b) => Number(!!b.trending)-Number(!!a.trending));
+  } else {
+    window.plotlabTrendingOrder = remote.filter(m => m.trending);
     trendStart = 0;
   }
   renderTrending();
@@ -1148,7 +1142,7 @@ function showCatalogNotice(message) {
   }
   note.textContent = message;
 }
-window.plotlabLoadReviews=async function(movieTitle){const host=document.getElementById("detailReviews");try{const snap=await getDocs(query(collection(window.plotlabDb,"reviews"),where("movieTitle","==",movieTitle)));const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));if(!rows.length){host.innerHTML='<p class="review-status">No reviews yet. Be the first to share your thoughts.</p>';return}host.innerHTML=rows.map(r=>{const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));const n=Math.max(0,Math.min(5,Number(r.stars)||0));return '<article class="detail-review-card"><div class="detail-review-stars">'+("★".repeat(n))+("☆".repeat(5-n))+'</div><p>“'+esc(r.text)+'”</p><small>'+esc(r.name||"Guest reviewer")+'</small></article>'}).join("")}catch(e){host.innerHTML='<p class="review-status">Reviews are unavailable until Firestore rules are updated.</p>';console.error("[PlotLab] Reviews failed",e)}};
+window.plotlabLoadReviews=async function(movieTitle){const host=document.getElementById("detailReviews");if(!host)return;try{if(!window.plotlabDb)throw new Error("Firebase is still connecting");const snap=await getDocs(collection(window.plotlabDb,"reviews"));const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(r=>String(r.movieTitle||"").trim().toUpperCase()===String(movieTitle||"").trim().toUpperCase()).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));if(!rows.length){host.innerHTML='<p class="review-status">No reviews yet. Be the first to share your thoughts.</p>';return}host.innerHTML=rows.map(r=>{const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));const n=Math.max(0,Math.min(5,Number(r.stars)||0));return '<article class="detail-review-card"><div class="detail-review-stars">'+("★".repeat(n))+("☆".repeat(5-n))+'</div><p>“'+esc(r.text)+'”</p><small>'+esc(r.name||"Guest reviewer")+'</small></article>'}).join("")}catch(e){host.innerHTML='<p class="review-status">Could not load reviews ('+String(e.code||e.message||"unknown error").replace(/[<>&"]/g,"") +'). Check Firebase Rules and console.</p>';console.error("[PlotLab] Reviews failed",e)}};
 document.getElementById("reviewForm")?.addEventListener("submit",async e=>{e.preventDefault();const status=document.getElementById("reviewStatus");const movieTitle=window.plotlabCurrentReviewTitle;const text=document.getElementById("reviewText").value.trim();const name=document.getElementById("reviewName").value.trim().slice(0,40);const stars=Number(document.getElementById("reviewStars").value);if(!movieTitle||text.length<5||text.length>600||stars<1||stars>5){status.textContent="Please enter a review (5–600 characters) and choose a star rating.";return}try{await addDoc(collection(window.plotlabDb,"reviews"),{movieTitle,name:name||"Guest reviewer",text,stars,createdAt:serverTimestamp()});document.getElementById("reviewText").value="";status.textContent="Thanks! Your review has been posted.";await window.plotlabLoadReviews(movieTitle)}catch(err){status.textContent="Could not post review. Firestore rules may need updating.";console.error("[PlotLab] Review submit failed",err)}});
 </script>
 </body></html>
