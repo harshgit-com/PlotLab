@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == "harshsolanki3107@gmail.com";
+    }
+
+    // Published movie metadata is public to read. Only the verified admin can write.
+    match /movies/{movieId} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Single published settings document controls genre list and featured/trending IDs.
+    match /siteSettings/{documentId} {
+      allow read: if documentId == "public" || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
