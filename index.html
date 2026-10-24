@@ -573,6 +573,31 @@ input,select,textarea{font-size:14px;line-height:1.4}
 @keyframes movieCenterArrive{0%{opacity:0;transform:translate(-50%,-46%) scale(.92)}75%{opacity:1;transform:translate(-50%,-51%) scale(1.025)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @media(max-width:600px){.movie-skip-controls{gap:16px!important}.movie-control-btn.pause-toggle{width:68px!important;height:68px!important;min-width:68px!important;min-height:68px!important}.movie-control-btn.skip-back,.movie-control-btn.skip-forward{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important}.movie-timeline{width:calc(100vw - 32px)!important}.movie-fullscreen-corner{right:12px!important;bottom:12px!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important}}
 
+
+/* Cinematic admission ticket sequence */
+.plotlab-ticket-overlay{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(ellipse at center,#2a1b2eaa 0%,#050508f2 72%);perspective:1200px;animation:ticketBackdropIn .65s ease both}
+.plotlab-ticket-overlay:before{content:"";position:absolute;width:min(850px,95vw);height:min(500px,75vh);border-radius:50%;background:#b88cff16;filter:blur(70px);pointer-events:none}
+.ticket-main,.ticket-half{position:relative;z-index:1;min-height:290px;background:linear-gradient(135deg,#f8efd9,#e6d5b4);color:#19121d;box-shadow:0 28px 90px #0009,inset 0 0 0 1px #fff9}
+.ticket-main{width:min(530px,68vw);padding:clamp(24px,4vw,44px);display:flex;flex-direction:column;justify-content:center;border-top:1px solid #fff}
+.ticket-half{width:clamp(74px,12vw,118px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:28px 10px;background:linear-gradient(155deg,#e8d8b9,#c9b58f)}
+.ticket-left{border-radius:12px 0 0 12px;border-right:1px dashed #6c5a4b88}.ticket-right{border-radius:0 12px 12px 0;border-left:1px dashed #6c5a4b88}
+.ticket-kicker,.ticket-eyebrow,.ticket-serial{font:800 9px/1.4 Arial,sans-serif;letter-spacing:2px}
+.ticket-stamp{writing-mode:vertical-rl;transform:rotate(180deg);font:900 13px/1 Georgia,serif;letter-spacing:3px;border:1px solid #322437;padding:12px 8px}
+.ticket-main h2{font:900 clamp(27px,5vw,56px)/.98 Georgia,serif;letter-spacing:-1.8px;margin:15px 0 18px;overflow-wrap:anywhere}
+.ticket-rule{height:1px;background:#31253655;margin-bottom:18px}.ticket-meta{display:flex;gap:clamp(12px,3vw,28px);flex-wrap:wrap}.ticket-meta span{display:flex;flex-direction:column;gap:5px}
+.ticket-meta small{font:800 8px/1 Arial,sans-serif;letter-spacing:1.5px;color:#806b7c}.ticket-meta b{font:800 11px/1.2 Arial,sans-serif;text-transform:uppercase}
+.ticket-cast{font:500 10px/1.5 Arial,sans-serif;color:#655568;margin:16px 0 18px}
+.ticket-barcode{height:27px;display:flex;gap:3px;align-items:stretch;width:100%;opacity:.8}.ticket-barcode i{display:block;background:#211727;width:3px}.ticket-barcode i:nth-child(3n){width:6px}.ticket-barcode i:nth-child(4n){width:2px}
+.ticket-serial{margin-top:8px;font-size:8px;color:#78687a}.ticket-seat{text-align:center;font:800 8px/1.6 Arial,sans-serif;letter-spacing:2px}.ticket-seat b{font:900 29px/1 Georgia,serif}.ticket-perforation{height:70%;border-left:1px dashed #6c5a4b99}
+.ticket-tearing .ticket-main{animation:ticketTearMain .92s cubic-bezier(.6,.02,.8,.4) both;transform-origin:center right}.ticket-tearing .ticket-left{animation:ticketStubLeft .92s cubic-bezier(.6,.02,.8,.4) both;transform-origin:right center}.ticket-tearing .ticket-right{animation:ticketStubRight .92s cubic-bezier(.6,.02,.8,.4) both;transform-origin:left center}
+@keyframes ticketBackdropIn{from{opacity:0;backdrop-filter:blur(14px)}to{opacity:1;backdrop-filter:blur(0)}}
+@keyframes ticketTearMain{0%{clip-path:inset(0);opacity:1;transform:translateX(0) rotate(0)}25%{clip-path:polygon(0 0,100% 0,97% 50%,100% 100%,0 100%);transform:translateX(-5px)}100%{clip-path:polygon(0 0,100% 0,95% 45%,100% 100%,0 100%);opacity:0;transform:translateX(-65vw) rotate(-10deg)}}
+@keyframes ticketStubLeft{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translate(-55vw,-12vh) rotate(-18deg)}}@keyframes ticketStubRight{0%{opacity:1;transform:translateX(0) rotate(0)}100%{opacity:0;transform:translate(55vw,12vh) rotate(18deg)}}
+.movie-fullscreen-corner{position:absolute!important;right:max(18px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;left:auto!important;top:auto!important;z-index:120!important;display:flex!important;align-items:center!important;justify-content:center!important;transform:none!important;pointer-events:auto!important}
+.movie-fullscreen-corner:hover{transform:scale(1.06)!important}.movie-skip-controls{z-index:110!important}
+@media(max-width:600px){.plotlab-ticket-overlay{padding:10px}.ticket-main{width:calc(100vw - 150px);min-height:250px;padding:18px 14px}.ticket-half{width:60px;min-height:250px;padding:18px 5px}.ticket-main h2{font-size:clamp(22px,6vw,34px);letter-spacing:-.8px}.ticket-kicker,.ticket-eyebrow{font-size:7px;letter-spacing:1px}.ticket-stamp{font-size:10px}.ticket-cast{font-size:8px}.movie-fullscreen-corner{right:max(10px,env(safe-area-inset-right))!important;bottom:max(10px,env(safe-area-inset-bottom))!important}}
+@media(prefers-reduced-motion:reduce){.plotlab-ticket-overlay,.ticket-tearing .ticket-main,.ticket-tearing .ticket-left,.ticket-tearing .ticket-right{animation-duration:.01ms!important}}
+
 </style>
 </head>
 <body><div id="app">
@@ -826,6 +851,16 @@ function playMovieNow(){
  window.setTimeout(()=>{
   if(!screen.classList.contains('show'))return;
   intro.classList.add('hide');
+  const ticket=document.createElement('div');ticket.className='plotlab-ticket-overlay';
+  const cast=(movieCast[activeModalMovie.title]||[]).slice(0,3).map(x=>x[0]).join(' · ')||'PlotLab Selection';
+  ticket.innerHTML='<div class="ticket-half ticket-left"><span class="ticket-kicker">PLOTLAB CINEMA</span><span class="ticket-stamp">ADMIT ONE</span></div><div class="ticket-main"><span class="ticket-eyebrow">YOUR FEATURE PRESENTATION</span><h2></h2><div class="ticket-rule"></div><div class="ticket-meta"><span><small>YEAR</small><b class="ticket-year"></b></span><span><small>GENRE</small><b class="ticket-genre"></b></span><span><small>FORMAT</small><b>FEATURE</b></span></div><p class="ticket-cast"></p><div class="ticket-barcode"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="ticket-serial">PL · '+String(Date.now()).slice(-6)+'</span></div><div class="ticket-half ticket-right"><span class="ticket-perforation"></span><span class="ticket-seat">SCREEN<br><b>01</b></span></div>';
+  ticket.querySelector('h2').textContent=activeModalMovie.title;
+  ticket.querySelector('.ticket-year').textContent=activeModalMovie.year||'—';
+  ticket.querySelector('.ticket-genre').textContent=activeModalMovie.genre||'Film';
+  ticket.querySelector('.ticket-cast').textContent=cast;
+  screen.appendChild(ticket);
+  window.setTimeout(()=>{ticket.classList.add('ticket-tearing');window.setTimeout(()=>{
+  ticket.remove();
   const video=document.createElement('video');
   video.className='plotlab-movie-video';video.src='https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
   video.preload='auto';video.playsInline=true;video.controls=false;video.autoplay=true;video.volume=1;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
@@ -841,10 +876,6 @@ function playMovieNow(){
   const pause=document.createElement('button');pause.type='button';pause.className='movie-control-btn pause-toggle';pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.title='Pause or play';
   const forward=document.createElement('button');forward.type='button';forward.className='movie-control-btn skip-forward';forward.innerHTML='<span class="control-symbol">↷</span><span class="control-label">10 SEC</span>';forward.setAttribute('aria-label','Go forward 10 seconds');forward.title='Forward 10 seconds';
   const fullscreen=document.createElement('button');fullscreen.type='button';fullscreen.className='movie-control-btn fullscreen-toggle';fullscreen.innerHTML='<span class="control-symbol">⛶</span>';fullscreen.setAttribute('aria-label','Enter full screen');fullscreen.title='Full screen';
-  const quality=document.createElement('button');quality.type='button';quality.className='movie-control-btn quality-toggle';quality.innerHTML='<span class="control-label">AUTO</span><span class="control-symbol quality-caret">⌄</span>';quality.setAttribute('aria-label','Video quality');quality.title='Video quality';
-  const qualityMenu=document.createElement('div');qualityMenu.className='quality-menu';qualityMenu.innerHTML='<button type="button" data-quality="Auto">Auto</button><button type="button" data-quality="720p">720p</button><button type="button" data-quality="480p">480p</button><button type="button" data-quality="360p">360p</button>';quality.appendChild(qualityMenu);
-  quality.addEventListener('click',e=>{e.stopPropagation();qualityMenu.classList.toggle('quality-menu-open');showPlayerControls()});
-  qualityMenu.querySelectorAll('button').forEach(option=>option.addEventListener('click',e=>{e.stopPropagation();const q=option.dataset.quality;quality.querySelector('.control-label').textContent=q.toUpperCase();qualityMenu.classList.remove('quality-menu-open');if(q!=='Auto'){showToast('Quality selection needs an available '+q+' video source. Playing the uploaded source quality.')}showPlayerControls()}));
   fullscreen.addEventListener('click',async()=>{try{if(!document.fullscreenElement){if(screen.requestFullscreen)await screen.requestFullscreen();else if(stage.requestFullscreen)await stage.requestFullscreen();}else await document.exitFullscreen();}catch(e){}showPlayerControls()});
   document.addEventListener('fullscreenchange',()=>{const active=!!document.fullscreenElement;fullscreen.innerHTML=active?'<span class="control-symbol">⛶</span>':'<span class="control-symbol">⛶</span>';fullscreen.setAttribute('aria-label',active?'Exit full screen':'Enter full screen');fullscreen.title=active?'Exit full screen':'Full screen'});
   const fmt=t=>{if(!Number.isFinite(t)||t<0)t=0;const h=Math.floor(t/3600),m=Math.floor(t%3600/60),sec=Math.floor(t%60).toString().padStart(2,'0');return h? h+':'+m.toString().padStart(2,'0')+':'+sec:m+':'+sec};
@@ -856,7 +887,7 @@ function playMovieNow(){
   pause.addEventListener('click',()=>{if(video.paused){video.play().catch(()=>{});pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')}else{video.pause();pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused')}showPlayerControls()});
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
-  row.append(back,pause,forward,quality);controls.append(row,timeline);fullscreen.classList.add('movie-fullscreen-corner');
+  row.append(back,pause,forward);controls.append(row,timeline);fullscreen.classList.add('movie-fullscreen-corner');
   stage.replaceChildren(video,controls,fullscreen);
   let hideControlsTimer=null;
   video.addEventListener('click',()=>{if(video.paused)video.play().catch(()=>{});else video.pause();showPlayerControls()});
@@ -869,7 +900,8 @@ function playMovieNow(){
   showPlayerControls();updateTimeline();
   video.play().catch(()=>{});
   video.addEventListener('error',()=>{stage.innerHTML='<div class="movie-source-error">The direct video URL could not be loaded. Please provide the Cloudinary video delivery URL ending in .mp4 to play it without Cloudinary branding.</div>';});
- },2500);
+  },900);},2300);
+ },1400);
 }
 function toggleWatchLater(){
  if(!activeModalMovie)return;
