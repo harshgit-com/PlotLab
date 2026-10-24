@@ -4,7 +4,7 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null
         && request.auth.token.email_verified == true
-        && request.auth.token.email == "harshsolanki3107@gmail.com";
+        && request.auth.token.email == "plotlab29@gmail.com";
     }
 
     // Published movie metadata is public to read. Only the verified admin can write.
@@ -19,7 +19,7 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
-    // Deny everything else by default.
+    // Public visitors may post bounded movie reviews; only the admin may delete them.\n    match /reviews/{reviewId} {\n      allow read: if true;\n      allow create: if request.resource.data.keys().hasAll(["movieTitle", "name", "text", "stars", "createdAt"])\n        && request.resource.data.movieTitle is string\n        && request.resource.data.movieTitle.size() > 0\n        && request.resource.data.movieTitle.size() <= 120\n        && request.resource.data.name is string\n        && request.resource.data.name.size() <= 40\n        && request.resource.data.text is string\n        && request.resource.data.text.size() >= 5\n        && request.resource.data.text.size() <= 600\n        && request.resource.data.stars is int\n        && request.resource.data.stars >= 1\n        && request.resource.data.stars <= 5;\n      allow update: if false;\n      allow delete: if isAdmin();\n    }\n\n    // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;
     }
