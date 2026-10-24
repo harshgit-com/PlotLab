@@ -914,9 +914,8 @@ function playMovieNow(){
   const cast=(movieCast[activeModalMovie.title]||[]).slice(0,3).map(x=>x[0]).join(' · ')||'PlotLab Selection';
   ticket.innerHTML='<div class="plotlab-ticket-card"><section class="ticket-top"><div class="ticket-brand">PLOTLAB CINEMA · PRESENTS</div><h2></h2><div class="ticket-subline"></div></section><section class="ticket-bottom"><span class="ticket-stub-perf"></span><div><div class="ticket-stub-label">ADMIT ONE · FEATURE PRESENTATION</div><div class="ticket-stub-seat">SCREEN 01</div><div class="ticket-stub-code"></div></div><div class="ticket-barcode"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section></div>';
   ticket.querySelector('h2').textContent=activeModalMovie.title;
-  ticket.querySelector('.ticket-year').textContent=activeModalMovie.year||'—';
-  ticket.querySelector('.ticket-genre').textContent=activeModalMovie.genre||'Film';
-  ticket.querySelector('.ticket-cast').textContent=cast;
+  ticket.querySelector('.ticket-subline').textContent=[activeModalMovie.year||'—',activeModalMovie.genre||'FILM',cast].join('  ·  ');
+  ticket.querySelector('.ticket-stub-code').textContent='PL · '+String(activeModalMovie.year||'2026')+' · '+Math.random().toString(36).slice(2,8).toUpperCase();
   screen.appendChild(ticket);
   window.setTimeout(()=>{ticket.classList.add('ticket-tearing');window.setTimeout(()=>{
   ticket.remove();
