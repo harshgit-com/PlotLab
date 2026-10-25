@@ -1183,8 +1183,9 @@ const notice = (id,msg,good=false) => { const el=document.getElementById(id); if
 const friendly = e => ({"auth/email-already-in-use":"That email already has a PlotLab account. Please log in.","auth/invalid-credential":"Email or password is incorrect.","auth/weak-password":"Choose a password with at least 8 characters.","auth/invalid-email":"Enter a valid email address.","auth/too-many-requests":"Too many attempts. Please wait and try again.","auth/network-request-failed":"Network error. Check your connection and try again."}[e.code] || e.message || "Something went wrong. Please try again.");
 const clean = v => String(v||"").trim().slice(0,120);
 async function saveProfile(user,data){
- window.plotlabCurrentRole=data.role; await setDoc(doc(db,"users",user.uid),{uid:user.uid,name:clean(data.name),email:user.email,role:data.role,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
- if(data.role==="creator") await setDoc(doc(db,"creatorProfiles",user.uid),{uid:user.uid,name:clean(data.name),email:user.email,role:clean(data.craft),experience:clean(data.experience),portfolio:clean(data.portfolio),bio:clean(data.bio),lookingFor:clean(data.looking),createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+ window.plotlabCurrentRole=data.role;
+ await setDoc(doc(db,"users",user.uid),{uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:data.role,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+ if(data.role==="creator") await setDoc(doc(db,"creatorProfiles",user.uid),{uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:clean(data.craft),experience:clean(data.experience),portfolio:clean(data.portfolio),bio:clean(data.bio),lookingFor:clean(data.looking),updatedAt:serverTimestamp(),createdAt:serverTimestamp()},{merge:true});
 }
 document.getElementById("accountMode")?.addEventListener("change",e=>{
  const signup=e.target.value==="signup";
@@ -1214,8 +1215,21 @@ document.getElementById("joinForm")?.addEventListener("submit",async e=>{
  const data={name:document.getElementById("joinName").value.trim(),email:document.getElementById("joinEmail").value.trim(),password:document.getElementById("joinPassword").value,craft:document.getElementById("joinRole").value,experience:document.getElementById("joinLevel").value,portfolio:document.getElementById("joinWork").value.trim(),bio:document.getElementById("joinBio").value.trim(),looking:document.getElementById("joinLooking").value.trim()};
  try{
   if(data.password.length<8)throw new Error("Password must be at least 8 characters.");
-  const cred=await createUserWithEmailAndPassword(auth,data.email,data.password); await updateProfile(cred.user,{displayName:data.name}); await saveProfile(cred.user,{...data,role:"creator"});
-  notice("joinNotice","Your creator account and profile are saved to PlotLab. You are now signed in.",true);
+  let cred;
+  try{
+   cred=await createUserWithEmailAndPassword(auth,data.email,data.password);
+   await updateProfile(cred.user,{displayName:data.name});
+   await saveProfile(cred.user,{...data,role:"creator"});
+  }catch(createErr){
+   if(createErr.code!=="auth/email-already-in-use")throw createErr;
+   // Existing email: require the account password, then upgrade that same account to creator.
+   cred=await signInWithEmailAndPassword(auth,data.email,data.password);
+   const userSnap=await getDoc(doc(db,"users",cred.user.uid));
+   if(!userSnap.exists())throw new Error("We found this email, but its PlotLab profile is missing. Sign in first, then contact support.");
+   await updateProfile(cred.user,{displayName:data.name||cred.user.displayName||""});
+   await saveProfile(cred.user,{...data,role:"creator"});
+  }
+  notice("joinNotice","Creator profile saved. This email now uses one PlotLab account with creator access.",true);
   if(typeof showToast==="function")showToast("Creator profile saved");
  }catch(err){notice("joinNotice",friendly(err));console.error("[PlotLab] Creator registration failed",err);}finally{btn.disabled=false;}
 });
@@ -1223,7 +1237,7 @@ onAuthStateChanged(auth,async user=>{
  const nav=document.querySelector(".nav-actions"); if(!nav)return;
  document.getElementById("plotlabAccountButton")?.remove();
  const b=document.createElement("button"); b.id="plotlabAccountButton"; b.className="account-nav-button"; b.style.cssText="max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
- if(user){let role="viewer";try{const p=await getDoc(doc(db,"users",user.uid));if(p.exists())role=p.data().role||role;}catch{}
+ if(user){let role="viewer";try{const p=await getDoc(doc(db,"users",user.uid));if(p.exists())role=p.data().role||role;}catch{} window.plotlabCurrentRole=role;
  b.innerHTML="<span class=\"account-avatar\">"+((user.displayName||user.email||"P").trim().charAt(0).toUpperCase())+"</span><span class=\"account-nav-label\"><small>YOUR ACCOUNT</small>"+(user.displayName||user.email.split("@")[0])+"</span><span class=\"account-chevron\">↗</span>";b.title="Open your PlotLab account";b.addEventListener("click",()=>{location.hash="account";});
  }else{b.innerHTML="<span class=\"account-avatar\">↗</span><span class=\"account-nav-label\">Sign in</span>";b.addEventListener("click",()=>location.hash="login");}
  nav.appendChild(b);
