@@ -14,7 +14,7 @@ service cloud.firestore {
   match /users/{uid}{
    allow read:if ownUser(uid)||isAdmin();
    allow create:if ownUser(uid)&&request.resource.data.uid==uid&&request.resource.data.email==request.auth.token.email&&request.resource.data.role in ["viewer","creator"]&&request.resource.data.keys().hasAll(["uid","name","email","role","createdAt","updatedAt"]);
-   allow update:if ownUser(uid)&&request.resource.data.uid==resource.data.uid&&request.resource.data.email==resource.data.email&&request.resource.data.role==resource.data.role&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["name","updatedAt"]);
+   allow update:if ownUser(uid)&&request.resource.data.uid==resource.data.uid&&request.resource.data.email==resource.data.email&&((request.resource.data.role==resource.data.role&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["name","updatedAt"]))||(resource.data.role=="viewer"&&request.resource.data.role=="creator"&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["name","role","updatedAt"])));
    allow delete:if ownUser(uid)||isAdmin();
   }
   match /creatorProfiles/{uid}{
