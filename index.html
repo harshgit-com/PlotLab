@@ -1184,7 +1184,10 @@ const friendly = e => ({"auth/email-already-in-use":"That email already has a Pl
 const clean = v => String(v||"").trim().slice(0,120);
 async function saveProfile(user,data){
  window.plotlabCurrentRole=data.role;
- await setDoc(doc(db,"users",user.uid),{uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:data.role,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+ const userRef=doc(db,"users",user.uid), existing=await getDoc(userRef);
+ const profile={uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:data.role,updatedAt:serverTimestamp()};
+ if(!existing.exists())profile.createdAt=serverTimestamp();
+ await setDoc(userRef,profile,{merge:true});
  if(data.role==="creator") await setDoc(doc(db,"creatorProfiles",user.uid),{uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:clean(data.craft),experience:clean(data.experience),portfolio:clean(data.portfolio),bio:clean(data.bio),lookingFor:clean(data.looking),updatedAt:serverTimestamp(),createdAt:serverTimestamp()},{merge:true});
 }
 document.getElementById("accountMode")?.addEventListener("change",e=>{
