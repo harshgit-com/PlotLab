@@ -1144,7 +1144,7 @@ function renderUpcoming(records){
   const grid=document.getElementById('upcomingGrid');
   if(!grid)return;
   const items=(records||[]).filter(m=>m.upcoming);
-  if(!items.length)return;
+  if(!items.length){grid.innerHTML='<div class="empty">No upcoming titles have been published yet.</div>';return;}
   grid.innerHTML=items.map((m,i)=>{
     const date=m.releaseDate?new Date(m.releaseDate+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):(m.releaseLabel||'Coming soon');
     const poster=m.poster||m.backdropUrl||'';
