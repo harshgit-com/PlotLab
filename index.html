@@ -1399,6 +1399,7 @@ onAuthStateChanged(auth,async user=>{
  b.innerHTML="<span class=\"account-avatar\">"+((user.displayName||user.email||"P").trim().charAt(0).toUpperCase())+"</span><span class=\"account-nav-label\"><small>YOUR ACCOUNT</small>"+(user.displayName||user.email.split("@")[0])+"</span><span class=\"account-chevron\">↗</span>";b.title="Open your PlotLab account";b.addEventListener("click",()=>{location.hash="account";});
  }else{window.plotlabCurrentRole="viewer";b.innerHTML="<span class=\"account-avatar\">↗</span><span class=\"account-nav-label\">Sign in</span>";b.addEventListener("click",()=>location.hash="login");}
  nav.appendChild(b);
+ if(user&&location.hash.toLowerCase()==="#join"){try{const existingCreator=await getDoc(doc(db,"creatorProfiles",user.uid));if(existingCreator.exists()){window.location.href="creator-lab.html";return}}catch(err){console.warn("[PlotLab] Creator application redirect check failed",err)}}
  renderDiscoverContinueWatching();setTimeout(loadCreatorDirectory,100);
 });
 </script>
