@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Creator Lab — PlotLab</title>
+<meta name="theme-color" content="#09090b">
+<style>
+:root{color-scheme:dark;--bg:#09090b;--panel:#121216;--line:#ffffff1c;--text:#f5f0e8;--muted:#a5a1aa;--accent:#ff806d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#291923 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.top{border-bottom:1px solid var(--line);background:#09090be8;position:sticky;top:0;backdrop-filter:blur(16px)}.nav{max-width:1120px;width:calc(100% - 40px);margin:auto;min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}.wordmark{font-size:23px;font-weight:900;letter-spacing:-1.3px}.wordmark span{color:var(--accent)}.nav-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid #ffffff40;background:transparent;color:var(--text);padding:11px 16px;border-radius:3px;font-size:11px;letter-spacing:1px;text-transform:uppercase}.btn.primary{background:var(--text);color:#09090b;border-color:var(--text)}.wrap{max-width:1000px;width:calc(100% - 40px);margin:auto}.hero{padding:72px 0 38px}.eyebrow{color:var(--accent);font-size:10px;letter-spacing:2.8px;text-transform:uppercase}.hero h1{font-size:clamp(42px,8vw,82px);letter-spacing:-.07em;line-height:.98;margin:16px 0}.hero h1 em{font-family:Georgia,serif;font-weight:400}.hero p{color:var(--muted);max-width:610px}.layout{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;padding-bottom:80px}.panel{background:linear-gradient(145deg,#17151c,#101014);border:1px solid var(--line);border-radius:8px;padding:25px}.panel h2{font-size:20px;letter-spacing:-.5px;margin:0 0 8px}.muted{color:var(--muted)}.details{display:grid;gap:0;margin-top:20px}.detail{padding:14px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.detail:last-child{border-bottom:0}.detail small{display:block;color:#999;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}.detail div{white-space:pre-wrap}.status{padding:16px;border:1px solid var(--line);border-radius:5px;color:var(--muted)}footer{border-top:1px solid var(--line);padding:25px 0;color:#777;font-size:11px}@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{padding-top:48px}.nav{min-height:68px}.nav-actions .btn{padding:9px 10px;font-size:9px}}
+</style>
+</head>
+<body>
+<header class="top"><nav class="nav"><a class="wordmark" href="index.html">PLOT<span>LAB</span></a><div class="nav-actions"><a class="btn" href="index.html#home">Discover ↗</a><button class="btn" id="signOutBtn" type="button">Sign out</button></div></nav></header>
+<main class="wrap"><section class="hero"><div class="eyebrow">Your private creative workspace</div><h1>Welcome to<br><em>Creator Lab.</em></h1><p>Your creator profile is saved. You only need to submit the creator application once. This page is your return point whenever you sign in.</p></section>
+<section class="layout"><article class="panel"><div class="eyebrow">Creator profile</div><h2 id="profileName">Loading your profile…</h2><p id="profileIntro" class="muted">Checking your PlotLab account.</p><div id="profileDetails" class="details"></div></article><aside class="panel"><div class="eyebrow">Make your next connection</div><h2>Find your people.</h2><p class="muted">Explore creators by craft, city, experience, and the kind of collaboration they want. Send connection requests and message creators after they accept.</p><p class="muted">The live creator directory is in Discover, under <strong>Meet the makers</strong>.</p><a class="btn primary" href="index.html#creators">Explore creators ↗</a><div id="pageStatus" class="status" style="margin-top:22px">Connecting to PlotLab…</div></aside></section></main>
+<footer><div class="wrap">© 2026 PlotLab · Creator Lab</div></footer>
+<script type="module">
+import {getApps,initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {getFirestore,doc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {firebaseConfig} from "./firebase-config.js";
+const app=getApps().find(a=>a.name==="plotlab-user-auth")||initializeApp(firebaseConfig,"plotlab-user-auth");
+const auth=getAuth(app),db=getFirestore(app);
+const esc=v=>String(v??"—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const status=document.getElementById("pageStatus");
+onAuthStateChanged(auth,async user=>{
+ if(!user){status.textContent="Please sign in to access Creator Lab.";setTimeout(()=>location.href="index.html#login",700);return}
+ try{
+  const snap=await getDoc(doc(db,"creatorProfiles",user.uid));
+  if(!snap.exists()){status.textContent="No creator application is saved on this account yet. Complete it once to unlock Creator Lab.";setTimeout(()=>location.href="index.html#join",900);return}
+  const p=snap.data();document.getElementById("profileName").textContent=p.name||user.displayName||"PlotLab creator";
+  document.getElementById("profileIntro").textContent="Your creator profile is active. You do not need to complete the application again.";
+  const rows=[["Craft",p.role],["City",p.city],["Experience",p.experience],["Portfolio",p.portfolio],["About you",p.bio],["Looking to collaborate on",p.lookingFor],["Account email",user.email]];
+  document.getElementById("profileDetails").innerHTML=rows.map(([label,value])=>'<div class="detail"><small>'+esc(label)+'</small><div>'+(label==="Portfolio"&&value?'<a target="_blank" rel="noopener noreferrer" href="'+esc(value)+'">'+esc(value)+'</a>':esc(value||"Not added"))+'</div></div>').join("");
+  status.textContent="Profile loaded successfully. Your Creator Lab access is active.";
+ }catch(err){console.error("[PlotLab] Creator Lab load failed",err);status.textContent="We could not load your profile. Check your connection and Firebase permissions, then refresh."}
+});
+document.getElementById("signOutBtn").addEventListener("click",async()=>{await signOut(auth);location.href="index.html#login"});
+</script>
+</body></html>
