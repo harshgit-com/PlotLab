@@ -1038,6 +1038,15 @@ async function renderCreatorWorkspace(){
   details.innerHTML=rows.map(([label,value])=>'<div style="padding:13px 0;border-bottom:1px solid #ffffff1c"><div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-bottom:6px">'+esc(label)+'</div><div style="font-size:14px;line-height:1.6;color:#f5f0e8;overflow-wrap:anywhere">'+esc(value)+'</div></div>').join('');
  }catch(err){console.error('[PlotLab] Creator workspace load failed',err);if(intro)intro.textContent='We could not load your creator profile. Please refresh and try again.'}
 }
+window.editCreatorProfile=async function(){
+ navigate("join");
+ const user=auth.currentUser;if(!user)return;
+ try{const snap=await getDoc(doc(db,"creatorProfiles",user.uid));if(!snap.exists())return;const p=snap.data();
+  const values={joinName:p.name,joinEmail:user.email,joinRole:p.role,joinLevel:p.experience,joinWork:p.portfolio,joinCity:p.city,joinBio:p.bio,joinLooking:p.lookingFor};
+  Object.entries(values).forEach(([id,value])=>{const el=document.getElementById(id);if(el&&value!==undefined&&value!==null)el.value=value});
+  syncCreatorFormAccount(user);
+ }catch(err){console.error("[PlotLab] Could not preload creator profile",err);showToast("Could not load your saved profile")}
+};
 let creatorProfilesUnsub=null, creatorOutgoingUnsub=null, creatorIncomingUnsub=null, creatorMessagesUnsub=null, activeCreatorChat=null;
 window.plotlabCreatorDirectory=[];
 window.plotlabCreatorConnections={outgoing:[],incoming:[]};
@@ -1417,9 +1426,8 @@ onAuthStateChanged(auth,async user=>{
  b.innerHTML="<span class=\"account-avatar\">"+((user.displayName||user.email||"P").trim().charAt(0).toUpperCase())+"</span><span class=\"account-nav-label\"><small>YOUR ACCOUNT</small>"+(user.displayName||user.email.split("@")[0])+"</span><span class=\"account-chevron\">↗</span>";b.title="Open your PlotLab account";b.addEventListener("click",()=>{location.hash="account";});
  }else{window.plotlabCurrentRole="viewer";b.innerHTML="<span class=\"account-avatar\">↗</span><span class=\"account-nav-label\">Sign in</span>";b.addEventListener("click",()=>location.hash="login");}
  nav.appendChild(b);
- renderDiscoverContinueWatching();
+ renderDiscoverContinueWatching();setTimeout(loadCreatorDirectory,100);
 });
-</script>
 
 
 <style>
@@ -1469,4 +1477,38 @@ function renderPlotlabAccount(tab='watchlater'){
  host.querySelectorAll('[data-remove-title]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();watchLaterItems=watchLaterItems.filter(x=>x!==b.dataset.removeTitle);localStorage.setItem('plotlabWatchLater',JSON.stringify(watchLaterItems));renderPlotlabAccount('watchlater')}));
 }
 </script>
-</body></html>
+<style>
+.creator-discover-tools{display:grid;grid-template-columns:minmax(180px,2fr) minmax(140px,1fr) minmax(130px,1fr);gap:10px;margin:20px 0 14px}
+.creator-discover-tools input,.creator-discover-tools select{width:100%;min-width:0;background:#111;color:#f5f0e8;border:1px solid #343434;border-radius:4px;padding:13px 14px;font:inherit;font-size:12px;outline:none}
+.creator-discover-tools input:focus,.creator-discover-tools select:focus{border-color:#ff806d}
+.creator-directory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 30px}
+.creator-person-card{min-width:0;border:1px solid #ffffff20;background:linear-gradient(145deg,#131313,#0c0c0c);border-radius:7px;padding:18px;display:flex;flex-direction:column;align-items:stretch;transition:border-color .2s,transform .2s}
+.creator-person-card:hover{border-color:#ff806d;transform:translateY(-2px)}
+.creator-person-top{display:flex;align-items:center;gap:12px}
+.creator-person-avatar{width:44px;height:44px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#f5f0e8;color:#111;font-size:18px;font-weight:800}
+.creator-person-identity{min-width:0;display:flex;flex-direction:column;gap:5px}
+.creator-person-identity strong{font-size:14px;overflow-wrap:anywhere}
+.creator-person-identity span{font-size:10px;color:#ff9a86;letter-spacing:.3px}
+.creator-person-identity small{font-size:11px;color:#999}
+.creator-person-card>p{font-size:12px;line-height:1.65;color:#bcbcbc;margin:16px 0 12px;overflow-wrap:anywhere}
+.creator-portfolio-link{color:#f5f0e8;font-size:11px;text-decoration:underline;margin-bottom:14px}
+.creator-looking-for{background:#191919;border-left:2px solid #ff806d;padding:10px 12px;color:#ccc;font-size:11px;line-height:1.6;margin:0 0 15px;overflow-wrap:anywhere}
+.creator-looking-for span{display:block;color:#999;font-size:9px;letter-spacing:1.2px;margin-bottom:4px}
+.creator-person-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.creator-person-actions .btn{font-size:10px;padding:10px 12px;min-height:36px}
+.creator-chat-panel{border:1px solid #ffffff25;background:#101010;border-radius:8px;padding:18px;margin:24px 0 40px;scroll-margin-top:100px}
+.creator-chat-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;border-bottom:1px solid #ffffff1b;padding-bottom:15px}
+.creator-chat-head h3{margin:7px 0;font-size:20px}
+.creator-chat-head p{margin:0;color:#999;font-size:11px}
+.creator-chat-messages{height:300px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:16px 2px}
+.creator-message{max-width:min(82%,520px);padding:10px 13px;border-radius:9px;background:#202020;align-self:flex-start;overflow-wrap:anywhere}
+.creator-message.mine{align-self:flex-end;background:#f5f0e8;color:#111}
+.creator-message p{font-size:12px;line-height:1.6;margin:0;white-space:pre-wrap}
+.creator-message small{display:block;margin-top:7px;font-size:9px;opacity:.7}
+.creator-chat-empty{margin:auto;color:#888;font-size:12px;text-align:center;padding:30px}
+.creator-chat-compose{display:flex;gap:9px;border-top:1px solid #ffffff1b;padding-top:14px}
+.creator-chat-compose input{flex:1;min-width:0;background:#090909;border:1px solid #333;color:#f5f0e8;border-radius:4px;padding:13px;font:inherit;font-size:12px}
+.creator-chat-compose .btn{flex-shrink:0}
+@media(max-width:900px){.creator-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.creator-discover-tools{grid-template-columns:1fr}.creator-directory-grid{grid-template-columns:1fr}.creator-person-card{padding:15px}.creator-chat-panel{padding:12px}.creator-chat-messages{height:260px}.creator-chat-compose{gap:6px}.creator-chat-compose .btn{padding:10px}.creator-chat-head h3{font-size:17px}}
+</style></body></html>
