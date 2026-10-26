@@ -1,40 +1,198 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Creator Lab — PlotLab</title>
-<meta name="theme-color" content="#09090b">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Creator Lab — PlotLab</title><meta name="theme-color" content="#09090b">
 <style>
-:root{color-scheme:dark;--bg:#09090b;--panel:#121216;--line:#ffffff1c;--text:#f5f0e8;--muted:#a5a1aa;--accent:#ff806d}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#291923 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}.top{border-bottom:1px solid var(--line);background:#09090be8;position:sticky;top:0;backdrop-filter:blur(16px)}.nav{max-width:1120px;width:calc(100% - 40px);margin:auto;min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}.wordmark{font-size:23px;font-weight:900;letter-spacing:-1.3px}.wordmark span{color:var(--accent)}.nav-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid #ffffff40;background:transparent;color:var(--text);padding:11px 16px;border-radius:3px;font-size:11px;letter-spacing:1px;text-transform:uppercase}.btn.primary{background:var(--text);color:#09090b;border-color:var(--text)}.wrap{max-width:1000px;width:calc(100% - 40px);margin:auto}.hero{padding:72px 0 38px}.eyebrow{color:var(--accent);font-size:10px;letter-spacing:2.8px;text-transform:uppercase}.hero h1{font-size:clamp(42px,8vw,82px);letter-spacing:-.07em;line-height:.98;margin:16px 0}.hero h1 em{font-family:Georgia,serif;font-weight:400}.hero p{color:var(--muted);max-width:610px}.layout{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;padding-bottom:80px}.panel{background:linear-gradient(145deg,#17151c,#101014);border:1px solid var(--line);border-radius:8px;padding:25px}.panel h2{font-size:20px;letter-spacing:-.5px;margin:0 0 8px}.muted{color:var(--muted)}.details{display:grid;gap:0;margin-top:20px}.detail{padding:14px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.detail:last-child{border-bottom:0}.detail small{display:block;color:#999;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}.detail div{white-space:pre-wrap}.status{padding:16px;border:1px solid var(--line);border-radius:5px;color:var(--muted)}footer{border-top:1px solid var(--line);padding:25px 0;color:#777;font-size:11px}@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{padding-top:48px}.nav{min-height:68px}.nav-actions .btn{padding:9px 10px;font-size:9px}}
-</style>
-</head>
-<body>
-<header class="top"><nav class="nav"><a class="wordmark" href="index.html">PLOT<span>LAB</span></a><div class="nav-actions"><a class="btn" href="index.html#home">Discover ↗</a><button class="btn" id="signOutBtn" type="button">Sign out</button></div></nav></header>
-<main class="wrap"><section class="hero"><div class="eyebrow">Your private creative workspace</div><h1>Welcome to<br><em>Creator Lab.</em></h1><p>Your creator profile is saved. You only need to submit the creator application once. This page is your return point whenever you sign in.</p></section>
-<section class="layout"><article class="panel"><div class="eyebrow">Creator profile</div><h2 id="profileName">Loading your profile…</h2><p id="profileIntro" class="muted">Checking your PlotLab account.</p><div id="profileDetails" class="details"></div></article><aside class="panel"><div class="eyebrow">Make your next connection</div><h2>Find your people.</h2><p class="muted">Explore creators by craft, city, experience, and the kind of collaboration they want. Send connection requests and message creators after they accept.</p><p class="muted">The live creator directory is in Discover, under <strong>Meet the makers</strong>.</p><a class="btn primary" href="index.html#creators">Explore creators ↗</a><div id="pageStatus" class="status" style="margin-top:22px">Connecting to PlotLab…</div></aside></section></main>
-<footer><div class="wrap">© 2026 PlotLab · Creator Lab</div></footer>
+:root{color-scheme:dark;--bg:#09090b;--panel:#121216;--line:#ffffff1c;--text:#f5f0e8;--muted:#a5a1aa;--accent:#ff806d}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#291923 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}.top{border-bottom:1px solid var(--line);background:#09090be8;position:sticky;top:0;z-index:10;backdrop-filter:blur(16px)}.nav{max-width:1120px;width:calc(100% - 40px);margin:auto;min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}.wordmark{font-size:23px;font-weight:900;letter-spacing:-1.3px}.wordmark span{color:var(--accent)}.nav-actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid #ffffff40;background:transparent;color:var(--text);padding:11px 16px;border-radius:3px;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}.btn.solid{background:var(--text);color:#09090b;border-color:var(--text)}.wrap{max-width:1120px;width:calc(100% - 40px);margin:auto}.hero{padding:58px 0 28px}.eyebrow,.kicker{color:var(--accent);font-size:10px;letter-spacing:2.8px;text-transform:uppercase}.hero h1{font-size:clamp(42px,8vw,76px);letter-spacing:-.07em;line-height:.98;margin:16px 0}.hero h1 em{font-family:Georgia,serif;font-weight:400}.hero p{color:var(--muted);max-width:650px}.section{padding:25px 0 48px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px}.section-head h2{font-size:30px;letter-spacing:-1px;margin:7px 0}.creator-discover-tools{display:grid;grid-template-columns:minmax(180px,2fr) minmax(140px,1fr) minmax(130px,1fr);gap:10px;margin:20px 0 14px}.creator-discover-tools input,.creator-discover-tools select{width:100%;min-width:0;background:#111;color:#f5f0e8;border:1px solid #343434;border-radius:4px;padding:13px 14px;font:inherit;font-size:12px}.creator-directory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0 30px}.creator-person-card{min-width:0;border:1px solid #ffffff20;background:linear-gradient(145deg,#131313,#0c0c0c);border-radius:7px;padding:18px;display:flex;flex-direction:column;transition:border-color .2s,transform .2s}.creator-person-card:hover{border-color:var(--accent);transform:translateY(-2px)}.creator-person-top{display:flex;align-items:center;gap:12px}.creator-person-avatar{width:44px;height:44px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#f5f0e8;color:#111;font-size:18px;font-weight:800}.creator-person-identity{min-width:0;display:flex;flex-direction:column;gap:5px}.creator-person-identity strong{font-size:14px;overflow-wrap:anywhere}.creator-person-identity span{font-size:10px;color:#ff9a86}.creator-person-identity small{font-size:11px;color:#999}.creator-person-card>p{font-size:12px;line-height:1.65;color:#bcbcbc;margin:16px 0 12px;overflow-wrap:anywhere}.creator-portfolio-link{color:#f5f0e8;font-size:11px;text-decoration:underline;margin-bottom:14px}.creator-looking-for{background:#191919;border-left:2px solid var(--accent);padding:10px 12px;color:#ccc;font-size:11px;line-height:1.6;margin:0 0 15px}.creator-looking-for span{display:block;color:#999;font-size:9px;letter-spacing:1.2px;margin-bottom:4px}.creator-person-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}.creator-chat-panel{border:1px solid #ffffff25;background:#101010;border-radius:8px;padding:18px;margin:24px 0 40px}.creator-chat-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:15px}.creator-chat-head h3{margin:7px 0}.creator-chat-head p{margin:0;color:#999;font-size:11px}.creator-chat-messages{height:300px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:16px 2px}.creator-message{max-width:min(82%,520px);padding:10px 13px;border-radius:9px;background:#202020;align-self:flex-start;overflow-wrap:anywhere}.creator-message.mine{align-self:flex-end;background:#f5f0e8;color:#111}.creator-message p{font-size:12px;line-height:1.6;margin:0;white-space:pre-wrap}.creator-message small{display:block;margin-top:7px;font-size:9px;opacity:.7}.creator-chat-compose{display:flex;gap:9px;border-top:1px solid var(--line);padding-top:14px}.creator-chat-compose input{flex:1;min-width:0;background:#090909;border:1px solid #333;color:#f5f0e8;border-radius:4px;padding:13px;font:inherit;font-size:12px}.panel{background:linear-gradient(145deg,#17151c,#101014);border:1px solid var(--line);border-radius:8px;padding:25px;margin-bottom:30px}.panel h2{margin-top:0}.creator-application{display:none;padding:10px 0 55px}.form-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px}.form-intro p,.form-note{color:#aaa}.form-box{background:var(--panel);border:1px solid var(--line);padding:25px;border-radius:7px}.form-box h2{margin-top:0}.field{display:flex;flex-direction:column;gap:7px;margin:0 0 17px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{font-size:11px;color:#ddd}.field input,.field select,.field textarea{width:100%;background:#09090b;color:#f5f0e8;border:1px solid #333;border-radius:4px;padding:12px;font-size:12px}.field textarea{min-height:95px;resize:vertical}.notice{display:none;color:#ff9b8a;font-size:12px;margin-top:12px}.notice.show{display:block}.detail{padding:12px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}.detail small{display:block;color:#999;font-size:10px;letter-spacing:1.5px;text-transform:uppercase}.muted{color:var(--muted)}footer{border-top:1px solid var(--line);padding:25px 0;color:#777;font-size:11px}#creatorToast{display:none;position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#f5f0e8;color:#111;padding:12px 18px;z-index:30;border-radius:4px}@media(max-width:800px){.creator-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-layout{grid-template-columns:1fr}}@media(max-width:600px){.creator-discover-tools,.creator-directory-grid,.field-row{grid-template-columns:1fr}.nav{width:calc(100% - 24px)}.wrap{width:calc(100% - 24px)}.section-head{align-items:start;flex-direction:column}.form-box,.panel{padding:17px}}
+</style></head><body>
+<header class="top"><nav class="nav"><a class="wordmark" href="index.html">PLOT<span>LAB</span></a><div class="nav-actions"><a class="btn" href="index.html#home">OTT / Discover ↗</a><button class="btn" id="creatorSignOut" type="button">Sign out</button></div></nav></header>
+<main class="wrap"><section class="hero"><div class="eyebrow">PlotLab / Creator network</div><h1>Your work.<br><em>Your people.</em></h1><p>Creator Lab is your dedicated space to build your professional profile, discover filmmakers and collaborators, send connection requests, and chat privately. This entire experience is separate from the OTT discovery page.</p></section>
+<section id="creatorOwnProfile" class="panel" style="display:none"><div class="eyebrow">Your saved profile</div><h2 id="profileName">Creator profile</h2><p class="muted">Your application is already complete. You do not need to fill it out again.</p><div id="profileDetails"></div><button class="btn" onclick="document.getElementById('creatorApplication').style.display='block';document.getElementById('creatorApplication').scrollIntoView({behavior:'smooth'})">Edit profile</button></section>
+<section class="section wrap" id="creatorDirectory"><div class="section-head"><div><div class="kicker">03 / People make the picture</div><h2>Meet the makers<span style="color:#777">.</span></h2></div><button class="btn" onclick="showCreatorApplication()">Create your profile ↗</button></div><p style="color:#999;font-size:13px;line-height:1.7;max-width:700px">Real people. Real projects. Search by craft or city, explore portfolios, connect with collaborators, and start a conversation.</p><div class="creator-discover-tools"><input id="discoverCreatorSearch" aria-label="Search creators" placeholder="Search name, craft, city, or skills" oninput="filterCreatorDirectory(this.value)"><select id="discoverCreatorCraft" aria-label="Filter by craft" onchange="filterCreatorCraft(this.value)"><option value="">All crafts</option><option>Writer</option><option>Director</option><option>Actor</option><option>Producer</option><option>Cinematographer</option><option>Editor</option><option>Sound designer</option><option>Production designer</option><option>Animator / VFX</option><option>Composer</option><option>Film enthusiast</option><option>Other</option></select><select id="discoverCreatorCity" aria-label="Filter by city" onchange="filterCreatorCity(this.value)"><option value="">All cities</option></select></div><div id="discoverCreatorStatus" style="font-size:11px;color:#999;margin:12px 0">Sign in to explore creator profiles and connect.</div><div id="discoverCreatorDirectory" class="creator-directory-grid"></div><div id="creatorChatPanel" class="creator-chat-panel" style="display:none"><div class="creator-chat-head"><div><div class="kicker">PRIVATE CONVERSATION</div><h3 id="creatorChatTitle">Chat</h3><p id="creatorChatSubtitle">Talk about a project or collaboration.</p></div><button class="btn" type="button" onclick="closeCreatorChat()">Close</button></div><div id="creatorChatMessages" class="creator-chat-messages"></div><form id="creatorChatForm" class="creator-chat-compose"><input id="creatorChatInput" maxlength="2000" autocomplete="off" placeholder="Write a message…" required><button class="btn solid" type="submit">Send ↗</button></form><div id="creatorChatNotice" style="font-size:11px;color:#999;margin-top:8px"></div></div></section>
+<div id="creatorChatPanel" class="creator-chat-panel" style="display:none"><div class="creator-chat-head"><div><div class="eyebrow">Private conversation</div><h3 id="creatorChatTitle">Creator</h3><p id="creatorChatSubtitle"></p></div><button class="btn" type="button" onclick="closeCreatorChat()">Close</button></div><div id="creatorChatMessages" class="creator-chat-messages"></div><div id="creatorChatNotice" class="notice"></div><form id="creatorChatForm" class="creator-chat-compose"><input id="creatorChatInput" maxlength="2000" placeholder="Write a message…" required><button class="btn solid" type="submit">Send ↗</button></form></div>
+<section class="creator-application" id="creatorApplication"><div class="wrap form-page"><div class="form-layout"><div class="form-intro"><div class="eyebrow">Join the community</div><h1>Welcome<br>to the<br><em style="font-family:Georgia,serif;font-weight:400">Lab.</em></h1><p>Tell us your role, experience, and what you want to create.</p><div class="form-note">01 — Introduce yourself<br><br>02 — Show us your work<br><br>03 — Find your next collaboration</div></div><form class="form-box" id="joinForm"><h2>Creator application</h2><p>Submit this application once to create your Creator Lab profile. After that, you can return directly to Creator Lab without filling this form again.</p><div class="field-row"><div class="field"><label for="joinName">Full name *</label><input id="joinName" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="joinEmail">Email address *</label><input id="joinEmail" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div></div><div class="field" id="joinPasswordField"><label for="joinPassword">Password *</label><input id="joinPassword" name="password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters"><small id="joinPasswordHint" style="display:block;color:#888;margin-top:7px;line-height:1.5">New to PlotLab? Choose a password. If you are signed in, you can leave this blank.</small></div><div id="joinAccountStatus" style="font-size:11px;color:#9de0b1;margin:-5px 0 18px;display:none"></div><div class="field"><label for="joinCity">City *</label><input id="joinCity" name="city" required autocomplete="address-level2" placeholder="e.g. Mumbai"></div><div class="field-row"><div class="field"><label for="joinRole">Your role *</label><select id="joinRole" name="role" required><option value="">Choose your craft</option><option>Writer</option><option>Director</option><option>Actor</option><option>Producer</option><option>Cinematographer</option><option>Editor</option><option>Sound designer</option><option>Production designer</option><option>Animator / VFX</option><option>Composer</option><option>Film enthusiast</option><option>Other</option></select></div><div class="field"><label for="joinLevel">Experience</label><select id="joinLevel" name="experience"><option>Just starting out</option><option>Student / aspiring</option><option>1–3 years</option><option>3–5 years</option><option>5+ years</option></select></div></div><div class="field"><label for="joinWork">Prior work / portfolio link</label><input id="joinWork" name="portfolio" type="url" placeholder="https://yourwork.com"></div><div class="field"><label for="joinBio">Tell us about your experience *</label><textarea id="joinBio" name="bio" required placeholder="Projects you've worked on, skills you bring, or the stories you want to tell..."></textarea></div><div class="field"><label for="joinLooking">What kind of collaborators are you looking for?</label><textarea id="joinLooking" name="looking" placeholder="A writer for a short film, actors for a scene, an editor..." style="min-height:75px"></textarea></div><label class="checkline"><input type="checkbox" required><span>I agree that my profile details may be used to help connect me with other Plotlab creators.</span></label><button class="btn solid" type="submit" style="width:100%">Create my creator profile ↗</button><div class="notice" id="joinNotice"></div><p style="margin:17px 0 0;font-size:10px;color:#888">Your account and creator profile will be saved securely to PlotLab Firebase. Use at least 8 characters for your password.</p></form></div></div></section>
+</main><footer><div class="wrap">© 2026 PlotLab · Creator Lab</div></footer><div id="creatorToast"></div>
 <script type="module">
-import {getApps,initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import {getFirestore,doc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import {firebaseConfig} from "./firebase-config.js";
-const app=getApps().find(a=>a.name==="plotlab-user-auth")||initializeApp(firebaseConfig,"plotlab-user-auth");
-const auth=getAuth(app),db=getFirestore(app);
-const esc=v=>String(v??"—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const status=document.getElementById("pageStatus");
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs, addDoc, query, where, updateDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+const app = getApps().find(a => a.name === "plotlab-user-auth") || initializeApp(firebaseConfig, "plotlab-user-auth");
+const auth = getAuth(app), db = getFirestore(app);
+window.plotlabAuth = auth; window.plotlabDb=db; window.plotlabCurrentRole='viewer';
+const notice = (id,msg,good=false) => { const el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add("show");el.style.color=good?"#9de0b1":"#ff9b8a";} };
+const friendly = e => ({"auth/email-already-in-use":"That email already has a PlotLab account. Please log in.","auth/invalid-credential":"Email or password is incorrect.","auth/weak-password":"Choose a password with at least 8 characters.","auth/invalid-email":"Enter a valid email address.","auth/too-many-requests":"Too many attempts. Please wait and try again.","auth/network-request-failed":"Network error. Check your connection and try again."}[e.code] || e.message || "Something went wrong. Please try again.");
+const clean = v => String(v||"").trim().slice(0,120);
+async function saveProfile(user,data){
+ const userRef=doc(db,"users",user.uid), existing=await getDoc(userRef);
+ const prior=existing.exists()?existing.data():{};
+ const roles=new Set(Array.isArray(prior.roles)?prior.roles:(prior.role?["viewer",prior.role]:["viewer"]));
+ roles.add("viewer");
+ if(data.role==="creator"){
+  const creatorRef=doc(db,"creatorProfiles",user.uid),creatorSnap=await getDoc(creatorRef);
+  const creatorProfile={uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:clean(data.craft),experience:clean(data.experience),portfolio:String(data.portfolio||"").trim().slice(0,500),city:String(data.city||"").trim().slice(0,100),bio:String(data.bio||"").trim().slice(0,2000),lookingFor:String(data.looking||"").trim().slice(0,1000),updatedAt:serverTimestamp()};
+  if(!creatorSnap.exists())creatorProfile.createdAt=serverTimestamp();
+  await setDoc(creatorRef,creatorProfile,{merge:true});
+  roles.add("creator");
+  window.plotlabHasCreatorAccess=true;
+ }
+ const roleList=["viewer",...(roles.has("creator")?["creator"]:[])];
+ window.plotlabCurrentRole=roleList.join(" + ");
+ const profile={uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:roles.has("creator")?"creator":"viewer",roles:roleList,updatedAt:serverTimestamp()};
+ if(!existing.exists())profile.createdAt=serverTimestamp();
+ await setDoc(userRef,profile,{merge:true});
+}
+
+function syncCreatorFormAccount(user=auth.currentUser){
+ const email=document.getElementById("joinEmail"),password=document.getElementById("joinPassword"),passwordField=document.getElementById("joinPasswordField"),hint=document.getElementById("joinPasswordHint"),status=document.getElementById("joinAccountStatus"),name=document.getElementById("joinName");
+ if(!email||!password)return;
+ if(user){
+  email.value=user.email||"";email.dataset.signedIn="true";password.required=false;password.value="";password.placeholder="Optional — leave blank to keep current password";
+  if(hint)hint.textContent="You are already signed in. Leave this blank to keep your current password, or enter a new one to change it.";const passwordLabel=document.querySelector('label[for="joinPassword"]');if(passwordLabel)passwordLabel.textContent="Change password (optional)";
+  if(status){status.style.display="block";status.textContent="Signed in as "+(user.email||"your PlotLab account")+". Your creator profile will be added to this account."}
+  if(name&&!name.value)name.value=user.displayName||"";
+ }else{
+  email.dataset.signedIn="false";password.required=true;password.placeholder="At least 8 characters";
+  if(hint)hint.textContent="Use an existing account by signing in first, or create a new PlotLab account with this email and password.";const passwordLabel=document.querySelector('label[for="joinPassword"]');if(passwordLabel)passwordLabel.textContent="Password *";
+  if(status){status.style.display="none";status.textContent=""}
+ }
+}
+syncCreatorFormAccount();
+onAuthStateChanged(auth,user=>syncCreatorFormAccount(user));
+document.getElementById("joinForm")?.addEventListener("submit",async e=>{
+ e.preventDefault(); const btn=e.currentTarget.querySelector('button[type="submit"]'); btn.disabled=true;
+ const data={name:document.getElementById("joinName").value.trim(),email:document.getElementById("joinEmail").value.trim(),password:document.getElementById("joinPassword").value,craft:document.getElementById("joinRole").value,experience:document.getElementById("joinLevel").value,portfolio:document.getElementById("joinWork").value.trim(),city:document.getElementById("joinCity").value.trim(),bio:document.getElementById("joinBio").value.trim(),looking:document.getElementById("joinLooking").value.trim()};
+ try{let user=auth.currentUser;if(user){const existingCreator=await getDoc(doc(db,"creatorProfiles",user.uid));if(existingCreator.exists()){window.plotlabHasCreatorAccess=true;window.location.href="creator-lab.html";return}
+   if(data.email!==user.email){await updateEmail(user,data.email);user=auth.currentUser;await user.getIdToken(true);}
+   if(data.password){if(data.password.length<8)throw new Error("A new password must be at least 8 characters.");await updatePassword(user,data.password);}
+   await updateProfile(user,{displayName:data.name});
+   await saveProfile(user,{...data,role:"creator"});
+  }else{
+   if(data.password.length<8)throw new Error("Password must be at least 8 characters.");
+   try{
+    const cred=await createUserWithEmailAndPassword(auth,data.email,data.password);
+    await updateProfile(cred.user,{displayName:data.name});
+    await saveProfile(cred.user,{...data,role:"creator"});
+    user=cred.user;
+   }catch(createErr){
+    if(createErr.code!=="auth/email-already-in-use")throw createErr;
+    throw new Error("This email already has a PlotLab account. Sign in first, then open the Creator application again.");
+   }
+  }
+  notice("joinNotice","Creator application completed. Your Creator Studio is now available.",true);
+  window.plotlabHasCreatorAccess=true;
+  
+  if(typeof showToast==="function")showToast("Creator profile saved");
+  location.hash="creator";
+ }catch(err){notice("joinNotice",err.code==="auth/requires-recent-login"?"For security, sign out and sign in again before changing your email or password. Your creator application has not been submitted.":friendly(err));console.error("[PlotLab] Creator registration failed",err);}finally{btn.disabled=false;}
+});
+
+function showCreatorApplication(){document.getElementById("creatorApplication").style.display="block";document.getElementById("creatorApplication").scrollIntoView({behavior:"smooth"});}
+window.showCreatorApplication=showCreatorApplication;
+
+function creatorToast(m){const n=document.getElementById('creatorToast');if(n){n.textContent=m;n.style.display='block';setTimeout(()=>n.style.display='none',2800)}}
+let creatorProfilesUnsub=null, creatorOutgoingUnsub=null, creatorIncomingUnsub=null, creatorMessagesUnsub=null, activeCreatorChat=null;
+window.plotlabCreatorDirectory=[];
+window.plotlabCreatorConnections={outgoing:[],incoming:[]};
+window.plotlabCreatorSearch="";
+window.plotlabCreatorCraft="";
+window.plotlabCreatorCity="";
+function escapeCreatorHtml(v){return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function loadCreatorDirectory(){
+ const host=document.getElementById("discoverCreatorDirectory"),status=document.getElementById("discoverCreatorStatus"),user=auth.currentUser;
+ if(!host)return;
+ if(creatorProfilesUnsub){creatorProfilesUnsub();creatorProfilesUnsub=null}
+ if(creatorOutgoingUnsub){creatorOutgoingUnsub();creatorOutgoingUnsub=null}
+ if(creatorIncomingUnsub){creatorIncomingUnsub();creatorIncomingUnsub=null}
+ if(!user){host.innerHTML='<div class="account-empty"><strong>Meet the makers.</strong>Sign in to explore creator profiles, connect, and chat.</div>';if(status)status.textContent="Sign in to use the live creator network.";return}
+ if(status)status.textContent="Connecting to the live creator network…";
+ creatorProfilesUnsub=onSnapshot(collection(db,"creatorProfiles"),snap=>{
+  window.plotlabCreatorDirectory=snap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.uid!==user.uid);
+  const cities=[...new Set(window.plotlabCreatorDirectory.map(p=>String(p.city||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const citySelect=document.getElementById("discoverCreatorCity"),current=citySelect?.value||window.plotlabCreatorCity;
+  if(citySelect){citySelect.innerHTML='<option value="">All cities</option>'+cities.map(c=>'<option value="'+escapeCreatorHtml(c)+'">'+escapeCreatorHtml(c)+'</option>').join("");citySelect.value=cities.includes(current)?current:"";window.plotlabCreatorCity=citySelect.value}
+  renderCreatorDirectory();
+  if(status)status.textContent=window.plotlabCreatorDirectory.length+" creator"+(window.plotlabCreatorDirectory.length===1?"":"s")+" · Live updates on";
+ },err=>{console.error("[PlotLab] Live creator profiles failed",err);if(status)status.textContent="Could not load creators. Check that the latest Firestore rules are published."});
+ creatorOutgoingUnsub=onSnapshot(query(collection(db,"creatorConnections"),where("fromUid","==",user.uid)),snap=>{window.plotlabCreatorConnections.outgoing=snap.docs.map(d=>({id:d.id,...d.data()}));renderCreatorDirectory()},err=>console.warn("[PlotLab] Outgoing connections failed",err));
+ creatorIncomingUnsub=onSnapshot(query(collection(db,"creatorConnections"),where("toUid","==",user.uid)),snap=>{window.plotlabCreatorConnections.incoming=snap.docs.map(d=>({id:d.id,...d.data()}));renderCreatorDirectory()},err=>console.warn("[PlotLab] Incoming connections failed",err));
+}
+function filterCreatorDirectory(value){window.plotlabCreatorSearch=String(value||"");renderCreatorDirectory()}
+function filterCreatorCraft(value){window.plotlabCreatorCraft=String(value||"");renderCreatorDirectory()}
+function filterCreatorCity(value){window.plotlabCreatorCity=String(value||"");renderCreatorDirectory()}
+function renderCreatorDirectory(){
+ const host=document.getElementById("discoverCreatorDirectory");if(!host)return;
+ const profiles=window.plotlabCreatorDirectory||[],connections=window.plotlabCreatorConnections||{outgoing:[],incoming:[]},term=(window.plotlabCreatorSearch||"").toLowerCase(),craft=(window.plotlabCreatorCraft||"").toLowerCase(),city=(window.plotlabCreatorCity||"").toLowerCase();
+ const outgoing=connections.outgoing||[],incoming=connections.incoming||[];
+ const list=profiles.filter(p=>(!term||[p.name,p.role,p.bio,p.lookingFor,p.city,p.experience].some(v=>String(v||"").toLowerCase().includes(term)))&&(!craft||String(p.role||"").toLowerCase()===craft)&&(!city||String(p.city||"").toLowerCase()===city));
+ if(!list.length){host.innerHTML='<div class="account-empty"><strong>No matching creators yet.</strong>Try another search or city. New profiles appear here automatically when creators complete their profiles.</div>';return}
+ host.innerHTML=list.map(p=>{
+  const sent=outgoing.find(c=>c.toUid===p.uid),received=incoming.find(c=>c.fromUid===p.uid);
+  const connected=sent?.status==="accepted"||received?.status==="accepted",pending=sent?.status==="pending",incomingPending=received?.status==="pending";
+  const action=connected?'<button class="btn" disabled>Connected ✓</button>':incomingPending?'<button class="btn solid" onclick="respondCreatorConnection(\''+escapeCreatorHtml(received.id)+'\',true)">Accept request</button>':pending?'<button class="btn" disabled>Request sent</button>':'<button class="btn solid" onclick="sendCreatorConnection(\''+escapeCreatorHtml(p.uid)+'\')">Connect ↗</button>';
+  const chat=connected?'<button class="btn" onclick="openCreatorChat(\''+escapeCreatorHtml(p.uid)+'\')">Message ↗</button>':'';
+  return '<article class="creator-person-card"><div class="creator-person-top"><div class="creator-person-avatar">'+escapeCreatorHtml((p.name||"C").trim().charAt(0).toUpperCase())+'</div><div class="creator-person-identity"><strong>'+escapeCreatorHtml(p.name||"PlotLab creator")+'</strong><span>'+escapeCreatorHtml(p.role||"Creator")+' · '+escapeCreatorHtml(p.experience||"Experience not listed")+'</span><small>⌖ '+escapeCreatorHtml(p.city||"Location not added")+'</small></div></div><p>'+escapeCreatorHtml(p.bio||"No bio added yet.")+'</p>'+(p.portfolio?'<a href="'+escapeCreatorHtml(p.portfolio)+'" target="_blank" rel="noopener noreferrer" class="creator-portfolio-link">Explore portfolio ↗</a>':'')+(p.lookingFor?'<div class="creator-looking-for"><span>LOOKING TO COLLABORATE</span>'+escapeCreatorHtml(p.lookingFor)+'</div>':'')+'<div class="creator-person-actions">'+action+chat+'</div></article>'
+ }).join("");
+}
+window.sendCreatorConnection=async function(toUid){
+ const user=auth.currentUser;if(!user){location.href="index.html#login";return}if(toUid===user.uid)return;
+ try{
+  const prior=await getDocs(query(collection(db,"creatorConnections"),where("fromUid","==",user.uid),where("toUid","==",toUid)));
+  if(!prior.empty){creatorToast("You already sent a request");return}
+  const p=(window.plotlabCreatorDirectory||[]).find(x=>x.uid===toUid);
+  await addDoc(collection(db,"creatorConnections"),{fromUid:user.uid,fromEmail:user.email||"",fromName:user.displayName||"",toUid,toEmail:p?.email||"",toName:p?.name||"",status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  creatorToast("Connection request sent");
+ }catch(err){console.error("[PlotLab] Connection request failed",err);creatorToast("Could not send request. Check Firestore rules.");}
+};
+window.respondCreatorConnection=async function(id,accept){
+ try{await updateDoc(doc(db,"creatorConnections",id),{status:accept?"accepted":"declined",updatedAt:serverTimestamp()});creatorToast(accept?"Creator connected":"Request declined")}
+ catch(err){console.error("[PlotLab] Connection response failed",err);creatorToast("Could not update request. Check Firestore rules.");}
+};
+function creatorChatId(a,b){return [a,b].sort().join("__")}
+window.openCreatorChat=async function(uid){
+ const user=auth.currentUser;if(!user){location.href="index.html#login";return}
+ const person=(window.plotlabCreatorDirectory||[]).find(p=>p.uid===uid);if(!person)return;
+ const c=window.plotlabCreatorConnections||{};
+ const acceptedConnection=(c.outgoing||[]).find(x=>x.toUid===uid&&x.status==="accepted")||(c.incoming||[]).find(x=>x.fromUid===uid&&x.status==="accepted");
+ if(!acceptedConnection){creatorToast("Connect with this creator before messaging");return}
+ const chatId=creatorChatId(user.uid,uid),panel=document.getElementById("creatorChatPanel");if(!panel)return;
+ activeCreatorChat={id:chatId,uid,person};panel.style.display="block";
+ document.getElementById("creatorChatTitle").textContent=person.name||"Creator";
+ document.getElementById("creatorChatSubtitle").textContent=[person.role,person.city].filter(Boolean).join(" · ")+" · Private creator chat";
+ document.getElementById("creatorChatMessages").innerHTML='<div class="account-empty">Opening conversation…</div>';
+ try{
+  const chatRef=doc(db,"creatorChats",chatId),snap=await getDoc(chatRef);
+  if(!snap.exists())await setDoc(chatRef,{participants:[user.uid,uid].sort(),connectionId:acceptedConnection.id,participantNames:{[user.uid]:user.displayName||user.email||"Creator",[uid]:person.name||"Creator"},createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  if(creatorMessagesUnsub){creatorMessagesUnsub();creatorMessagesUnsub=null}
+  creatorMessagesUnsub=onSnapshot(query(collection(db,"creatorChats",chatId,"messages"),orderBy("createdAt","asc")),messagesSnap=>{
+   const box=document.getElementById("creatorChatMessages");if(!box||!activeCreatorChat||activeCreatorChat.id!==chatId)return;
+   const rows=messagesSnap.docs.map(d=>({id:d.id,...d.data()}));
+   box.innerHTML=rows.length?rows.map(m=>'<div class="creator-message '+(m.fromUid===user.uid?"mine":"theirs")+'"><p>'+escapeCreatorHtml(m.text)+'</p><small>'+escapeCreatorHtml(m.fromName||"Creator")+' · '+(m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"sending…")+'</small></div>').join(""):'<div class="creator-chat-empty">No messages yet. Say hello and start planning a collaboration.</div>';
+   box.scrollTop=box.scrollHeight;
+  },err=>{console.error("[PlotLab] Chat listener failed",err);document.getElementById("creatorChatNotice").textContent="Chat is unavailable. Check that Firestore rules are published."});
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(err){console.error("[PlotLab] Chat open failed",err);document.getElementById("creatorChatNotice").textContent="Could not open chat. Check Firestore rules and try again."}
+};
+window.closeCreatorChat=function(){if(creatorMessagesUnsub){creatorMessagesUnsub();creatorMessagesUnsub=null}activeCreatorChat=null;const p=document.getElementById("creatorChatPanel");if(p)p.style.display="none"};
+document.getElementById("creatorChatForm")?.addEventListener("submit",async e=>{
+ e.preventDefault();const user=auth.currentUser,textValue=document.getElementById("creatorChatInput").value.trim(),chat=activeCreatorChat;if(!user||!chat||!textValue)return;
+ const send=e.currentTarget.querySelector("button[type=submit]");send.disabled=true;
+ try{await addDoc(collection(db,"creatorChats",chat.id,"messages"),{fromUid:user.uid,fromName:user.displayName||user.email||"Creator",text:textValue.slice(0,2000),createdAt:serverTimestamp()});document.getElementById("creatorChatInput").value="";document.getElementById("creatorChatNotice").textContent=""}
+ catch(err){console.error("[PlotLab] Message send failed",err);document.getElementById("creatorChatNotice").textContent="Message not sent. Check that the latest Firestore rules are published."}
+ finally{send.disabled=false}
+});
+
 onAuthStateChanged(auth,async user=>{
- if(!user){status.textContent="Please sign in to access Creator Lab.";setTimeout(()=>location.href="index.html#login",700);return}
+ const app=document.getElementById("creatorApplication"),intro=document.getElementById("creatorApplicationIntro"),profile=document.getElementById("creatorOwnProfile");
+ if(!user){profile.style.display="none";app.style.display="block";loadCreatorDirectory();return}
  try{
   const snap=await getDoc(doc(db,"creatorProfiles",user.uid));
-  if(!snap.exists()){status.textContent="No creator application is saved on this account yet. Complete it once to unlock Creator Lab.";setTimeout(()=>location.href="index.html#join",900);return}
-  const p=snap.data();document.getElementById("profileName").textContent=p.name||user.displayName||"PlotLab creator";
-  document.getElementById("profileIntro").textContent="Your creator profile is active. You do not need to complete the application again.";
-  const rows=[["Craft",p.role],["City",p.city],["Experience",p.experience],["Portfolio",p.portfolio],["About you",p.bio],["Looking to collaborate on",p.lookingFor],["Account email",user.email]];
-  document.getElementById("profileDetails").innerHTML=rows.map(([label,value])=>'<div class="detail"><small>'+esc(label)+'</small><div>'+(label==="Portfolio"&&value?'<a target="_blank" rel="noopener noreferrer" href="'+esc(value)+'">'+esc(value)+'</a>':esc(value||"Not added"))+'</div></div>').join("");
-  status.textContent="Profile loaded successfully. Your Creator Lab access is active.";
- }catch(err){console.error("[PlotLab] Creator Lab load failed",err);status.textContent="We could not load your profile. Check your connection and Firebase permissions, then refresh."}
+  if(snap.exists()){
+   app.style.display="none";profile.style.display="block";
+   const p=snap.data();document.getElementById("profileName").textContent=p.name||user.displayName||"PlotLab creator";
+   const rows=[["Craft",p.role],["City",p.city],["Experience",p.experience],["Portfolio",p.portfolio],["About you",p.bio],["Looking to collaborate on",p.lookingFor],["Account email",user.email]];
+   document.getElementById("profileDetails").innerHTML=rows.map(([k,v])=>'<div class="detail"><small>'+escapeCreatorHtml(k)+'</small><div>'+escapeCreatorHtml(v||"Not added")+'</div></div>').join("");
+  }else{profile.style.display="none";app.style.display="block";syncCreatorFormAccount(user)}
+  loadCreatorDirectory();
+ }catch(e){console.error(e);app.style.display="block";profile.style.display="none";loadCreatorDirectory()}
 });
-document.getElementById("signOutBtn").addEventListener("click",async()=>{await signOut(auth);location.href="index.html#login"});
-</script>
-</body></html>
+
+document.getElementById("creatorSignOut").addEventListener("click",async()=>{await signOut(auth);location.href="index.html#login"});
+</script></body></html>
