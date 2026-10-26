@@ -21,7 +21,7 @@ service cloud.firestore {
   match /creatorProfiles/{uid}{
    // Creator profiles are discoverable to signed-in PlotLab members so they can find collaborators.
    allow read:if signedIn()||isAdmin();
-   allow create:if ownUser(uid)&&request.resource.data.uid==uid&&request.resource.data.email==request.auth.token.email&&request.resource.data.keys().hasAll(["uid","name","email","role","experience","portfolio","bio","lookingFor","createdAt","updatedAt"])&&request.resource.data.name is string&&request.resource.data.name.size()>0&&request.resource.data.role is string&&request.resource.data.role.size()>0&&request.resource.data.experience is string&&request.resource.data.bio is string&&request.resource.data.bio.size()>0&&request.resource.data.portfolio is string&&request.resource.data.lookingFor is string;
+   allow create:if ownUser(uid)&&request.resource.data.uid==uid&&request.resource.data.email==request.auth.token.email&&request.resource.data.keys().hasAll(["uid","name","email","role","experience","portfolio","city","bio","lookingFor","createdAt","updatedAt"])&&request.resource.data.name is string&&request.resource.data.name.size()>0&&request.resource.data.role is string&&request.resource.data.role.size()>0&&request.resource.data.experience is string&&request.resource.data.bio is string&&request.resource.data.bio.size()>0&&request.resource.data.portfolio is string&&request.resource.data.city is string&&request.resource.data.city.size()>0&&request.resource.data.city.size()<=100&&request.resource.data.lookingFor is string;
    allow update:if ownUser(uid)&&request.resource.data.uid==resource.data.uid&&request.resource.data.email==request.auth.token.email&&request.resource.data.keys().hasAll(["uid","name","email","role","experience","portfolio","bio","lookingFor","createdAt","updatedAt"])&&request.resource.data.name is string&&request.resource.data.name.size()>0&&request.resource.data.role is string&&request.resource.data.role.size()>0&&request.resource.data.experience is string&&request.resource.data.bio is string&&request.resource.data.bio.size()>0&&request.resource.data.portfolio is string&&request.resource.data.lookingFor is string;
    allow delete:if ownUser(uid)||isAdmin();
   }
@@ -30,6 +30,18 @@ service cloud.firestore {
    allow create:if signedIn()&&request.resource.data.fromUid==request.auth.uid&&request.resource.data.fromEmail==request.auth.token.email&&request.resource.data.toUid is string&&request.resource.data.toUid!=request.auth.uid&&request.resource.data.status=="pending"&&request.resource.data.keys().hasAll(["fromUid","fromEmail","fromName","toUid","toEmail","toName","status","createdAt","updatedAt"]);
    allow update:if signedIn()&&resource.data.toUid==request.auth.uid&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status","updatedAt"])&&request.resource.data.status in ["accepted","declined"];
    allow delete:if signedIn()&&(resource.data.fromUid==request.auth.uid||resource.data.toUid==request.auth.uid)||isAdmin();
+  }
+  match /creatorChats/{chatId}{
+   allow get:if signedIn()&&(resource==null||request.auth.uid in resource.data.participants);
+   allow list:if signedIn()&&request.auth.uid in resource.data.participants;
+   allow create:if signedIn()&&request.resource.data.participants is list&&request.resource.data.participants.size()==2&&request.auth.uid in request.resource.data.participants&&request.resource.data.participantNames is map;
+   allow update:if signedIn()&&request.auth.uid in resource.data.participants&&request.resource.data.participants==resource.data.participants&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["participantNames","updatedAt"]);
+   allow delete:if false;
+   match /messages/{messageId}{
+    allow read:if signedIn()&&request.auth.uid in get(/databases/$(database)/documents/creatorChats/$(chatId)).data.participants;
+    allow create:if signedIn()&&request.auth.uid in get(/databases/$(database)/documents/creatorChats/$(chatId)).data.participants&&request.resource.data.fromUid==request.auth.uid&&request.resource.data.text is string&&request.resource.data.text.size()>0&&request.resource.data.text.size()<=2000&&request.resource.data.keys().hasAll(["fromUid","fromName","text","createdAt"]);
+    allow update,delete:if false;
+   }
   }
   match /{document=**}{allow read,write:if false;}
  }
