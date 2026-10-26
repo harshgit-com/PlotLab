@@ -40,6 +40,29 @@ async function saveProfile(user,data){
  await setDoc(userRef,profile,{merge:true});
 }
 
+const notice = (id,msg,good=false) => { const el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add("show");el.style.color=good?"#9de0b1":"#ff9b8a";} };
+const friendly = e => ({"auth/email-already-in-use":"That email already has a PlotLab account. Please log in.","auth/invalid-credential":"Email or password is incorrect.","auth/weak-password":"Choose a password with at least 8 characters.","auth/invalid-email":"Enter a valid email address.","auth/too-many-requests":"Too many attempts. Please wait and try again.","auth/network-request-failed":"Network error. Check your connection and try again."}[e.code] || e.message || "Something went wrong. Please try again.");
+const clean = v => String(v||"").trim().slice(0,120);
+async function saveProfile(user,data){
+ const userRef=doc(db,"users",user.uid), existing=await getDoc(userRef);
+ const prior=existing.exists()?existing.data():{};
+ const roles=new Set(Array.isArray(prior.roles)?prior.roles:(prior.role?["viewer",prior.role]:["viewer"]));
+ roles.add("viewer");
+ if(data.role==="creator"){
+  const creatorRef=doc(db,"creatorProfiles",user.uid),creatorSnap=await getDoc(creatorRef);
+  const creatorProfile={uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:clean(data.craft),experience:clean(data.experience),portfolio:String(data.portfolio||"").trim().slice(0,500),city:String(data.city||"").trim().slice(0,100),bio:String(data.bio||"").trim().slice(0,2000),lookingFor:String(data.looking||"").trim().slice(0,1000),updatedAt:serverTimestamp()};
+  if(!creatorSnap.exists())creatorProfile.createdAt=serverTimestamp();
+  await setDoc(creatorRef,creatorProfile,{merge:true});
+  roles.add("creator");
+  window.plotlabHasCreatorAccess=true;
+ }
+ const roleList=["viewer",...(roles.has("creator")?["creator"]:[])];
+ window.plotlabCurrentRole=roleList.join(" + ");
+ const profile={uid:user.uid,name:clean(data.name||user.displayName),email:user.email,role:roles.has("creator")?"creator":"viewer",roles:roleList,updatedAt:serverTimestamp()};
+ if(!existing.exists())profile.createdAt=serverTimestamp();
+ await setDoc(userRef,profile,{merge:true});
+}
+
 function syncCreatorFormAccount(user=auth.currentUser){
  const email=document.getElementById("joinEmail"),password=document.getElementById("joinPassword"),passwordField=document.getElementById("joinPasswordField"),hint=document.getElementById("joinPasswordHint"),status=document.getElementById("joinAccountStatus"),name=document.getElementById("joinName");
  if(!email||!password)return;
@@ -79,13 +102,10 @@ document.getElementById("joinForm")?.addEventListener("submit",async e=>{
   notice("joinNotice","Creator application completed. Your Creator Studio is now available.",true);
   window.plotlabHasCreatorAccess=true;
   
-  if(typeof showToast==="function")showToast("Creator profile saved");
-  location.hash="creator";
+  if(typeof showToast==="function")creatorToast("Creator profile saved");
+  location.reload();
  }catch(err){notice("joinNotice",err.code==="auth/requires-recent-login"?"For security, sign out and sign in again before changing your email or password. Your creator application has not been submitted.":friendly(err));console.error("[PlotLab] Creator registration failed",err);}finally{btn.disabled=false;}
 });
-
-function showCreatorApplication(){document.getElementById("creatorApplication").style.display="block";document.getElementById("creatorApplication").scrollIntoView({behavior:"smooth"});}
-window.showCreatorApplication=showCreatorApplication;
 
 function creatorToast(m){const n=document.getElementById('creatorToast');if(n){n.textContent=m;n.style.display='block';setTimeout(()=>n.style.display='none',2800)}}
 let creatorProfilesUnsub=null, creatorOutgoingUnsub=null, creatorIncomingUnsub=null, creatorMessagesUnsub=null, activeCreatorChat=null;
@@ -179,8 +199,11 @@ document.getElementById("creatorChatForm")?.addEventListener("submit",async e=>{
  finally{send.disabled=false}
 });
 
+
+function showCreatorApplication(){const app=document.getElementById("creatorApplication");if(app){app.style.display="block";app.scrollIntoView({behavior:"smooth"})}}
+window.showCreatorApplication=showCreatorApplication;
 onAuthStateChanged(auth,async user=>{
- const app=document.getElementById("creatorApplication"),intro=document.getElementById("creatorApplicationIntro"),profile=document.getElementById("creatorOwnProfile");
+ const app=document.getElementById("creatorApplication"),profile=document.getElementById("creatorOwnProfile");
  if(!user){profile.style.display="none";app.style.display="block";loadCreatorDirectory();return}
  try{
   const snap=await getDoc(doc(db,"creatorProfiles",user.uid));
@@ -191,8 +214,8 @@ onAuthStateChanged(auth,async user=>{
    document.getElementById("profileDetails").innerHTML=rows.map(([k,v])=>'<div class="detail"><small>'+escapeCreatorHtml(k)+'</small><div>'+escapeCreatorHtml(v||"Not added")+'</div></div>').join("");
   }else{profile.style.display="none";app.style.display="block";syncCreatorFormAccount(user)}
   loadCreatorDirectory();
- }catch(e){console.error(e);app.style.display="block";profile.style.display="none";loadCreatorDirectory()}
+ }catch(e){console.error("[PlotLab] Creator profile load failed",e);app.style.display="block";profile.style.display="none";loadCreatorDirectory()}
 });
-
 document.getElementById("creatorSignOut").addEventListener("click",async()=>{await signOut(auth);location.href="index.html#login"});
+
 </script></body></html>
