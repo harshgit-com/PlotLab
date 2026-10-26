@@ -12,5 +12,5 @@ export const firebaseConfig = {
 };
 
 // Keep your current admin email until your new Gmail is ready.
-export const PLOTLAB_ADMIN_EMAIL = "plotlab29@gmail.com";
+export const PLOTLAB_ADMIN_EMAIL = "harshsolanki3107@gmail.com";
 
