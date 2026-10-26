@@ -34,7 +34,7 @@ service cloud.firestore {
   match /creatorChats/{chatId}{
    allow get:if signedIn()&&(resource==null||request.auth.uid in resource.data.participants);
    allow list:if signedIn()&&request.auth.uid in resource.data.participants;
-   allow create:if signedIn()&&request.resource.data.participants is list&&request.resource.data.participants.size()==2&&request.auth.uid in request.resource.data.participants&&request.resource.data.participantNames is map;
+   allow create:if signedIn()&&request.resource.data.participants is list&&request.resource.data.participants.size()==2&&request.auth.uid in request.resource.data.participants&&request.resource.data.participantNames is map&&request.resource.data.connectionId is string&&get(/databases/$(database)/documents/creatorConnections/$(request.resource.data.connectionId)).data.status=="accepted"&&request.resource.data.participants.hasAll([get(/databases/$(database)/documents/creatorConnections/$(request.resource.data.connectionId)).data.fromUid,get(/databases/$(database)/documents/creatorConnections/$(request.resource.data.connectionId)).data.toUid]);
    allow update:if signedIn()&&request.auth.uid in resource.data.participants&&request.resource.data.participants==resource.data.participants&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["participantNames","updatedAt"]);
    allow delete:if false;
    match /messages/{messageId}{
