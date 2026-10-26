@@ -19,7 +19,7 @@ firebase deploy --only firestore:rules
 ```
 Select your project when prompted. Confirm `firebase.json` and `firestore.rules` are in the repository root.
 
-Rules enforce authorization on Firebase servers: only a **verified Google account whose email exactly matches** `plotlab29@gmail.com` can create, update, publish or delete movie records/settings. Public visitors can read only records marked `published: true`. All other Firestore paths are denied. Do not loosen these rules.
+Rules enforce authorization on Firebase servers: only a **verified Google account whose email exactly matches** `harshsolanki3107@gmail.com` can create, update, publish or delete movie records/settings. Public visitors can read only records marked `published: true`. All other Firestore paths are denied. Do not loosen these rules.
 
 ## 3. Publish the website
 The dashboard is `admin.html`; main site is `index.html`. Deploy both from the same static site root so their relative paths work. The admin route is not secret by URL; security comes from Google sign-in plus Firestore rules. A visitor may open the admin page, but cannot read drafts or make changes.
