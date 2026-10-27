@@ -48,13 +48,14 @@ function friendly(err){return err?.message||"Something went wrong. Please try ag
 async function saveProfile(user,data){const profile={uid:user.uid,name:data.name,email:user.email||data.email||"",role:data.craft||data.role||"Creator",experience:data.experience||"Just starting out",portfolio:data.portfolio||"",city:data.city||"",age:Number(data.age||0),bio:data.bio||"",lookingFor:Array.isArray(data.looking)?data.looking.join(", "):(data.looking||data.lookingFor||""),profilePhoto:data.profilePhoto||"",auditionPhoto:(data.craft||data.role)==="Actor"?(data.auditionPhoto||""):"",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(doc(db,"creatorProfiles",user.uid),profile,{merge:true});}
 function creatorToast(m){const n=document.getElementById('creatorToast');if(n){n.textContent=m;n.style.display='block';setTimeout(()=>n.style.display='none',2800)}}
 let creatorProfilesUnsub=null, creatorOutgoingUnsub=null, creatorIncomingUnsub=null, creatorMessagesUnsub=null, activeCreatorChat=null;
-let creatorChatListUnsub=null, creatorMessageWatchers=new Map(), creatorKnownMessageIds=new Map();
+let creatorChatListUnsub=null, creatorMessageWatchers=new Map(), creatorKnownMessageIds=new Map(), creatorChatsAddedAfterLoad=new Set(), creatorChatListPrimed=false;
 window.plotlabLastMessages={};
-function stopCreatorNotificationWatch(){if(creatorChatListUnsub){creatorChatListUnsub();creatorChatListUnsub=null}creatorMessageWatchers.forEach(unsub=>unsub());creatorMessageWatchers.clear();creatorKnownMessageIds.clear();window.plotlabLastMessages={}}
+function stopCreatorNotificationWatch(){if(creatorChatListUnsub){creatorChatListUnsub();creatorChatListUnsub=null}creatorMessageWatchers.forEach(unsub=>unsub());creatorMessageWatchers.clear();creatorKnownMessageIds.clear();creatorChatsAddedAfterLoad.clear();creatorChatListPrimed=false;creatorKnownMessageIds.clear();window.plotlabLastMessages={}}
 function startCreatorNotificationWatch(user){
  stopCreatorNotificationWatch();if(!user)return;
  creatorChatListUnsub=onSnapshot(query(collection(db,"creatorChats"),where("participants","array-contains",user.uid)),snap=>{
   const liveIds=new Set(snap.docs.map(d=>d.id));
+  if(creatorChatListPrimed){snap.docs.forEach(d=>{if(!creatorMessageWatchers.has(d.id))creatorChatsAddedAfterLoad.add(d.id)})}else creatorChatListPrimed=true;
   creatorMessageWatchers.forEach((unsub,id)=>{if(!liveIds.has(id)){unsub();creatorMessageWatchers.delete(id);creatorKnownMessageIds.delete(id);delete window.plotlabLastMessages[id]}});
   snap.docs.forEach(chatDoc=>{
    const chatId=chatDoc.id;if(creatorMessageWatchers.has(chatId))return;
@@ -62,7 +63,8 @@ function startCreatorNotificationWatch(user){
     if(ms.empty)return;
     const mdoc=ms.docs[0],m={id:mdoc.id,...mdoc.data()},previous=creatorKnownMessageIds.get(chatId);
     creatorKnownMessageIds.set(chatId,m.id);window.plotlabLastMessages[chatId]=m;renderCreatorMessagesDirectory();
-    if(previous&&previous!==m.id&&m.fromUid!==user.uid&&(!activeCreatorChat||activeCreatorChat.id!==chatId)){
+    const isFirstMessageInNewChat=previous===undefined&&creatorChatsAddedAfterLoad.has(chatId);if(isFirstMessageInNewChat)creatorChatsAddedAfterLoad.delete(chatId);
+    if(((previous&&previous!==m.id)||isFirstMessageInNewChat)&&m.fromUid!==user.uid&&(!activeCreatorChat||activeCreatorChat.id!==chatId)){
      playCreatorNotificationSound();
      if(document.hidden&&"Notification" in window&&Notification.permission==="granted"){const other=(chatDoc.data().participantNames||{});new Notification("PlotLab · "+(other[m.fromUid]||"New message"),{body:String(m.text||"New message").slice(0,120)})}
     }
