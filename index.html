@@ -1345,7 +1345,7 @@ document.getElementById("loginForm")?.addEventListener("submit",async e=>{
    const profile=snap.data(); window.plotlabCurrentRole=profile.role||'viewer'; notice("loginNotice","Welcome back, "+(profile.name||cred.user.email)+"! Signed in as "+profile.role+".",true);
   }
   const signedInUser=auth.currentUser;
-  if(signedInUser){const creatorProfileSnap=await getDoc(doc(db,"creatorProfiles",signedInUser.uid));location.href=creatorProfileSnap.exists()?"creator-lab.html":"index.html#discover";return;}
+  if(signedInUser){const creatorProfileSnap=await getDoc(doc(db,"creatorProfiles",signedInUser.uid));location.href=creatorProfileSnap.exists()?"creator-lab.html":"index.html#home";return;}
  }catch(err){notice("loginNotice",friendly(err));console.error("[PlotLab] Account operation failed",err);}finally{btn.disabled=false;}
 });
 function syncCreatorFormAccount(user=auth.currentUser){
