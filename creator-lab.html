@@ -13,7 +13,7 @@
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, updateEmail, updatePassword, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs, addDoc, query, where, updateDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs, addDoc, query, where, updateDoc, onSnapshot, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 const app = getApps().find(a => a.name === "plotlab-user-auth") || initializeApp(firebaseConfig, "plotlab-user-auth");
 const auth = getAuth(app), db = getFirestore(app);
@@ -48,6 +48,29 @@ function friendly(err){return err?.message||"Something went wrong. Please try ag
 async function saveProfile(user,data){const profile={uid:user.uid,name:data.name,email:user.email||data.email||"",role:data.craft||data.role||"Creator",experience:data.experience||"Just starting out",portfolio:data.portfolio||"",city:data.city||"",age:Number(data.age||0),bio:data.bio||"",lookingFor:Array.isArray(data.looking)?data.looking.join(", "):(data.looking||data.lookingFor||""),profilePhoto:data.profilePhoto||"",auditionPhoto:(data.craft||data.role)==="Actor"?(data.auditionPhoto||""):"",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(doc(db,"creatorProfiles",user.uid),profile,{merge:true});}
 function creatorToast(m){const n=document.getElementById('creatorToast');if(n){n.textContent=m;n.style.display='block';setTimeout(()=>n.style.display='none',2800)}}
 let creatorProfilesUnsub=null, creatorOutgoingUnsub=null, creatorIncomingUnsub=null, creatorMessagesUnsub=null, activeCreatorChat=null;
+let creatorChatListUnsub=null, creatorMessageWatchers=new Map(), creatorKnownMessageIds=new Map();
+window.plotlabLastMessages={};
+function stopCreatorNotificationWatch(){if(creatorChatListUnsub){creatorChatListUnsub();creatorChatListUnsub=null}creatorMessageWatchers.forEach(unsub=>unsub());creatorMessageWatchers.clear();creatorKnownMessageIds.clear();window.plotlabLastMessages={}}
+function startCreatorNotificationWatch(user){
+ stopCreatorNotificationWatch();if(!user)return;
+ creatorChatListUnsub=onSnapshot(query(collection(db,"creatorChats"),where("participants","array-contains",user.uid)),snap=>{
+  const liveIds=new Set(snap.docs.map(d=>d.id));
+  creatorMessageWatchers.forEach((unsub,id)=>{if(!liveIds.has(id)){unsub();creatorMessageWatchers.delete(id);creatorKnownMessageIds.delete(id);delete window.plotlabLastMessages[id]}});
+  snap.docs.forEach(chatDoc=>{
+   const chatId=chatDoc.id;if(creatorMessageWatchers.has(chatId))return;
+   const unsub=onSnapshot(query(collection(db,"creatorChats",chatId,"messages"),orderBy("createdAt","desc"),limit(1)),ms=>{
+    if(ms.empty)return;
+    const mdoc=ms.docs[0],m={id:mdoc.id,...mdoc.data()},previous=creatorKnownMessageIds.get(chatId);
+    creatorKnownMessageIds.set(chatId,m.id);window.plotlabLastMessages[chatId]=m;renderCreatorMessagesDirectory();
+    if(previous&&previous!==m.id&&m.fromUid!==user.uid&&(!activeCreatorChat||activeCreatorChat.id!==chatId)){
+     playCreatorNotificationSound();
+     if(document.hidden&&"Notification" in window&&Notification.permission==="granted"){const other=(chatDoc.data().participantNames||{});new Notification("PlotLab · "+(other[m.fromUid]||"New message"),{body:String(m.text||"New message").slice(0,120)})}
+    }
+   },err=>console.warn("[PlotLab] Message notification listener failed",err));
+   creatorMessageWatchers.set(chatId,unsub);
+  });
+ },err=>console.warn("[PlotLab] Creator chat list listener failed",err));
+}
 let creatorChatInitialSnapshot=true;
 function playCreatorNotificationSound(){
  try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;const ctx=new Ctx();const now=ctx.currentTime;[0,0.16].forEach((offset,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(i?1046:784,now+offset);gain.gain.setValueAtTime(0.0001,now+offset);gain.gain.exponentialRampToValueAtTime(0.12,now+offset+0.025);gain.gain.exponentialRampToValueAtTime(0.0001,now+offset+0.14);osc.connect(gain);gain.connect(ctx.destination);osc.start(now+offset);osc.stop(now+offset+0.15)});setTimeout(()=>ctx.close().catch(()=>{}),500)}catch(e){console.debug("Notification sound unavailable until browser audio is enabled",e)}
@@ -81,6 +104,7 @@ let creatorRequestTab="incoming";
 function renderCreatorRequests(){const host=document.getElementById("creatorRequestList");if(!host)return;const con=window.plotlabCreatorConnections||{incoming:[],outgoing:[]},profiles=window.plotlabCreatorDirectory||[],incoming=(con.incoming||[]).filter(x=>x.status==="pending"),outgoing=(con.outgoing||[]).filter(x=>x.status==="pending"),connected=[...(con.incoming||[]),...(con.outgoing||[])].filter(x=>x.status==="accepted");document.getElementById("incomingRequestCount").textContent=String(incoming.length);const messagesMode=creatorRequestTab==="messages";document.getElementById("creatorMessagesDirectory").style.display=messagesMode?"block":"none";host.style.display=messagesMode?"none":"grid";if(messagesMode){renderCreatorMessagesDirectory();return}const items=creatorRequestTab==="incoming"?incoming:creatorRequestTab==="outgoing"?outgoing:connected;if(!items.length){host.innerHTML='<div class="account-empty">'+(creatorRequestTab==="incoming"?"No new requests right now.":creatorRequestTab==="outgoing"?"No pending sent requests.":"Accepted connections will appear here.")+'</div>';return}host.innerHTML=items.map(x=>{const inc=creatorRequestTab==="incoming",uid=inc?x.fromUid:x.toUid,p=profiles.find(y=>y.uid===uid)||{},name=x[inc?"fromName":"toName"]||p.name||"Creator",buttons=inc?'<button class="btn solid" data-accept="'+escapeCreatorHtml(x.id)+'">Accept</button><button class="btn" data-decline="'+escapeCreatorHtml(x.id)+'">Decline</button>':creatorRequestTab==="connected"?'<button class="btn solid" data-chat="'+escapeCreatorHtml(uid)+'">Chat ↗</button>':'<span class="muted">Waiting for response</span>';return '<article class="creator-request-card"><div><strong>'+escapeCreatorHtml(name)+'</strong><p class="muted">'+escapeCreatorHtml(p.role||"Creator")+' · '+escapeCreatorHtml(p.city||"")+'</p></div><div style="display:flex;gap:7px;flex-wrap:wrap">'+buttons+'</div></article>'}).join("");host.querySelectorAll("[data-accept]").forEach(b=>b.onclick=()=>respondCreatorConnection(b.dataset.accept,true));host.querySelectorAll("[data-decline]").forEach(b=>b.onclick=()=>respondCreatorConnection(b.dataset.decline,false));host.querySelectorAll("[data-chat]").forEach(b=>b.onclick=()=>openCreatorChat(b.dataset.chat))}
 document.querySelectorAll("[data-request-tab]").forEach(b=>b.addEventListener("click",()=>{creatorRequestTab=b.dataset.requestTab;document.querySelectorAll("[data-request-tab]").forEach(x=>x.classList.toggle("active",x===b));renderCreatorRequests()}));
 document.getElementById("creatorMessagesSearch")?.addEventListener("input",renderCreatorMessagesDirectory);
+document.querySelector('[data-request-tab="messages"]')?.addEventListener("click",()=>{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission().catch(()=>{});});
 function renderCreatorMessagesDirectory(){
  const host=document.getElementById("creatorMessagesList");if(!host)return;
  const profiles=window.plotlabCreatorDirectory||[],con=window.plotlabCreatorConnections||{incoming:[],outgoing:[]};
@@ -91,7 +115,7 @@ function renderCreatorMessagesDirectory(){
  accepted.forEach(x=>{const uid=x.fromUid===user.uid?x.toUid:x.fromUid;if(uid&&!unique.has(uid)){const p=profiles.find(z=>z.uid===uid)||{};unique.set(uid,{uid,name:p.name||x.fromName||x.toName||"Creator",role:p.role||"Creator",city:p.city||"",profilePhoto:p.profilePhoto||""})}});
  const list=[...unique.values()].filter(p=>[p.name,p.role,p.city].some(v=>String(v||"").toLowerCase().includes(term))).sort((a,b)=>a.name.localeCompare(b.name));
  if(!list.length){host.innerHTML='<div class="account-empty">'+(accepted.length?'No connections match that search. Try another name, craft, or city.':'Your conversations will appear here after a creator accepts your connection request.')+'</div>';return}
- host.innerHTML=list.map(p=>'<article class="creator-request-card creator-message-contact"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="creator-person-avatar" style="width:42px;height:42px;flex:0 0 42px">'+(p.profilePhoto?'<img src="'+escapeCreatorHtml(p.profilePhoto)+'" alt="">':escapeCreatorHtml((p.name||"C").charAt(0).toUpperCase()))+'</div><div><strong>'+escapeCreatorHtml(p.name)+'</strong><p class="muted">'+escapeCreatorHtml(p.role)+' · '+escapeCreatorHtml(p.city||"City not listed")+'</p><small class="creator-last-message" data-last-message="'+escapeCreatorHtml(p.uid)+'">Open conversation to load messages</small></div></div><button class="btn solid" type="button" data-message-user="'+escapeCreatorHtml(p.uid)+'">Message ↗</button></article>').join("");
+ host.innerHTML=list.map(p=>'<article class="creator-request-card creator-message-contact"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="creator-person-avatar" style="width:42px;height:42px;flex:0 0 42px">'+(p.profilePhoto?'<img src="'+escapeCreatorHtml(p.profilePhoto)+'" alt="">':escapeCreatorHtml((p.name||"C").charAt(0).toUpperCase()))+'</div><div><strong>'+escapeCreatorHtml(p.name)+'</strong><p class="muted">'+escapeCreatorHtml(p.role)+' · '+escapeCreatorHtml(p.city||"City not listed")+'</p><small class="creator-last-message">'+escapeCreatorHtml((window.plotlabLastMessages[creatorChatId(user.uid,p.uid)]?.text)||"No messages yet")+'</small></div></div><button class="btn solid" type="button" data-message-user="'+escapeCreatorHtml(p.uid)+'">Message ↗</button></article>').join("");
  host.querySelectorAll("[data-message-user]").forEach(b=>b.addEventListener("click",()=>openCreatorChat(b.dataset.messageUser)));
 }
 function filterCreatorDirectory(value){window.plotlabCreatorSearch=String(value||"");renderCreatorDirectory()}
@@ -148,7 +172,7 @@ window.openCreatorChat=async function(uid){
   creatorMessagesUnsub=onSnapshot(query(collection(db,"creatorChats",chatId,"messages"),orderBy("createdAt","asc")),messagesSnap=>{
    const box=document.getElementById("creatorChatMessages");if(!box||!activeCreatorChat||activeCreatorChat.id!==chatId)return;
    const rows=messagesSnap.docs.map(d=>({id:d.id,...d.data()}));
-   if(creatorChatInitialSnapshot){creatorChatInitialSnapshot=false}else if(rows.some(m=>m.fromUid!==user.uid&&messagesSnap.docChanges().some(ch=>ch.type==="added"&&ch.doc.id===m.id))){playCreatorNotificationSound();const incoming=rows.filter(m=>m.fromUid!==user.uid&&messagesSnap.docChanges().some(ch=>ch.type==="added"&&ch.doc.id===m.id));const latest=incoming[incoming.length-1];if(latest&&document.hidden&&"Notification" in window&&Notification.permission==="granted")new Notification("PlotLab · "+(person.name||"New message"),{body:String(latest.text||"New message").slice(0,120)});}
+   if(creatorChatInitialSnapshot){creatorChatInitialSnapshot=false}
    box.innerHTML=rows.length?rows.map(m=>'<div class="creator-message '+(m.fromUid===user.uid?"mine":"theirs")+'"><p>'+escapeCreatorHtml(m.text)+'</p><small>'+escapeCreatorHtml(m.fromName||"Creator")+' · '+(m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"sending…")+'</small></div>').join(""):'<div class="creator-chat-empty">No messages yet. Say hello and start planning a collaboration.</div>';
    box.scrollTop=box.scrollHeight;
   },err=>{console.error("[PlotLab] Chat listener failed",err);document.getElementById("creatorChatNotice").textContent="Chat is unavailable. Check that Firestore rules are published."});
@@ -182,14 +206,14 @@ function openCreatorProfileEditor(){const p=currentCreatorProfile||{};const box=
 document.getElementById("editCreatorProfileBtn")?.addEventListener("click",openCreatorProfileEditor);document.getElementById("viewCreatorProfileBtn")?.addEventListener("click",()=>renderCreatorProfileView(currentCreatorProfile));
 onAuthStateChanged(auth,async user=>{
  const app=document.getElementById("creatorApplication"),profile=document.getElementById("creatorOwnProfile");
- if(!user){profile.style.display="none";app.style.display="block";document.getElementById("creatorDirectory").style.display="none";document.getElementById("creatorRequestsPanel").style.display="none";document.getElementById("creatorGroupsPanel").style.display="none";document.getElementById("creatorChatPanel").style.display="none";loadCreatorDirectory();loadCreatorGroups();return}
+ if(!user){stopCreatorNotificationWatch();profile.style.display="none";app.style.display="block";document.getElementById("creatorDirectory").style.display="none";document.getElementById("creatorRequestsPanel").style.display="none";document.getElementById("creatorGroupsPanel").style.display="none";document.getElementById("creatorChatPanel").style.display="none";loadCreatorDirectory();loadCreatorGroups();return}
  try{
   const snap=await getDoc(doc(db,"creatorProfiles",user.uid));
   if(snap.exists()){
    app.style.display="none";profile.style.display="block";document.getElementById("creatorDirectory").style.display="";document.getElementById("creatorRequestsPanel").style.display="";document.getElementById("creatorGroupsPanel").style.display="";
    const p=snap.data();renderCreatorProfileView(p,user);
   }else{profile.style.display="none";app.style.display="block";document.getElementById("creatorDirectory").style.display="none";document.getElementById("creatorRequestsPanel").style.display="none";document.getElementById("creatorGroupsPanel").style.display="none";document.getElementById("creatorChatPanel").style.display="none";syncCreatorFormAccount(user)}
-  loadCreatorDirectory();loadCreatorGroups();
+  startCreatorNotificationWatch(user);loadCreatorDirectory();loadCreatorGroups();
  }catch(e){console.error("[PlotLab] Creator profile load failed",e);app.style.display="block";profile.style.display="none";loadCreatorDirectory()}
 });
 document.getElementById("creatorSignOut").addEventListener("click",async()=>{await signOut(auth);location.href="index.html#login"});
