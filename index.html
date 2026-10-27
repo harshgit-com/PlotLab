@@ -1293,11 +1293,13 @@ document.getElementById("reviewForm")?.addEventListener("submit",async e=>{e.pre
 
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, updateEmail, updatePassword, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs, addDoc, query, where, updateDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 const app = getApps().find(a => a.name === "plotlab-user-auth") || initializeApp(firebaseConfig, "plotlab-user-auth");
 const auth = getAuth(app), db = getFirestore(app);
+// Session persistence keeps different PlotLab test accounts isolated across browser tabs.
+await setPersistence(auth,browserSessionPersistence);
 window.plotlabAuth = auth; window.plotlabDb=db; window.plotlabCurrentRole='viewer';
 const notice = (id,msg,good=false) => { const el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add("show");el.style.color=good?"#9de0b1":"#ff9b8a";} };
 const friendly = e => ({"auth/email-already-in-use":"That email already has a PlotLab account. Please log in.","auth/invalid-credential":"Email or password is incorrect.","auth/weak-password":"Choose a password with at least 8 characters.","auth/invalid-email":"Enter a valid email address.","auth/too-many-requests":"Too many attempts. Please wait and try again.","auth/network-request-failed":"Network error. Check your connection and try again."}[e.code] || e.message || "Something went wrong. Please try again.");
@@ -1342,6 +1344,8 @@ document.getElementById("loginForm")?.addEventListener("submit",async e=>{
    if(!snap.exists()){await signOut(auth);throw new Error("Your account profile was not found. Please contact PlotLab support.");}
    const profile=snap.data(); window.plotlabCurrentRole=profile.role||'viewer'; notice("loginNotice","Welcome back, "+(profile.name||cred.user.email)+"! Signed in as "+profile.role+".",true);
   }
+  const signedInUser=auth.currentUser;
+  if(signedInUser){const creatorProfileSnap=await getDoc(doc(db,"creatorProfiles",signedInUser.uid));location.href=creatorProfileSnap.exists()?"creator-lab.html":"index.html#discover";return;}
  }catch(err){notice("loginNotice",friendly(err));console.error("[PlotLab] Account operation failed",err);}finally{btn.disabled=false;}
 });
 function syncCreatorFormAccount(user=auth.currentUser){
