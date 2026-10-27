@@ -79,6 +79,10 @@ document.querySelectorAll("[data-request-tab]").forEach(b=>b.addEventListener("c
 function filterCreatorDirectory(value){window.plotlabCreatorSearch=String(value||"");renderCreatorDirectory()}
 function filterCreatorCraft(value){window.plotlabCreatorCraft=String(value||"");renderCreatorDirectory()}
 function filterCreatorCity(value){window.plotlabCreatorCity=String(value||"");renderCreatorDirectory()}
+// Expose module callbacks used by inline search/filter controls.
+window.filterCreatorDirectory=filterCreatorDirectory;
+window.filterCreatorCraft=filterCreatorCraft;
+window.filterCreatorCity=filterCreatorCity;
 function renderCreatorDirectory(){
  const host=document.getElementById("discoverCreatorDirectory");if(!host)return;
  const profiles=window.plotlabCreatorDirectory||[],connections=window.plotlabCreatorConnections||{outgoing:[],incoming:[]},term=(window.plotlabCreatorSearch||"").toLowerCase(),craft=(window.plotlabCreatorCraft||"").toLowerCase(),city=(window.plotlabCreatorCity||"").toLowerCase();
