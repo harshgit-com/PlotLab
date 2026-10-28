@@ -28,7 +28,7 @@ service cloud.firestore {
   match /creatorConnections/{connectionId}{
    allow read:if signedIn()&&(resource.data.fromUid==request.auth.uid||resource.data.toUid==request.auth.uid)||isAdmin();
    allow create:if signedIn()&&request.resource.data.fromUid==request.auth.uid&&request.resource.data.fromEmail==request.auth.token.email&&request.resource.data.toUid is string&&request.resource.data.toUid!=request.auth.uid&&request.resource.data.status=="pending"&&request.resource.data.keys().hasAll(["fromUid","fromEmail","fromName","toUid","toEmail","toName","status","createdAt","updatedAt"]);
-   allow update:if signedIn()&&resource.data.toUid==request.auth.uid&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status","updatedAt"])&&request.resource.data.status in ["accepted","declined"];
+   allow update:if signedIn()&&request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status","updatedAt"])&&((resource.data.toUid==request.auth.uid&&request.resource.data.status in ["accepted","declined"])||((resource.data.fromUid==request.auth.uid||resource.data.toUid==request.auth.uid)&&request.resource.data.status=="disconnected"));
    allow delete:if signedIn()&&(resource.data.fromUid==request.auth.uid||resource.data.toUid==request.auth.uid)||isAdmin();
   }
   match /creatorChats/{chatId}{
