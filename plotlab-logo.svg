@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" role="img" aria-labelledby="title desc">
+<title id="title">PlotLab</title><desc id="desc">PlotLab flask and play logo with Create Collaborate Stream tagline</desc>
+<defs><linearGradient id="ember" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb06b"/><stop offset=".55" stop-color="#ff806d"/><stop offset="1" stop-color="#e94f2e"/></linearGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#aeb3bb"/></linearGradient></defs>
+<g transform="translate(20 16)">
+<path d="M100 8h66M119 8v49L72 135a35 35 0 0 0 30 53h83a35 35 0 0 0 30-53l-47-78V8" fill="none" stroke="url(#glass)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M83 133h113l18 26a22 22 0 0 1-19 33h-83a22 22 0 0 1-19-33z" fill="url(#ember)" opacity=".9"/>
+<path d="M112 96l44 25-44 25z" fill="#fff"/>
+<circle cx="178" cy="32" r="26" fill="url(#ember)" stroke="#fff" stroke-width="4"/>
+<circle cx="170" cy="24" r="4" fill="#171719"/><circle cx="186" cy="24" r="4" fill="#171719"/><circle cx="170" cy="40" r="4" fill="#171719"/><circle cx="186" cy="40" r="4" fill="#171719"/>
+</g>
+<text x="252" y="130" font-family="Arial,Helvetica,sans-serif" font-size="76" font-weight="800" letter-spacing="9" fill="#f5f1ed">PLOT<tspan fill="url(#ember)">LAB</tspan></text>
+<text x="258" y="174" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="600" letter-spacing="4.4" fill="#d7d1cd">CREATE <tspan fill="#ff806d">•</tspan> COLLABORATE <tspan fill="#ff806d">•</tspan> STREAM</text>
+</svg>
