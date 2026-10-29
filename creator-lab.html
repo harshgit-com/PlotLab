@@ -173,19 +173,42 @@ window.viewCreatorPublicProfile = function(uid) {
 };
 window.closeCreatorPublicProfile = function() { document.getElementById("creatorProfileModal")?.classList.remove("open"); };
 window.sendCreatorConnection=async function(toUid){
- const user=auth.currentUser;if(!user){location.href="index.html#login";return}if(toUid===user.uid)return;
+ const user=auth.currentUser;
+ if(!user){location.href="index.html#login";return}
+ if(!toUid||toUid===user.uid)return;
  try{
-  const prior=await getDocs(query(collection(db,"creatorConnections"),where("fromUid","==",user.uid),where("toUid","==",toUid)));
-  const activePrior=prior.docs.map(d=>d.data()).find(x=>x.status==="pending"||x.status==="accepted");
-  if(activePrior){creatorToast(activePrior.status==="accepted"?"You are already connected":"You already sent a request");return}
+  // Check both directions so two creators cannot create parallel requests for the same pair.
+  const [sentSnap,receivedSnap]=await Promise.all([
+   getDocs(query(collection(db,"creatorConnections"),where("fromUid","==",user.uid),where("toUid","==",toUid))),
+   getDocs(query(collection(db,"creatorConnections"),where("fromUid","==",toUid),where("toUid","==",user.uid)))
+  ]);
+  const pair=[...sentSnap.docs,...receivedSnap.docs].map(d=>({id:d.id,...d.data()}));
+  if(pair.some(x=>x.status==="accepted")){creatorToast("You are already connected");return}
+  if(pair.some(x=>x.status==="pending"&&x.fromUid===user.uid)){creatorToast("You already sent a request");return}
+  if(pair.some(x=>x.status==="pending"&&x.toUid===user.uid)){creatorToast("They already sent you a request. Accept it in Requests.");creatorRequestTab="incoming";document.querySelector('[data-request-tab="incoming"]')?.click();return}
   const p=(window.plotlabCreatorDirectory||[]).find(x=>x.uid===toUid);
-  await addDoc(collection(db,"creatorConnections"),{fromUid:user.uid,fromEmail:user.email||"",fromName:user.displayName||"",toUid,toEmail:p?.email||"",toName:p?.name||"",status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  if(!p){creatorToast("This creator profile could not be found. Refresh and try again.");return}
+  await addDoc(collection(db,"creatorConnections"),{fromUid:user.uid,fromEmail:user.email||"",fromName:user.displayName||p.name||"",toUid,toEmail:p.email||"",toName:p.name||"",status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
   creatorToast("Connection request sent");
- }catch(err){console.error("[PlotLab] Connection request failed",err);creatorToast("Could not send request. Check Firestore rules.");}
+  renderCreatorDirectory();
+ }catch(err){console.error("[PlotLab] Connection request failed",err);creatorToast("Could not send request"+(err?.code==="permission-denied"?". Firestore rules blocked it. Publish the latest rules.":". Check your connection and try again."));}
 };
 window.respondCreatorConnection=async function(id,accept){
- try{await updateDoc(doc(db,"creatorConnections",id),{status:accept?"accepted":"declined",updatedAt:serverTimestamp()});creatorToast(accept?"Creator connected":"Request declined")}
- catch(err){console.error("[PlotLab] Connection response failed",err);creatorToast("Could not update request. Check Firestore rules.");}
+ const user=auth.currentUser;
+ if(!user){creatorToast("Please sign in again.");return}
+ try{
+  const ref=doc(db,"creatorConnections",id),snap=await getDoc(ref);
+  if(!snap.exists()){creatorToast("This request no longer exists. Refresh Requests.");return}
+  const data=snap.data();
+  if(data.toUid!==user.uid){creatorToast("Only the person who received this request can respond.");return}
+  if(data.status!=="pending"){creatorToast("This request has already been handled.");renderCreatorRequests();renderCreatorDirectory();return}
+  await updateDoc(ref,{status:accept?"accepted":"declined",updatedAt:serverTimestamp()});
+  creatorToast(accept?"Connection accepted":"Request declined");
+  // Refresh immediately; realtime listeners will also reconcile both users' views.
+  const row={id,...data,status:accept?"accepted":"declined"};
+  window.plotlabCreatorConnections.incoming=(window.plotlabCreatorConnections.incoming||[]).map(x=>x.id===id?row:x);
+  renderCreatorRequests();renderCreatorDirectory();renderCreatorMessagesDirectory();renderCreatorGroupChoices();
+ }catch(err){console.error("[PlotLab] Connection response failed",err);creatorToast("Could not "+(accept?"accept":"decline")+" request"+(err?.code==="permission-denied"?". Firestore rules blocked the update. Publish the latest rules.":". Check your connection and try again."));}
 };
 window.disconnectCreatorConnection=async function(id,peerUid,name){const user=auth.currentUser;if(!user){creatorToast("Please sign in again.");return}if(!confirm("Disconnect from "+(name||"this creator")+"? This will remove the connection and hide the conversation from your Messages list."))return;const all=[...(window.plotlabCreatorConnections?.outgoing||[]),...(window.plotlabCreatorConnections?.incoming||[])];const matches=all.filter(x=>x.fromUid&&x.toUid&&((x.fromUid===user.uid&&x.toUid===peerUid)||(x.toUid===user.uid&&x.fromUid===peerUid))&&x.status==="accepted");if(id&&!matches.some(x=>x.id===id)){const selected=all.find(x=>x.id===id);if(selected)matches.push(selected)}if(!matches.length){creatorToast("This connection is already removed or is still syncing.");renderCreatorRequests();renderCreatorMessagesDirectory();return}try{await Promise.all(matches.map(x=>updateDoc(doc(db,"creatorConnections",x.id),{status:"disconnected",updatedAt:serverTimestamp()})));window.plotlabCreatorConnections.outgoing=(window.plotlabCreatorConnections.outgoing||[]).map(x=>matches.some(m=>m.id===x.id)?{...x,status:"disconnected"}:x);window.plotlabCreatorConnections.incoming=(window.plotlabCreatorConnections.incoming||[]).map(x=>matches.some(m=>m.id===x.id)?{...x,status:"disconnected"}:x);const chatId=creatorChatId(user.uid,peerUid);delete window.plotlabUnreadChats[chatId];if(activeCreatorChat?.uid===peerUid)window.closeCreatorChat();creatorToast("Disconnected from "+(name||"creator"));renderCreatorRequests();renderCreatorMessagesDirectory();renderCreatorDirectory();renderCreatorGroupChoices()}catch(err){console.error("[PlotLab] Disconnect failed",err);creatorToast("Disconnect failed: "+(err?.code==="permission-denied"?"Firestore rules blocked this update. Publish rules that allow connection participants to update status.":"check your connection and try again."))}};
 function creatorChatId(a,b){return [a,b].sort().join("__")}
