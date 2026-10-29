@@ -143,7 +143,7 @@ function renderCreatorDirectory(){
  const list=profiles.filter(p=>(!term||[p.name,p.role,p.bio,p.lookingFor,p.city,p.experience].some(v=>String(v||"").toLowerCase().includes(term)))&&(!craft||String(p.role||"").toLowerCase()===craft)&&(!city||String(p.city||"").toLowerCase()===city));
  if(!list.length){host.innerHTML='<div class="account-empty"><strong>No matching creators yet.</strong>Try another search or city. New profiles appear here automatically when creators complete their profiles.</div>';return}
  host.innerHTML=list.map(p=>{
-  const sent=outgoing.find(c=>c.toUid===p.uid),received=incoming.find(c=>c.fromUid===p.uid);
+  const sent=outgoing.find(c=>c.toUid===p.uid&&(c.status==="accepted"||c.status==="pending")),received=incoming.find(c=>c.fromUid===p.uid&&(c.status==="accepted"||c.status==="pending"));
   const connected=sent?.status==="accepted"||received?.status==="accepted",pending=sent?.status==="pending",incomingPending=received?.status==="pending";
   const action=connected?'<button class="btn" disabled>Connected ✓</button>':incomingPending?'<button class="btn solid" onclick="respondCreatorConnection(\''+escapeCreatorHtml(received.id)+'\',true)">Accept request</button>':pending?'<button class="btn" disabled>Request sent</button>':'<button class="btn solid" onclick="sendCreatorConnection(\''+escapeCreatorHtml(p.uid)+'\')">Connect ↗</button>';
   const chat='';
