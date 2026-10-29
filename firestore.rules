@@ -54,6 +54,21 @@ service cloud.firestore {
     allow update,delete:if false;
    }
   }
+  match /analyticsEvents/{eventId}{
+   allow create:if signedIn()
+    &&request.resource.data.keys().hasOnly(["userId","eventName","sessionId","page","deviceType","browser","props","createdAt"])
+    &&request.resource.data.keys().hasAll(["userId","eventName","sessionId","page","deviceType","browser","props","createdAt"])
+    &&request.resource.data.userId==request.auth.uid
+    &&request.resource.data.eventName in ["session_start","page_view","login","signup","logout","movie_open","movie_play","movie_pause","movie_progress","movie_complete","trailer_play","search_used","genre_selected","review_submitted","watchlist_add","creator_profile_view","creator_search","connection_request","message_sent","playback_error","ui_interaction"]
+    &&request.resource.data.sessionId is string&&request.resource.data.sessionId.size()>=8&&request.resource.data.sessionId.size()<=80
+    &&request.resource.data.page is string&&request.resource.data.page.size()<=180
+    &&request.resource.data.deviceType in ["mobile","tablet","desktop"]
+    &&request.resource.data.browser in ["Edge","Chrome","Firefox","Safari","Other"]
+    &&request.resource.data.props is map&&request.resource.data.props.size()<=10
+    &&request.resource.data.createdAt==request.time;
+   allow read:if isAdmin();
+   allow update,delete:if false;
+  }
   match /{document=**}{allow read,write:if false;}
  }
 }
