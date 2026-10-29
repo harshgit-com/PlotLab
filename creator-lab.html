@@ -154,8 +154,8 @@ window.viewCreatorPublicProfile = function(uid) {
  const p = (window.plotlabCreatorDirectory || []).find(x => x.uid === uid);
  if (!p) return;
  const con = window.plotlabCreatorConnections || {incoming:[],outgoing:[]};
- const sent = (con.outgoing || []).find(x => x.toUid === uid);
- const received = (con.incoming || []).find(x => x.fromUid === uid);
+ const sent = (con.outgoing || []).find(x => x.toUid === uid && (x.status === "accepted" || x.status === "pending"));
+ const received = (con.incoming || []).find(x => x.fromUid === uid && (x.status === "accepted" || x.status === "pending"));
  const connected = sent?.status === "accepted" || received?.status === "accepted";
  const pending = sent?.status === "pending", incomingPending = received?.status === "pending";
  const photo = p.profilePhoto ? '<img src="' + escapeCreatorHtml(p.profilePhoto) + '" alt="' + escapeCreatorHtml(p.name || "Creator") + '">' : '<div class="creator-person-avatar" style="width:84px;height:84px;font-size:30px">' + escapeCreatorHtml((p.name || "C").trim().charAt(0).toUpperCase()) + '</div>';
@@ -171,7 +171,8 @@ window.sendCreatorConnection=async function(toUid){
  const user=auth.currentUser;if(!user){location.href="index.html#login";return}if(toUid===user.uid)return;
  try{
   const prior=await getDocs(query(collection(db,"creatorConnections"),where("fromUid","==",user.uid),where("toUid","==",toUid)));
-  if(!prior.empty){creatorToast("You already sent a request");return}
+  const activePrior=prior.docs.map(d=>d.data()).find(x=>x.status==="pending"||x.status==="accepted");
+  if(activePrior){creatorToast(activePrior.status==="accepted"?"You are already connected":"You already sent a request");return}
   const p=(window.plotlabCreatorDirectory||[]).find(x=>x.uid===toUid);
   await addDoc(collection(db,"creatorConnections"),{fromUid:user.uid,fromEmail:user.email||"",fromName:user.displayName||"",toUid,toEmail:p?.email||"",toName:p?.name||"",status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
   creatorToast("Connection request sent");
