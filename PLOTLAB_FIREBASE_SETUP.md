@@ -19,10 +19,10 @@ firebase deploy --only firestore:rules
 ```
 Select your project when prompted. Confirm `firebase.json` and `firestore.rules` are in the repository root.
 
-Rules enforce authorization on Firebase servers: only a **verified Google account whose email exactly matches** `plotlab29@gmail.com` can create, update, publish or delete movie records/settings. Public visitors can read only records marked `published: true`. All other Firestore paths are denied. Do not loosen these rules.
+Rules enforce authorization on Firebase servers: only a **verified Google sign-in whose email exactly matches** `plotlab29@gmail.com` can create, update, publish or delete movie records/settings. The dashboard also checks the refreshed Firebase ID token and immediately redirects any other signed-in account to the public site. Admin sign-in uses session-only persistence. Public visitors can read only records marked `published: true`. All other Firestore paths are denied. Do not loosen these rules.
 
 ## 3. Publish the website
-The dashboard is `admin.html`; main site is `index.html`. Deploy both from the same static site root so their relative paths work. The admin route is not secret by URL; security comes from Google sign-in plus Firestore rules. A visitor may open the admin page, but cannot read drafts or make changes.
+The dashboard is `admin.html`; main site is `index.html`. Deploy both from the same static site root so their relative paths work. A static HTML file cannot be made secret by hiding its link: someone can still request `/admin.html` directly. This dashboard therefore fails closed: only the verified owner Google account can reveal the admin interface, and any other signed-in account is signed out and redirected to the public site. Firestore rules independently reject every admin read/write by other accounts. If you need even the login page itself to be unreachable from the public internet, add a hosting-layer access gateway (for example Cloudflare Access on a custom domain); static-site code alone cannot enforce that.
 
 ## 4. Use the dashboard
 1. Open `/admin.html` on your deployed PlotLab domain.
