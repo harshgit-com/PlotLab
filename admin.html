@@ -27,53 +27,75 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
 <section class="section" id="movies"><div class="panel"><h2>Movie library</h2><p class="hint">Import the original built-in titles once to make them editable from this dashboard.</p><button id="importBuiltins" class="btn ghost">Import built-in movies</button><div class="field"><label for="searchMovies">Search titles</label><input id="searchMovies" placeholder="Search title, genre, year…"></div><div id="movieList" class="movie-list"></div></div></section><section class="section" id="reviews"><div class="panel"><h2>Community reviews</h2><p class="hint">Reviews submitted on the public movie detail pages appear here. You can refresh the list or remove inappropriate reviews.</p><div class="form-actions" style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0"><button id="refreshReviews" class="btn ghost" type="button">Refresh reviews</button><a href="index.html" target="_blank" rel="noopener" class="btn ghost">Open public site to write a review ↗</a></div><div id="reviewAdminList" class="movie-list"><div class="empty">Sign in to load community reviews.</div></div></div></section>
 <section class="section" id="analytics">
 <style>
+#analytics{--an-accent:#35d0ba}
 #analytics .an-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+#analytics .an-toolbar{display:flex;gap:9px;align-items:end;flex-wrap:wrap}
 #analytics .an-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;align-items:end}
-#analytics .an-filters .field{margin:0}
-#analytics .an-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin:16px 0}
-#analytics .an-kpi{background:linear-gradient(145deg,#171f27,#11161c);border:1px solid var(--line);border-radius:14px;padding:16px;min-height:95px}
-#analytics .an-kpi small{display:block;color:#aab3bf;font-size:12px;margin-bottom:10px}
-#analytics .an-kpi strong{font-size:26px;letter-spacing:-.5px}
-#analytics .an-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0}
-#analytics .an-chart{min-height:220px}
-#analytics .an-toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
-#analytics .an-toolbar .field{margin:0;min-width:150px}
-#analytics .an-table{width:100%;border-collapse:collapse;min-width:650px}
-#analytics .an-table th{position:sticky;top:0;background:#171e26;color:#aeb9c5;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
-#analytics .an-table th,#analytics .an-table td{padding:11px 10px;border-bottom:1px solid var(--line);font-size:12px}
+#analytics .an-filters .field,#analytics .an-toolbar .field{margin:0}
+#analytics .an-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}
+#analytics .an-kpi{background:linear-gradient(145deg,#171f27,#11161c);border:1px solid var(--line);border-radius:13px;padding:15px;min-height:105px}
+#analytics .an-kpi small{display:block;color:#aab3bf;font-size:11px;margin-bottom:9px}
+#analytics .an-kpi strong{display:block;font-size:26px;letter-spacing:-.5px}
+#analytics .an-kpi em{display:block;font-style:normal;color:#9da8b4;font-size:10px;margin-top:7px;line-height:1.45}
+#analytics .an-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:13px 0}
+#analytics .an-chart{min-height:210px}
+#analytics .an-chart svg{width:100%;height:auto;display:block}
+#analytics .an-table{width:100%;border-collapse:collapse;min-width:760px}
+#analytics .an-table th{position:sticky;top:0;background:#171e26;color:#aeb9c5;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;z-index:1}
+#analytics .an-table th,#analytics .an-table td{padding:10px;border-bottom:1px solid var(--line);font-size:12px}
 #analytics .an-table td{color:#e5e9ed}
-#analytics .an-empty{padding:30px 14px;text-align:center;color:#9da8b4;border:1px dashed #38434e;border-radius:12px}
-#analytics .an-chip{display:inline-flex;padding:4px 8px;border:1px solid #394550;border-radius:20px;color:#c8d2dc;font-size:11px}
-@media(max-width:760px){#analytics .an-grid{grid-template-columns:1fr}#analytics .an-kpi strong{font-size:23px}}
+#analytics .an-empty{padding:28px 14px;text-align:center;color:#9da8b4;border:1px dashed #38434e;border-radius:12px}
+#analytics .an-chip{display:inline-flex;padding:4px 8px;border:1px solid #394550;border-radius:20px;color:#c8d2dc;font-size:10px;white-space:nowrap}
+#analytics .an-note{color:#98a5b2;font-size:11px;line-height:1.6}
+#analytics .an-section-title{margin:0 0 4px}
+#analytics .an-progress{height:8px;background:#28313b;border-radius:9px;overflow:hidden}
+#analytics .an-progress span{display:block;height:100%;background:#35d0ba;border-radius:9px}
+@media(max-width:850px){#analytics .an-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#analytics .an-grid{grid-template-columns:1fr}#analytics .an-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#analytics .an-kpi strong{font-size:22px}}
 </style>
 <div class="panel">
- <div class="an-head"><div><div class="eyebrow">PLOTLAB / INTELLIGENCE</div><h2 style="font-size:25px;margin:4px 0 6px">Analytics overview</h2><p class="hint" style="margin:0">A live view of audience activity, viewing behaviour and Creator Lab engagement.</p></div><div class="an-toolbar"><button id="refreshAnalytics" class="btn ghost" type="button">↻ Refresh data</button><button id="clearAnalyticsFilters" class="btn ghost" type="button">Reset filters</button></div></div>
- <p id="analyticsStatus" class="hint" style="margin:14px 0 0">Waiting for secure Firebase connection…</p>
+ <div class="an-head"><div><div class="eyebrow">PLOTLAB / INTELLIGENCE</div><h2 style="font-size:25px;margin:4px 0 6px">Analytics workspace</h2><p class="hint" style="margin:0">Understand audience growth, viewing behaviour, content performance and product engagement.</p></div><div class="an-toolbar"><button id="refreshAnalytics" class="btn ghost" type="button">↻ Refresh</button><button id="exportAnalytics" class="btn ghost" type="button">↓ Export CSV</button><button id="clearAnalyticsFilters" class="btn ghost" type="button">Reset filters</button></div></div>
+ <p id="analyticsStatus" class="hint" style="margin:13px 0 0">Waiting for secure Firebase connection…</p>
+ <p class="an-note" style="margin:6px 0 0">Analytics currently reflects events collected from signed-in users only. Metrics are calculated from recorded events; no sample or estimated audience data is added.</p>
 </div>
-<div class="panel" style="margin-top:14px">
- <div class="an-head" style="margin-bottom:14px"><div><h3 style="margin:0 0 4px">Filter your report</h3><p class="hint" style="margin:0">All cards and charts respond to these filters.</p></div><span id="anResultCount" class="an-chip">0 matching events</span></div>
+<div class="panel" style="margin-top:13px">
+ <div class="an-head" style="margin-bottom:13px"><div><h3 class="an-section-title">Report filters</h3><p class="hint" style="margin:0">Filters apply to every KPI, chart and activity row.</p></div><span id="anResultCount" class="an-chip">0 events</span></div>
  <div class="an-filters">
-  <div class="field"><label for="anRange">Date range</label><select id="anRange"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option><option value="all">All time</option><option value="custom">Custom range</option></select></div>
-  <div class="field"><label for="anFrom">From</label><input id="anFrom" type="date" disabled></div>
-  <div class="field"><label for="anTo">To</label><input id="anTo" type="date" disabled></div>
-  <div class="field"><label for="anCategoryFilter">Activity category</label><select id="anCategoryFilter"><option value="all">All activity</option><option value="movie">Movie & playback</option><option value="creator">Creator Lab</option><option value="community">Reviews & watchlist</option><option value="discovery">Search & discovery</option><option value="site">Site activity</option><option value="errors">Playback errors</option></select></div>
-  <div class="field"><label for="anEventFilter">Specific event</label><select id="anEventFilter"><option value="all">All events</option><option value="movie_play">Movie play</option><option value="movie_complete">Movie complete</option><option value="movie_progress">Movie progress</option><option value="movie_open">Movie opened</option><option value="review_submitted">Review submitted</option><option value="search_used">Search used</option><option value="genre_selected">Genre selected</option><option value="watchlist_add">Watchlist addition</option><option value="creator_profile_view">Creator profile view</option><option value="creator_search">Creator search</option><option value="connection_request">Connection request</option><option value="message_sent">Message sent</option><option value="login">Login</option><option value="page_view">Page view</option><option value="playback_error">Playback error</option></select></div>
-  <div class="field"><label for="anDeviceFilter">Device</label><select id="anDeviceFilter"><option value="all">All devices</option><option value="desktop">Desktop</option><option value="mobile">Mobile</option><option value="tablet">Tablet</option><option value="unknown">Unknown</option></select></div>
-  <div class="field"><label for="anMovieFilter">Movie / section search</label><input id="anMovieFilter" type="search" placeholder="Type a title or section…"></div>
+  <div class="field"><label for="anRange">Reporting period</label><select id="anRange"><option value="1">Last 24 hours</option><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option><option value="all">All time</option><option value="custom">Custom dates</option></select></div>
+  <div class="field"><label for="anFrom">From date</label><input id="anFrom" type="date" disabled></div>
+  <div class="field"><label for="anTo">To date</label><input id="anTo" type="date" disabled></div>
+  <div class="field"><label for="anCategoryFilter">Product area</label><select id="anCategoryFilter"><option value="all">All product areas</option><option value="movie">Movies & playback</option><option value="creator">Creator Lab</option><option value="community">Community</option><option value="discovery">Discovery</option><option value="site">Account & site</option><option value="errors">Playback errors</option><option value="other">Other events</option></select></div>
+  <div class="field"><label for="anEventFilter">Event type</label><select id="anEventFilter"><option value="all">All event types</option><option value="movie_play">Movie play</option><option value="movie_complete">Movie completed</option><option value="movie_progress">Playback progress</option><option value="movie_pause">Movie paused</option><option value="movie_open">Movie opened</option><option value="trailer_play">Trailer played</option><option value="review_submitted">Review submitted</option><option value="watchlist_add">Added to watchlist</option><option value="watchlist_remove">Removed from watchlist</option><option value="search_used">Search used</option><option value="genre_selected">Genre selected</option><option value="creator_profile_view">Creator profile viewed</option><option value="creator_search">Creator search</option><option value="connection_request">Connection request</option><option value="message_sent">Message sent</option><option value="login">Login</option><option value="signup">Signup</option><option value="page_view">Page view</option><option value="playback_error">Playback error</option><option value="ui_interaction">UI interaction</option></select></div>
+  <div class="field"><label for="anDeviceFilter">Device type</label><select id="anDeviceFilter"><option value="all">All devices</option><option value="desktop">Desktop</option><option value="mobile">Mobile</option><option value="tablet">Tablet</option><option value="unknown">Unknown</option></select></div>
+  <div class="field"><label for="anBrowserFilter">Browser</label><select id="anBrowserFilter"><option value="all">All browsers</option><option value="Chrome">Chrome</option><option value="Edge">Edge</option><option value="Safari">Safari</option><option value="Firefox">Firefox</option><option value="Other">Other</option></select></div>
+  <div class="field"><label for="anMovieFilter">Search title / genre / page</label><input id="anMovieFilter" type="search" placeholder="Search report data…"></div>
  </div>
 </div>
 <div class="an-kpis">
- <div class="an-kpi"><small>Total events</small><strong id="anEvents">—</strong></div><div class="an-kpi"><small>Active signed-in users</small><strong id="anActiveUsers">—</strong></div><div class="an-kpi"><small>Movie plays</small><strong id="anPlays">—</strong></div><div class="an-kpi"><small>Unique viewers</small><strong id="anViewers">—</strong></div><div class="an-kpi"><small>Estimated watch time</small><strong id="anWatch">—</strong></div><div class="an-kpi"><small>Completed sessions</small><strong id="anComplete">—</strong></div><div class="an-kpi"><small>Creator interactions</small><strong id="anCreator">—</strong></div><div class="an-kpi"><small>Reviews submitted</small><strong id="anReviews">—</strong></div>
+ <div class="an-kpi"><small>Tracked events</small><strong id="anEvents">—</strong><em>All matching recorded actions</em></div>
+ <div class="an-kpi"><small>Active users</small><strong id="anActiveUsers">—</strong><em>Distinct signed-in user IDs</em></div>
+ <div class="an-kpi"><small>Movie starts</small><strong id="anPlays">—</strong><em>Recorded movie_play events</em></div>
+ <div class="an-kpi"><small>Unique viewers</small><strong id="anViewers">—</strong><em>Distinct users who started a movie</em></div>
+ <div class="an-kpi"><small>Completion rate</small><strong id="anCompletionRate">—</strong><em>Completed play sessions ÷ started play sessions</em></div>
+ <div class="an-kpi"><small>Recorded watch time</small><strong id="anWatch">—</strong><em>Maximum reported watch seconds per play session</em></div>
+ <div class="an-kpi"><small>Playback errors</small><strong id="anErrors">—</strong><em>Recorded playback_error events</em></div>
+ <div class="an-kpi"><small>Community actions</small><strong id="anCommunity">—</strong><em>Reviews and watchlist actions</em></div>
 </div>
 <div class="an-grid">
- <div class="panel"><h3>Activity trend</h3><div id="anTrendChart" class="an-chart"></div></div><div class="panel"><h3>Activity breakdown</h3><div id="anEventPie" class="an-chart"></div></div>
- <div class="panel"><h3>Most-watched titles</h3><div id="anMovieChart" class="an-chart"></div></div><div class="panel"><h3>Audience devices</h3><div id="anDevicePie" class="an-chart"></div></div>
- <div class="panel"><h3>Creator Lab engagement</h3><div id="anCreatorChart" class="an-chart"></div></div><div class="panel"><h3>Feature usage</h3><div id="anFeatureChart" class="an-chart"></div></div>
- <div class="panel" style="grid-column:1/-1"><h3>Genre interest</h3><div id="anGenreChart" class="an-chart"></div><p class="hint">Genre selections indicate interest, not confirmed viewing.</p></div>
+ <div class="panel"><h3>Audience activity over time</h3><div id="anTrendChart" class="an-chart"></div><p class="an-note">Daily events and distinct active users, based on event timestamps.</p></div>
+ <div class="panel"><h3>Product area mix</h3><div id="anAreaPie" class="an-chart"></div></div>
+ <div class="panel"><h3>Top-performing movies</h3><div id="anMovieChart" class="an-chart"></div><p class="an-note">Ranked by movie starts, not total minutes watched.</p></div>
+ <div class="panel"><h3>Viewing completion</h3><div id="anCompletionChart" class="an-chart"></div><p class="an-note">Completion is counted only when a movie_complete event is recorded.</p></div>
+ <div class="panel"><h3>Device distribution</h3><div id="anDevicePie" class="an-chart"></div></div>
+ <div class="panel"><h3>Browser distribution</h3><div id="anBrowserPie" class="an-chart"></div></div>
+ <div class="panel"><h3>Genre demand</h3><div id="anGenreChart" class="an-chart"></div><p class="an-note">Based on explicit genre_selected events only.</p></div>
+ <div class="panel"><h3>Creator Lab activity</h3><div id="anCreatorChart" class="an-chart"></div></div>
+ <div class="panel"><h3>Feature usage</h3><div id="anFeatureChart" class="an-chart"></div></div>
+ <div class="panel"><h3>Playback health</h3><div id="anHealthChart" class="an-chart"></div></div>
 </div>
-<div class="panel" style="margin-top:14px">
- <div class="an-head" style="margin-bottom:12px"><div><h3 style="margin:0 0 4px">Event activity log</h3><p class="hint" style="margin:0">Filter, sort and inspect the latest matching activity.</p></div><div class="an-toolbar"><div class="field"><label for="anSort">Sort rows</label><select id="anSort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="event">Event name A–Z</option><option value="device">Device A–Z</option><option value="title">Movie / context A–Z</option></select></div><div class="field"><label for="anRows">Rows per page</label><select id="anRows"><option value="25">25 rows</option><option value="50">50 rows</option><option value="100">100 rows</option></select></div></div></div>
- <div style="overflow:auto;max-height:560px"><table class="an-table"><thead><tr><th>Time</th><th>Event</th><th>Movie / context</th><th>Device</th><th>Category</th></tr></thead><tbody id="anRecent"></tbody></table></div>
+<div class="panel" style="margin-top:13px">
+ <div class="an-head" style="margin-bottom:12px"><div><h3 class="an-section-title">Event explorer</h3><p class="hint" style="margin:0">Inspect matching events, sort results and export the filtered report.</p></div><div class="an-toolbar"><div class="field"><label for="anSort">Sort by</label><select id="anSort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="event">Event A–Z</option><option value="device">Device A–Z</option><option value="title">Title / context A–Z</option></select></div><div class="field"><label for="anRows">Rows per page</label><select id="anRows"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div></div></div>
+ <div style="overflow:auto;max-height:560px"><table class="an-table"><thead><tr><th>Date & time</th><th>Event</th><th>Title / context</th><th>Area</th><th>Device</th><th>Browser</th></tr></thead><tbody id="anRecent"></tbody></table></div>
  <div class="an-head" style="margin-top:12px;align-items:center"><span id="anPageInfo" class="hint">Showing 0 rows</span><div class="an-toolbar"><button id="anPrev" class="btn ghost mini" type="button" disabled>Previous</button><button id="anNext" class="btn ghost mini" type="button" disabled>Next</button></div></div>
 </div>
 </section>
@@ -119,24 +141,25 @@ if(!configured){$("googleLogin").disabled=true;status("Firebase is not configure
 else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);await setPersistence(auth,browserSessionPersistence);let rejectingUnauthorized=false;$("googleLogin").addEventListener("click",async()=>{try{const provider=new GoogleAuthProvider();provider.setCustomParameters({prompt:"select_account"});await signInWithPopup(auth,provider)}catch(e){status("Sign-in failed: "+e.message,"bad")}});onAuthStateChanged(auth,async user=>{if(rejectingUnauthorized)return;currentUser=user;if(!user){$("loginPanel").classList.remove("hidden");$("appPanel").classList.add("hidden");$("logout").classList.add("hidden");$("userEmail").textContent="";return}try{await user.getIdToken(true);const token=await user.getIdTokenResult();const claims=token.claims||{};const provider=claims.firebase?.sign_in_provider;const owner=claims.email===PLOTLAB_ADMIN_EMAIL&&claims.email_verified===true&&provider==="google.com";if(!owner){rejectingUnauthorized=true;currentUser=null;document.body.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;background:#090909;color:#f5f0e8;font:16px Arial,sans-serif;text-align:center;padding:24px"><div><h1>Private area</h1><p>This dashboard is restricted to its authorized owner.</p><p>Returning to PlotLab…</p></div></main>';try{await signOut(auth)}catch(_){}location.replace("index.html");return}currentUser=user;$("loginPanel").classList.add("hidden");$("appPanel").classList.remove("hidden");$("logout").classList.remove("hidden");$("userEmail").textContent=user.email;status("Verified owner session. Loading private catalogue…");try{await loadData();status("Connected to Firebase. Changes are saved to the live catalogue when published.","good")}catch(e){status("Could not load data: "+e.message+". Confirm Firestore is created and firestore.rules are deployed.","bad")}}catch(e){rejectingUnauthorized=true;currentUser=null;try{await signOut(auth)}catch(_){}location.replace("index.html")}});$("logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")})}catch(e){status("Firebase initialization error: "+e.message,"bad")}}
 
 const fmtNum=n=>Number(n||0).toLocaleString();
-const fmtDuration=seconds=>{const n=Math.max(0,Math.round(seconds||0));if(n<60)return n+" sec";const m=Math.floor(n/60),h=Math.floor(m/60);return h?h+"h "+(m%60)+"m":m+"m"};
+const fmtDuration=seconds=>{const n=Math.max(0,Math.round(seconds||0));if(n<60)return n+"s";const m=Math.floor(n/60),h=Math.floor(m/60);return h?h+"h "+(m%60)+"m":m+"m"};
 let analyticsEventsCache=[],analyticsPage=0,analyticsFilterTimer=null;
 const anPalette=["#35D0BA","#F5B942","#55B6E8","#A3D977","#FF8A50","#E78AC3","#FF6B6B","#B7C7D8"];
 const anEsc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function anCategory(name){
- if(["movie_play","movie_complete","movie_progress","movie_pause","movie_open","playback_error"].includes(name))return "movie";
+ if(["movie_play","movie_complete","movie_progress","movie_pause","movie_open","trailer_play","playback_error"].includes(name))return "movie";
  if(["creator_profile_view","creator_search","connection_request","message_sent"].includes(name))return "creator";
  if(["review_submitted","watchlist_add","watchlist_remove"].includes(name))return "community";
  if(["search_used","genre_selected"].includes(name))return "discovery";
- if(["page_view","login","logout","session_start"].includes(name))return "site";
+ if(["page_view","login","signup","logout","session_start"].includes(name))return "site";
+ if(name==="playback_error")return "errors";
  return "other";
 }
-function anCategoryLabel(name){return ({movie:"Movie & playback",creator:"Creator Lab",community:"Community",discovery:"Discovery",site:"Site activity",errors:"Playback errors"})[name]||"Other"}
+function anCategoryLabel(name){return ({movie:"Movies & playback",creator:"Creator Lab",community:"Community",discovery:"Discovery",site:"Account & site",errors:"Playback errors",other:"Other"})[name]||"Other"}
 function anDate(e){return e.createdAt?.toDate?e.createdAt.toDate():e.createdAt?.seconds?new Date(e.createdAt.seconds*1000):null}
+function anContext(e){const p=e.props||{};return p.movieTitle||p.movieId||p.genre||p.section||e.page||"—"}
 function anFiltered(){
- const range=$("anRange").value,category=$("anCategoryFilter").value,event=$("anEventFilter").value,device=$("anDeviceFilter").value,term=$("anMovieFilter").value.trim().toLowerCase();
- const from=$("anFrom").value,to=$("anTo").value,now=new Date();
- let start=null,end=null;
+ const range=$("anRange").value,category=$("anCategoryFilter").value,event=$("anEventFilter").value,device=$("anDeviceFilter").value,browser=$("anBrowserFilter").value,term=$("anMovieFilter").value.trim().toLowerCase();
+ const from=$("anFrom").value,to=$("anTo").value,now=new Date();let start=null,end=null;
  if(range==="custom"){if(from)start=new Date(from+"T00:00:00");if(to)end=new Date(to+"T23:59:59.999")}
  else if(range!=="all")start=new Date(now.getTime()-Number(range)*86400000);
  return analyticsEventsCache.filter(e=>{
@@ -146,49 +169,69 @@ function anFiltered(){
   if(category!=="all"&&category!=="errors"&&cat!==category)return false;
   if(event!=="all"&&e.eventName!==event)return false;
   if(device!=="all"&&(e.deviceType||"unknown")!==device)return false;
-  if(term&&!([p.movieTitle,p.movieId,p.section,p.genre,e.page].filter(Boolean).join(" ").toLowerCase().includes(term)))return false;
+  if(browser!=="all"&&(e.browser||"Other")!==browser)return false;
+  if(term&&!([p.movieTitle,p.movieId,p.section,p.genre,e.page,e.eventName].filter(Boolean).join(" ").toLowerCase().includes(term)))return false;
   return true;
  });
 }
 function anBars(id,items,empty){
  const host=$(id),max=Math.max(1,...items.map(x=>x.value));
- host.innerHTML=items.length?items.map((x,i)=>'<div style="display:grid;grid-template-columns:minmax(90px,1fr) minmax(60px,2fr) 38px;gap:10px;align-items:center;margin:13px 0"><span style="font-size:12px;overflow-wrap:anywhere">'+anEsc(x.name)+'</span><div style="height:11px;background:#29323b;border-radius:9px;overflow:hidden"><div style="height:100%;width:'+Math.max(2,x.value/max*100)+'%;background:'+anPalette[i%anPalette.length]+';border-radius:9px"></div></div><b style="font-size:12px;text-align:right">'+fmtNum(x.value)+'</b></div>').join(""):'<div class="an-empty">'+anEsc(empty)+'</div>';
+ host.innerHTML=items.length?items.map((x,i)=>'<div style="display:grid;grid-template-columns:minmax(85px,1fr) minmax(65px,2fr) 42px;gap:9px;align-items:center;margin:13px 0"><span style="font-size:12px;overflow-wrap:anywhere">'+anEsc(x.name)+'</span><div class="an-progress"><span style="width:'+Math.max(2,x.value/max*100)+'%;background:'+anPalette[i%anPalette.length]+'"></span></div><b style="font-size:12px;text-align:right">'+fmtNum(x.value)+'</b></div>').join(""):'<div class="an-empty">'+anEsc(empty)+'</div>';
 }
 function anDonut(id,items,empty){
  const host=$(id),total=items.reduce((a,x)=>a+x.value,0);if(!total){host.innerHTML='<div class="an-empty">'+anEsc(empty)+'</div>';return}
  let cursor=0;const stops=items.map((x,i)=>{const a=cursor;cursor+=x.value/total*100;return anPalette[i%anPalette.length]+' '+a+'% '+cursor+'%'}).join(",");
- host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;padding:12px"><div style="width:145px;height:145px;border-radius:50%;background:conic-gradient('+stops+');position:relative;flex:none"><div style="position:absolute;inset:27px;border-radius:50%;background:#141920;display:grid;place-items:center;text-align:center"><div><b style="font-size:22px">'+fmtNum(total)+'</b><div style="font-size:10px;color:#aab3bf">EVENTS</div></div></div></div><div style="display:grid;gap:9px;min-width:125px">'+items.map((x,i)=>'<div style="display:flex;gap:8px;align-items:center;font-size:12px"><i style="width:9px;height:9px;border-radius:50%;background:'+anPalette[i%anPalette.length]+'"></i><span>'+anEsc(x.name)+'</span><b style="margin-left:auto">'+fmtNum(x.value)+'</b></div>').join("")+'</div></div>';
+ host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:12px"><div style="width:142px;height:142px;border-radius:50%;background:conic-gradient('+stops+');position:relative;flex:none"><div style="position:absolute;inset:27px;border-radius:50%;background:#141920;display:grid;place-items:center;text-align:center"><div><b style="font-size:22px">'+fmtNum(total)+'</b><div style="font-size:10px;color:#aab3bf">EVENTS</div></div></div></div><div style="display:grid;gap:8px;min-width:120px">'+items.map((x,i)=>'<div style="display:flex;gap:7px;align-items:center;font-size:11px"><i style="width:9px;height:9px;border-radius:50%;background:'+anPalette[i%anPalette.length]+'"></i><span>'+anEsc(x.name)+'</span><b style="margin-left:auto">'+fmtNum(x.value)+'</b></div>').join("")+'</div></div>';
 }
+function anSessionKey(e){const p=e.props||{};return [e.userId||"anonymous",e.sessionId||e.id||"",p.movieId||p.movieTitle||"unknown"].join("|")}
 function renderAnalytics(){
  const events=anFiltered(),plays=events.filter(e=>e.eventName==="movie_play"),active=new Set(events.map(e=>e.userId).filter(Boolean)),viewers=new Set(plays.map(e=>e.userId).filter(Boolean));
- const watch=new Map(),completed=new Set(),movieMap=new Map(),deviceMap=new Map(),dayMap=new Map(),creatorMap=new Map(),featureMap=new Map(),genreMap=new Map();
+ const watch=new Map(),completed=new Set(),movieMap=new Map(),deviceMap=new Map(),browserMap=new Map(),dayMap=new Map(),dayUsers=new Map(),creatorMap=new Map(),featureMap=new Map(),genreMap=new Map(),areaMap=new Map();
  for(const e of events){
-  const p=e.props||{},mid=p.movieId||p.movieTitle||"unknown",sid=[e.userId||"",e.sessionId||"",mid].join("|");
-  if(["movie_progress","movie_pause","movie_complete"].includes(e.eventName))watch.set(sid,Math.max(watch.get(sid)||0,Number(p.watchSeconds)||0));
-  if(e.eventName==="movie_complete")completed.add(sid);
-  const d=anDate(e);if(d){const key=d.toISOString().slice(0,10);dayMap.set(key,(dayMap.get(key)||0)+1)}
+  const p=e.props||{},key=anSessionKey(e),cat=anCategory(e.eventName);
+  if(["movie_progress","movie_pause","movie_complete"].includes(e.eventName))watch.set(key,Math.max(watch.get(key)||0,Number(p.watchSeconds)||0));
+  if(e.eventName==="movie_complete")completed.add(key);
+  const d=anDate(e);if(d){const day=d.toISOString().slice(0,10);dayMap.set(day,(dayMap.get(day)||0)+1);if(e.userId){if(!dayUsers.has(day))dayUsers.set(day,new Set());dayUsers.get(day).add(e.userId)}}
   const dev=e.deviceType||"unknown";deviceMap.set(dev,(deviceMap.get(dev)||0)+1);
+  const br=e.browser||"Other";browserMap.set(br,(browserMap.get(br)||0)+1);
   featureMap.set(e.eventName,(featureMap.get(e.eventName)||0)+1);
-  if(anCategory(e.eventName)==="creator")creatorMap.set(e.eventName,(creatorMap.get(e.eventName)||0)+1);
+  areaMap.set(cat,(areaMap.get(cat)||0)+1);
+  if(cat==="creator")creatorMap.set(e.eventName,(creatorMap.get(e.eventName)||0)+1);
   if(e.eventName==="genre_selected"&&p.genre)genreMap.set(String(p.genre),(genreMap.get(String(p.genre))||0)+1);
  }
  for(const e of plays){const p=e.props||{},name=p.movieTitle||p.movieId||"Unknown title",key=p.movieId||name;const x=movieMap.get(key)||{name,value:0};x.value++;movieMap.set(key,x)}
- $("anEvents").textContent=fmtNum(events.length);$("anActiveUsers").textContent=fmtNum(active.size);$("anPlays").textContent=fmtNum(plays.length);$("anViewers").textContent=fmtNum(viewers.size);$("anWatch").textContent=fmtDuration([...watch.values()].reduce((a,b)=>a+b,0));$("anComplete").textContent=fmtNum(completed.size);$("anCreator").textContent=fmtNum([...creatorMap.values()].reduce((a,b)=>a+b,0));$("anReviews").textContent=fmtNum(events.filter(e=>e.eventName==="review_submitted").length);
+ const playSessions=new Set(plays.map(anSessionKey)),completionCount=[...completed].filter(k=>playSessions.has(k)).length,completionRate=playSessions.size?completionCount/playSessions.size*100:0;
+ const watchSeconds=[...watch.values()].reduce((a,b)=>a+b,0),errors=events.filter(e=>e.eventName==="playback_error").length;
+ const community=events.filter(e=>["review_submitted","watchlist_add","watchlist_remove"].includes(e.eventName)).length;
+ $("anEvents").textContent=fmtNum(events.length);$("anActiveUsers").textContent=fmtNum(active.size);$("anPlays").textContent=fmtNum(plays.length);$("anViewers").textContent=fmtNum(viewers.size);
+ $("anCompletionRate").textContent=playSessions.size?completionRate.toFixed(1)+"%":"—";$("anWatch").textContent=fmtDuration(watchSeconds);$("anErrors").textContent=fmtNum(errors);$("anCommunity").textContent=fmtNum(community);
  $("anResultCount").textContent=fmtNum(events.length)+" matching events";
- anBars("anMovieChart",[...movieMap.values()].sort((a,b)=>b.value-a.value).slice(0,8),"No movie plays match these filters.");
- anDonut("anDevicePie",[...deviceMap.entries()].map(([name,value])=>({name,value})),"No device data for this selection.");
- anDonut("anEventPie",[...featureMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,value])=>({name:name.replaceAll("_"," "),value})),"No activity for this selection.");
- anBars("anCreatorChart",[...creatorMap.entries()].map(([name,value])=>({name:name.replaceAll("_"," "),value})),"No Creator Lab activity for this selection.");
- anBars("anFeatureChart",[...featureMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,10).map(([name,value])=>({name:name.replaceAll("_"," "),value})),"No feature activity for this selection.");
- anBars("anGenreChart",[...genreMap.entries()].sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name,value})),"No genre selections for this selection.");
- const days=[...dayMap.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-21),max=Math.max(1,...days.map(x=>x[1]));
- if(days.length){const w=620,h=205,pad=28,pts=days.map(([day,n],i)=>({x:pad+(days.length===1?0:i*(w-2*pad)/(days.length-1)),y:h-pad-n/max*(h-2*pad),day,n}));const path=pts.map((p,i)=>(i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)).join(" ");$("anTrendChart").innerHTML='<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto" role="img" aria-label="Daily activity trend"><path d="M'+pad+' '+pad+'V'+(h-pad)+'H'+(w-pad)+'" fill="none" stroke="#46505d"/><path d="'+path+'" fill="none" stroke="#35D0BA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+pts.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#35D0BA"><title>'+p.day+': '+p.n+'</title></circle>').join("")+pts.filter((p,i)=>i===0||i===pts.length-1||i%4===0).map(p=>'<text x="'+p.x+'" y="'+(h-7)+'" fill="#aab3bf" font-size="10" text-anchor="middle">'+p.day.slice(5)+'</text>').join("")+'</svg><p class="hint">Daily recorded events · hover a point for its count</p>'}else $("anTrendChart").innerHTML='<div class="an-empty">No dated events in this selection.</div>';
+ anBars("anMovieChart",[...movieMap.values()].sort((a,b)=>b.value-a.value).slice(0,10),"No movie starts in this report.");
+ anDonut("anAreaPie",[...areaMap.entries()].map(([name,value])=>({name:anCategoryLabel(name),value})),"No product-area events.");
+ anDonut("anDevicePie",[...deviceMap.entries()].map(([name,value])=>({name,value})),"No device data.");
+ anDonut("anBrowserPie",[...browserMap.entries()].map(([name,value])=>({name,value})),"No browser data.");
+ anBars("anCreatorChart",[...creatorMap.entries()].sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name:name.replaceAll("_"," "),value})),"No Creator Lab events.");
+ anBars("anFeatureChart",[...featureMap.entries()].sort((a,b)=>b[1]-a[1]).slice(0,10).map(([name,value])=>({name:name.replaceAll("_"," "),value})),"No feature events.");
+ anBars("anGenreChart",[...genreMap.entries()].sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name,value})),"No explicit genre selections.");
+ const completionItems=[{name:"Completed",value:completionCount},{name:"Not completed",value:Math.max(0,playSessions.size-completionCount)}].filter(x=>x.value>0);
+ anDonut("anCompletionChart",completionItems,"No movie play sessions to calculate completion.");
+ anBars("anHealthChart",[{name:"Movie starts",value:plays.length},{name:"Playback errors",value:errors}],events.length?"No playback starts or errors in this selection.":"No data for this selection.");
+ const days=[...dayMap.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-30),max=Math.max(1,...days.map(x=>x[1]));
+ if(days.length){
+  const w=660,h=220,pad=30,pts=days.map(([day,n],i)=>({x:pad+(days.length===1?0:i*(w-2*pad)/(days.length-1)),y:h-pad-n/max*(h-2*pad),day,n,users:(dayUsers.get(day)||new Set()).size}));
+  const path=pts.map((p,i)=>(i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)).join(" ");
+  $("anTrendChart").innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Daily event activity chart"><path d="M'+pad+' '+pad+'V'+(h-pad)+'H'+(w-pad)+'" fill="none" stroke="#46505d"/><path d="'+path+'" fill="none" stroke="#35D0BA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+pts.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="#35D0BA"><title>'+p.day+': '+p.n+' events; '+p.users+' active users</title></circle>').join("")+pts.filter((p,i)=>i===0||i===pts.length-1||i%Math.max(1,Math.floor(pts.length/6))===0).map(p=>'<text x="'+p.x+'" y="'+(h-7)+'" fill="#aab3bf" font-size="10" text-anchor="middle">'+p.day.slice(5)+'</text>').join("")+'</svg>';
+ }else $("anTrendChart").innerHTML='<div class="an-empty">No dated events in this selection.</div>';
  renderAnalyticsTable(events);
 }
 function renderAnalyticsTable(events){
- const sort=$("anSort").value,rows=[...events];rows.sort((a,b)=>{if(sort==="newest"||sort==="oldest"){const d=(anDate(a)?.getTime()||0)-(anDate(b)?.getTime()||0);return sort==="newest"?-d:d}const av=sort==="event"?(a.eventName||""):sort==="device"?(a.deviceType||"unknown"):(a.props?.movieTitle||a.props?.movieId||a.props?.section||"");const bv=sort==="event"?(b.eventName||""):sort==="device"?(b.deviceType||"unknown"):(b.props?.movieTitle||b.props?.movieId||b.props?.section||"");return av.localeCompare(bv)});
+ const sort=$("anSort").value,rows=[...events];rows.sort((a,b)=>{
+  if(sort==="newest"||sort==="oldest"){const d=(anDate(a)?.getTime()||0)-(anDate(b)?.getTime()||0);return sort==="newest"?-d:d}
+  const val=e=>sort==="event"?(e.eventName||""):sort==="device"?(e.deviceType||"unknown"):anContext(e);
+  return val(a).localeCompare(val(b));
+ });
  const size=Number($("anRows").value)||25,pages=Math.max(1,Math.ceil(rows.length/size));analyticsPage=Math.min(analyticsPage,pages-1);const start=analyticsPage*size,shown=rows.slice(start,start+size);
- $("anRecent").innerHTML=shown.length?shown.map(e=>{const d=anDate(e),p=e.props||{},ctx=p.movieTitle||p.movieId||p.section||p.genre||e.page||"—",cat=anCategory(e.eventName);return '<tr><td style="white-space:nowrap">'+anEsc(d?d.toLocaleString():"Pending")+'</td><td><span class="an-chip">'+anEsc((e.eventName||"event").replaceAll("_"," "))+'</span></td><td>'+anEsc(ctx)+'</td><td>'+anEsc(e.deviceType||"unknown")+'</td><td>'+anEsc(anCategoryLabel(cat))+'</td></tr>'}).join(""):'<tr><td colspan="5"><div class="an-empty">No events match the selected filters.</div></td></tr>';
+ $("anRecent").innerHTML=shown.length?shown.map(e=>{const d=anDate(e);return '<tr><td style="white-space:nowrap">'+anEsc(d?d.toLocaleString():"Pending")+'</td><td><span class="an-chip">'+anEsc((e.eventName||"event").replaceAll("_"," "))+'</span></td><td>'+anEsc(anContext(e))+'</td><td>'+anEsc(anCategoryLabel(anCategory(e.eventName)))+'</td><td>'+anEsc(e.deviceType||"unknown")+'</td><td>'+anEsc(e.browser||"Other")+'</td></tr>'}).join(""):'<tr><td colspan="6"><div class="an-empty">No events match these filters.</div></td></tr>';
  $("anPageInfo").textContent=rows.length?"Showing "+(start+1)+"–"+Math.min(start+size,rows.length)+" of "+rows.length+" events":"Showing 0 rows";
  $("anPrev").disabled=analyticsPage<=0;$("anNext").disabled=analyticsPage>=pages-1;
 }
@@ -198,13 +241,28 @@ async function loadAnalytics(){
  statusEl.textContent="Connecting securely to Firestore…";
  try{
   const q=query(collection(db,"analyticsEvents"),orderBy("createdAt","desc"));
-  analyticsUnsubscribe=onSnapshot(q,snap=>{analyticsEventsCache=snap.docs.map(d=>({id:d.id,...d.data()}));renderAnalytics();statusEl.textContent="LIVE · "+fmtNum(analyticsEventsCache.length)+" stored events · updates automatically when new events arrive."},err=>{statusEl.textContent="Analytics could not load ("+(err.code||"error")+"): "+err.message+" · Check that the deployed Firestore rules allow the verified owner to read analyticsEvents.";analyticsUnsubscribe=null});
+  analyticsUnsubscribe=onSnapshot(q,snap=>{analyticsEventsCache=snap.docs.map(d=>({id:d.id,...d.data()}));renderAnalytics();statusEl.textContent="LIVE · "+fmtNum(analyticsEventsCache.length)+" stored events · auto-refreshes when new events arrive."},err=>{statusEl.textContent="Analytics could not load ("+(err.code||"error")+"): "+err.message+" · Check that deployed Firestore rules allow the owner to read analyticsEvents.";analyticsUnsubscribe=null});
  }catch(e){statusEl.textContent="Analytics connection failed: "+e.message;analyticsUnsubscribe=null}
 }
-function resetAnalyticsFilters(){$("anRange").value="30";$("anFrom").value="";$("anTo").value="";$("anFrom").disabled=true;$("anTo").disabled=true;$("anCategoryFilter").value="all";$("anEventFilter").value="all";$("anDeviceFilter").value="all";$("anMovieFilter").value="";$("anSort").value="newest";$("anRows").value="25";analyticsPage=0;renderAnalytics()}
+function resetAnalyticsFilters(){
+ $("anRange").value="30";$("anFrom").value="";$("anTo").value="";$("anFrom").disabled=true;$("anTo").disabled=true;
+ ["anCategoryFilter","anEventFilter","anDeviceFilter","anBrowserFilter"].forEach(id=>$(id).value="all");
+ $("anMovieFilter").value="";$("anSort").value="newest";$("anRows").value="25";analyticsPage=0;renderAnalytics();
+}
+function exportAnalyticsCSV(){
+ const rows=anFiltered(),headers=["createdAt","eventName","category","userId","sessionId","deviceType","browser","page","movieTitle","movieId","genre","section","watchSeconds","percent"];
+ const quote=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+ const lines=[headers.join(","),...rows.map(e=>{const p=e.props||{},d=anDate(e);const vals=[d?d.toISOString():"",e.eventName,anCategoryLabel(anCategory(e.eventName)),e.userId,e.sessionId,e.deviceType,e.browser,e.page,p.movieTitle,p.movieId,p.genre,p.section,p.watchSeconds,p.percent];return vals.map(quote).join(",")})];
+ const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="plotlab-analytics-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
 $("refreshAnalytics").addEventListener("click",loadAnalytics);
+$("exportAnalytics").addEventListener("click",exportAnalyticsCSV);
 $("clearAnalyticsFilters").addEventListener("click",resetAnalyticsFilters);
-["anRange","anFrom","anTo","anCategoryFilter","anEventFilter","anDeviceFilter","anSort","anRows"].forEach(id=>$(id).addEventListener("change",()=>{if(id==="anRange"){const custom=$("anRange").value==="custom";$("anFrom").disabled=!custom;$("anTo").disabled=!custom}analyticsPage=0;renderAnalytics()}));
+["anRange","anFrom","anTo","anCategoryFilter","anEventFilter","anDeviceFilter","anBrowserFilter","anSort","anRows"].forEach(id=>$(id).addEventListener("change",()=>{
+ if(id==="anRange"){const custom=$("anRange").value==="custom";$("anFrom").disabled=!custom;$("anTo").disabled=!custom}
+ analyticsPage=0;renderAnalytics();
+}));
 $("anMovieFilter").addEventListener("input",()=>{clearTimeout(analyticsFilterTimer);analyticsFilterTimer=setTimeout(()=>{analyticsPage=0;renderAnalytics()},220)});
 $("anPrev").addEventListener("click",()=>{analyticsPage=Math.max(0,analyticsPage-1);renderAnalyticsTable(anFiltered())});
 $("anNext").addEventListener("click",()=>{analyticsPage++;renderAnalyticsTable(anFiltered())});
