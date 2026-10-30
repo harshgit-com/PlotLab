@@ -23,15 +23,15 @@ if (!window.__plotlabAnalyticsInitialized) {
       }
       let activeUser = null;
       let authInitialized = false;
-      let lastProgress = new WeakMap();
+      const boundVideos = new WeakSet();
       const deviceType = matchMedia("(max-width: 767px)").matches ? "mobile" : (matchMedia("(pointer: coarse)").matches ? "tablet" : "desktop");
       const browser = /Edg\//.test(navigator.userAgent) ? "Edge" : /Chrome\//.test(navigator.userAgent) ? "Chrome" : /Firefox\//.test(navigator.userAgent) ? "Firefox" : /Safari\//.test(navigator.userAgent) ? "Safari" : "Other";
       const clean = (v, max=120) => String(v ?? "").replace(/[\u0000-\u001f]/g, " ").trim().slice(0,max);
-      function movieContext() {
-        const modal = document.querySelector("#movieModal:not(.hidden), .movie-modal.active, [aria-modal='true']");
-        const heading = modal?.querySelector("h1,h2,h3") || document.querySelector("[data-current-movie-title]");
-        const title = clean(heading?.textContent || heading?.getAttribute("data-current-movie-title") || "", 100);
-        return title ? { movieTitle: title } : {};
+      function movieContext(video) {
+        const modal = document.getElementById("movieModal");
+        const title = clean(modal?.dataset.analyticsMovieTitle || document.querySelector("[data-current-movie-title]")?.getAttribute("data-current-movie-title") || "", 100);
+        const movieId = clean(video?.dataset.analyticsMovieId || modal?.dataset.analyticsMovieId || "", 120);
+        return { ...(movieId ? { movieId } : {}), ...(title ? { movieTitle: title } : {}) };
       }
       async function track(eventName, props={}) {
         if (!activeUser) return;
@@ -105,19 +105,49 @@ if (!window.__plotlabAnalyticsInitialized) {
         if (el.matches("input[type='search'],input[placeholder*='Search' i]")) track("search_used", { section: clean(location.hash.slice(1) || "site", 80) });
       }, true);
       function bindVideo(video) {
-        if (video.dataset.plotlabAnalyticsBound) return;
+        // Trailer previews are promotional media, not movie viewing sessions.
+        if (boundVideos.has(video) || video.closest("#detailTrailerBg,[data-analytics-ignore='true']")) return;
+        boundVideos.add(video);
         video.dataset.plotlabAnalyticsBound = "1";
-        video.addEventListener("play", () => track("movie_play", movieContext()));
-        video.addEventListener("pause", () => { if (!video.ended) track("movie_pause", {...movieContext(), watchSeconds: video.currentTime || 0}); });
-        video.addEventListener("ended", () => track("movie_complete", {...movieContext(), percent: 100, watchSeconds: video.duration || video.currentTime || 0}));
+        let playEventSent = false;
+        let watchedSeconds = 0;
+        let lastTick = 0;
+        let lastProgressAt = 0;
+        const flushWatchTime = () => {
+          if (!lastTick) return;
+          const elapsed = Math.max(0, Math.min(5, (Date.now() - lastTick) / 1000));
+          if (!video.paused && !video.ended && !document.hidden) watchedSeconds += elapsed;
+          lastTick = 0;
+        };
+        video.addEventListener("play", () => {
+          if (!playEventSent) {
+            playEventSent = true;
+            const context = movieContext(video);
+            track("movie_play", context);
+          }
+          lastTick = Date.now();
+        });
+        video.addEventListener("playing", () => { if (!lastTick) lastTick = Date.now(); });
+        video.addEventListener("pause", () => {
+          flushWatchTime();
+          if (!video.ended) track("movie_pause", {...movieContext(video), watchSeconds: Math.round(watchedSeconds)});
+        });
+        video.addEventListener("ended", () => {
+          flushWatchTime();
+          track("movie_complete", {...movieContext(video), percent: 100, watchSeconds: Math.round(watchedSeconds)});
+        });
         video.addEventListener("timeupdate", () => {
-          const now = Date.now(), prior = lastProgress.get(video) || 0;
-          if (video.currentTime > 0 && now - prior > 25000) {
-            lastProgress.set(video, now);
-            track("movie_progress", {...movieContext(), percent: video.duration ? Math.min(100, video.currentTime / video.duration * 100) : 0, watchSeconds: video.currentTime});
+          if (video.paused || video.seeking || document.hidden) { lastTick = 0; return; }
+          if (!lastTick) { lastTick = Date.now(); return; }
+          flushWatchTime();
+          lastTick = Date.now();
+          if (watchedSeconds - lastProgressAt >= 25) {
+            lastProgressAt = watchedSeconds;
+            track("movie_progress", {...movieContext(video), percent: video.duration ? Math.min(100, video.currentTime / video.duration * 100) : 0, watchSeconds: Math.round(watchedSeconds)});
           }
         });
-        video.addEventListener("error", () => track("playback_error", {...movieContext(), source: "html5-video"}));
+        video.addEventListener("visibilitychange", () => { if (document.hidden) flushWatchTime(); });
+        video.addEventListener("error", () => track("playback_error", {...movieContext(video), source: "html5-video"}));
       }
       document.querySelectorAll("video").forEach(bindVideo);
       new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(node => {
