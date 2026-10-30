@@ -26,19 +26,27 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
 <section class="section active" id="overview"><div class="cards"><div class="stat"><small>Total movie records</small><strong id="statTotal">0</strong></div><div class="stat"><small>Published titles</small><strong id="statPublished">0</strong></div><div class="stat"><small>Featured</small><strong id="statFeatured">0</strong></div><div class="stat"><small>Trending</small><strong id="statTrending">0</strong></div></div><div class="layout"><div class="panel"><h2>Recently managed titles</h2><div id="recentList" class="movie-list"><div class="empty">Sign in to load the library.</div></div></div><div class="panel"><h2>Publishing checklist</h2><p class="hint">01 / Add movie details and media links.</p><p class="hint">02 / Save as a private draft, or mark it published.</p><p class="hint">03 / Mark featured/trending to control homepage placement.</p><p class="hint">04 / Published metadata is read by the public PlotLab site. Use links you have rights to distribute.</p><hr style="border:0;border-top:1px solid #292929;margin:20px 0"><button class="btn" data-goto="editor">＋ Create movie card</button></div></div><div class="panel" style="margin-top:18px"><h2>Change activity</h2><p class="hint">Timestamped movie edits, deletions, imports, and publishing-setting changes.</p><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;min-width:680px"><thead><tr><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Time</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Action</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Movie / area</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">What changed</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">By</th></tr></thead><tbody id="activityLogRows"><tr><td colspan="5" class="hint" style="padding:12px">Sign in to load the activity log.</td></tr></tbody></table></div><button id="refreshActivity" class="btn ghost" type="button" style="margin-top:12px">Refresh activity</button></div></section>
 <section class="section" id="movies"><div class="panel"><h2>Movie library</h2><p class="hint">Import the original built-in titles once to make them editable from this dashboard.</p><button id="importBuiltins" class="btn ghost">Import built-in movies</button><div class="field"><label for="searchMovies">Search titles</label><input id="searchMovies" placeholder="Search title, genre, year…"></div><div id="movieList" class="movie-list"></div></div></section><section class="section" id="reviews"><div class="panel"><h2>Community reviews</h2><p class="hint">Reviews submitted on the public movie detail pages appear here. You can refresh the list or remove inappropriate reviews.</p><div class="form-actions" style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0"><button id="refreshReviews" class="btn ghost" type="button">Refresh reviews</button><a href="index.html" target="_blank" rel="noopener" class="btn ghost">Open public site to write a review ↗</a></div><div id="reviewAdminList" class="movie-list"><div class="empty">Sign in to load community reviews.</div></div></div></section>
 <section class="section" id="analytics">
-<div class="panel" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h2 style="margin-bottom:6px">Audience & viewing analytics</h2><p class="hint" style="margin:0">Aggregated from signed-in users' analyticsEvents. Unique viewers are distinct user IDs; watch time uses the maximum cumulative value per movie and session to avoid adding repeated snapshots.</p></div><button id="refreshAnalytics" class="btn ghost" type="button">Refresh analytics</button></div><p id="analyticsStatus" class="hint">Analytics have not been loaded yet.</p></div>
+<div class="panel" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h2 style="margin-bottom:6px">PlotLab Analytics Centre</h2><p class="hint" style="margin:0">Live Firestore analytics for authenticated PlotLab activity. This page updates as new events arrive.</p></div><button id="refreshAnalytics" class="btn ghost" type="button">Reconnect live data</button></div><p id="analyticsStatus" class="hint">Analytics have not been loaded yet.</p></div>
 <div class="cards">
+<div class="stat"><small>Total tracked events</small><strong id="anEvents">—</strong></div>
+<div class="stat"><small>Active users in data</small><strong id="anActiveUsers">—</strong></div>
 <div class="stat"><small>Playback starts</small><strong id="anPlays">—</strong></div>
 <div class="stat"><small>Unique viewers</small><strong id="anViewers">—</strong></div>
 <div class="stat"><small>Estimated watch time</small><strong id="anWatch">—</strong></div>
 <div class="stat"><small>Completed sessions</small><strong id="anComplete">—</strong></div>
+<div class="stat"><small>Creator interactions</small><strong id="anCreator">—</strong></div>
+<div class="stat"><small>Reviews submitted</small><strong id="anReviews">—</strong></div>
 </div>
 <div class="layout">
-<div class="panel"><h2>Most-played movies</h2><div id="anTopMovies" class="movie-list"><div class="empty">Load analytics to see movie activity.</div></div></div>
-<div class="panel"><h2>Viewing by device</h2><div id="anDevices" class="movie-list"><div class="empty">No device data yet.</div></div></div>
+<div class="panel"><h2>Most-played movies</h2><div id="anTopMovies" class="movie-list"><div class="empty">Waiting for live analytics…</div></div></div>
+<div class="panel"><h2>Activity by device</h2><div id="anDevices" class="movie-list"><div class="empty">Waiting for live analytics…</div></div></div>
 </div>
-<div class="panel" style="margin-top:16px"><h2>Daily playback activity</h2><div id="anDaily" class="movie-list"><div class="empty">Load analytics to see daily activity.</div></div><p class="hint">Daily counts use the browser's local timezone. Only the latest 30 days are displayed.</p></div>
-<div class="panel" style="margin-top:16px"><h2>Recent analytics events</h2><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;min-width:520px"><thead><tr><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Time</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Event</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Movie</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Device</th></tr></thead><tbody id="anRecent"></tbody></table></div></div>
+<div class="layout" style="margin-top:16px">
+<div class="panel"><h2>Creator Lab activity</h2><div id="anCreatorBreakdown" class="movie-list"><div class="empty">Waiting for live analytics…</div></div></div>
+<div class="panel"><h2>Most-used features</h2><div id="anFeatures" class="movie-list"><div class="empty">Waiting for live analytics…</div></div></div>
+</div>
+<div class="panel" style="margin-top:16px"><h2>Daily activity</h2><div id="anDaily" class="movie-list"><div class="empty">Waiting for live analytics…</div></div><p class="hint">Latest 30 calendar days, based on your browser's local timezone.</p></div>
+<div class="panel" style="margin-top:16px"><h2>Recent analytics events</h2><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;min-width:520px"><thead><tr><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Time</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Event</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Movie / context</th><th style="text-align:left;padding:10px;border-bottom:1px solid var(--line)">Device</th></tr></thead><tbody id="anRecent"></tbody></table></div></div>
 </section>
 <section class="section" id="editor"><div class="layout"><div class="panel"><h2 id="editorHeading">Create a movie card</h2><form id="movieForm">
 <input type="hidden" id="movieId">
@@ -70,9 +78,9 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc, addDoc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc, addDoc, serverTimestamp, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { firebaseConfig, PLOTLAB_ADMIN_EMAIL } from "./firebase-config.js";
-const $=id=>document.getElementById(id);let app,auth,db,currentUser=null,movies=[],settings={genres:["All","Sci-Fi","Adventure","Drama","Thriller","Animation","Action"],trendingIds:[],featuredIds:[]};
+const $=id=>document.getElementById(id);let app,auth,db,currentUser=null,movies=[],analyticsUnsubscribe=null,settings={genres:["All","Sci-Fi","Adventure","Drama","Thriller","Animation","Action"],trendingIds:[],featuredIds:[]};
 const configured=Object.values(firebaseConfig).every(v=>typeof v==="string"&&v.length>0&&!v.includes("REPLACE_"));
 function status(message,type=""){const el=$("globalStatus");el.textContent=message;el.className="status "+type}
 function go(tab){document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===tab));$("pageTitle").textContent=({overview:"Overview",movies:"Movie library",reviews:"Community reviews",editor:"Movie card editor",settings:"Publishing settings",analytics:"Analytics"}[tab]||"Studio")+".";if(tab==="editor")preview();if(tab==="analytics")loadAnalytics()}
@@ -84,38 +92,58 @@ else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(ap
 const fmtNum=n=>Number(n||0).toLocaleString();
 const fmtDuration=seconds=>{const n=Math.max(0,Math.round(seconds||0));if(n<60)return n+" sec";const m=Math.floor(n/60),h=Math.floor(m/60);return h? h+"h "+(m%60)+"m":m+"m"};
 async function loadAnalytics(){
- const statusEl=$("analyticsStatus");if(!db||!currentUser){statusEl.textContent="Sign in as the verified owner to view analytics.";return}
- statusEl.textContent="Loading analytics events…";
+ const statusEl=$("analyticsStatus");
+ if(!db||!currentUser){statusEl.textContent="Sign in as the verified owner to view analytics.";return}
+ if(analyticsUnsubscribe){analyticsUnsubscribe();analyticsUnsubscribe=null}
+ statusEl.textContent="Connecting to live Firestore analytics…";
  try{
-  const snap=await getDocs(query(collection(db,"analyticsEvents"),orderBy("createdAt","desc")));
-  const events=snap.docs.map(d=>({id:d.id,...d.data()}));
-  const plays=events.filter(e=>e.eventName==="movie_play");
-  const completed=events.filter(e=>e.eventName==="movie_complete");
-  const viewers=new Set(plays.map(e=>e.userId).filter(Boolean));
-  const watchBySession=new Map(),completedSessions=new Set(),movieCounts=new Map(),devices=new Map(),daily=new Map();
-  for(const e of events){
-   const p=e.props||{},mid=p.movieId||p.movieTitle||"unknown",sid=[e.userId||"",e.sessionId||"",mid].join("|");
-   if(["movie_progress","movie_pause","movie_complete"].includes(e.eventName)){
-    const seconds=Number(p.watchSeconds)||0;watchBySession.set(sid,Math.max(watchBySession.get(sid)||0,seconds));
+  const liveQuery=query(collection(db,"analyticsEvents"),orderBy("createdAt","desc"));
+  analyticsUnsubscribe=onSnapshot(liveQuery,snap=>{
+   const events=snap.docs.map(d=>({id:d.id,...d.data()}));
+   const plays=events.filter(e=>e.eventName==="movie_play");
+   const viewers=new Set(plays.map(e=>e.userId).filter(Boolean));
+   const activeUsers=new Set(events.map(e=>e.userId).filter(Boolean));
+   const watchBySession=new Map(),completedSessions=new Set(),movieCounts=new Map(),devices=new Map(),daily=new Map(),creatorEvents=new Map(),featureEvents=new Map();
+   const creatorNames=new Set(["creator_profile_view","creator_search","connection_request","message_sent"]);
+   for(const e of events){
+    const p=e.props||{},mid=p.movieId||p.movieTitle||"unknown",sid=[e.userId||"",e.sessionId||"",mid].join("|");
+    if(["movie_progress","movie_pause","movie_complete"].includes(e.eventName)){
+     const seconds=Number(p.watchSeconds)||0;watchBySession.set(sid,Math.max(watchBySession.get(sid)||0,seconds));
+    }
+    if(e.eventName==="movie_complete")completedSessions.add(sid);
+    featureEvents.set(e.eventName,(featureEvents.get(e.eventName)||0)+1);
+    if(creatorNames.has(e.eventName))creatorEvents.set(e.eventName,(creatorEvents.get(e.eventName)||0)+1);
+    const device=e.deviceType||"unknown";devices.set(device,(devices.get(device)||0)+1);
+    const date=e.createdAt?.toDate?e.createdAt.toDate():null;
+    if(date){const day=date.toLocaleDateString(undefined,{month:"short",day:"numeric"});daily.set(day,(daily.get(day)||0)+1)}
    }
-   if(e.eventName==="movie_complete")completedSessions.add(sid);
-  }
-  for(const e of plays){
-   const p=e.props||{},name=p.movieTitle||p.movieId||"Unknown title",key=p.movieId||name;
-   const item=movieCounts.get(key)||{name,plays:0,viewers:new Set()};item.plays++;if(e.userId)item.viewers.add(e.userId);movieCounts.set(key,item);
-   const device=e.deviceType||"unknown";devices.set(device,(devices.get(device)||0)+1);
-   const date=e.createdAt?.toDate?e.createdAt.toDate():null;if(date){const day=date.toLocaleDateString(undefined,{month:"short",day:"numeric"});daily.set(day,(daily.get(day)||0)+1)}
-  }
-  const totalWatch=[...watchBySession.values()].reduce((a,b)=>a+b,0);
-  $("anPlays").textContent=fmtNum(plays.length);$("anViewers").textContent=fmtNum(viewers.size);$("anWatch").textContent=fmtDuration(totalWatch);$("anComplete").textContent=fmtNum(completedSessions.size);
-  const top=[...movieCounts.values()].sort((a,b)=>b.plays-a.plays).slice(0,10);
-  $("anTopMovies").innerHTML=top.length?top.map(m=>'<div class="movie"><div><strong>'+escapeHtml(m.name)+'</strong><small>'+fmtNum(m.viewers.size)+' unique viewers</small></div><div class="movie-actions"><span class="pill">'+fmtNum(m.plays)+' plays</span></div></div>').join(""):'<div class="empty">No movie_play events recorded yet.</div>';
-  $("anDevices").innerHTML=[...devices.entries()].sort((a,b)=>b[1]-a[1]).map(([d,n])=>'<div class="movie"><strong>'+escapeHtml(d)+'</strong><span class="pill">'+fmtNum(n)+' plays</span></div>').join("")||'<div class="empty">No device data yet.</div>';
-  const days=[...daily.entries()].slice(-30),max=Math.max(1,...days.map(x=>x[1]));
-  $("anDaily").innerHTML=days.length?days.map(([day,n])=>'<div style="display:grid;grid-template-columns:75px minmax(0,1fr) 38px;gap:10px;align-items:center"><small style="color:#aaa">'+escapeHtml(day)+'</small><div style="height:10px;background:#252525;border-radius:8px;overflow:hidden"><div style="height:100%;width:'+Math.max(2,n/max*100)+'%;background:var(--accent);border-radius:8px"></div></div><small>'+fmtNum(n)+'</small></div>').join(""):'<div class="empty">No dated playback events yet.</div>';
-  $("anRecent").innerHTML=events.slice(0,25).map(e=>'<tr><td style="padding:9px;border-bottom:1px solid var(--line);white-space:nowrap">'+escapeHtml(e.createdAt?.toDate?e.createdAt.toDate().toLocaleString():"Pending")+'</td><td style="padding:9px;border-bottom:1px solid var(--line)">'+escapeHtml(e.eventName||"—")+'</td><td style="padding:9px;border-bottom:1px solid var(--line)">'+escapeHtml(e.props?.movieTitle||e.props?.movieId||"—")+'</td><td style="padding:9px;border-bottom:1px solid var(--line)">'+escapeHtml(e.deviceType||"—")+'</td></tr>').join("");
-  statusEl.textContent="Loaded "+fmtNum(events.length)+" events. "+fmtNum(plays.length)+" playback starts across "+fmtNum(viewers.size)+" unique signed-in viewers.";
- }catch(e){statusEl.textContent="Could not load analytics: "+e.message+". Check that Firestore rules allow the verified admin to read analyticsEvents."}
+   for(const e of plays){
+    const p=e.props||{},name=p.movieTitle||p.movieId||"Unknown title",key=p.movieId||name;
+    const item=movieCounts.get(key)||{name,plays:0,viewers:new Set()};item.plays++;if(e.userId)item.viewers.add(e.userId);movieCounts.set(key,item);
+   }
+   const totalWatch=[...watchBySession.values()].reduce((a,b)=>a+b,0);
+   $("anEvents").textContent=fmtNum(events.length);
+   $("anActiveUsers").textContent=fmtNum(activeUsers.size);
+   $("anPlays").textContent=fmtNum(plays.length);
+   $("anViewers").textContent=fmtNum(viewers.size);
+   $("anWatch").textContent=fmtDuration(totalWatch);
+   $("anComplete").textContent=fmtNum(completedSessions.size);
+   $("anCreator").textContent=fmtNum([...creatorEvents.values()].reduce((a,b)=>a+b,0));
+   $("anReviews").textContent=fmtNum(events.filter(e=>e.eventName==="review_submitted").length);
+   const top=[...movieCounts.values()].sort((a,b)=>b.plays-a.plays).slice(0,10);
+   $("anTopMovies").innerHTML=top.length?top.map(m=>'<div class="movie"><div><strong>'+escapeHtml(m.name)+'</strong><small>'+fmtNum(m.viewers.size)+' unique viewers</small></div><div class="movie-actions"><span class="pill">'+fmtNum(m.plays)+' plays</span></div></div>').join(""):'<div class="empty">No movie_play events recorded yet.</div>';
+   $("anDevices").innerHTML=[...devices.entries()].sort((a,b)=>b[1]-a[1]).map(([d,n])=>'<div class="movie"><strong>'+escapeHtml(d)+'</strong><span class="pill">'+fmtNum(n)+' events</span></div>').join("")||'<div class="empty">No device data yet.</div>';
+   $("anCreatorBreakdown").innerHTML=[...creatorEvents.entries()].sort((a,b)=>b[1]-a[1]).map(([name,n])=>'<div class="movie"><strong>'+escapeHtml(name.replaceAll("_"," "))+'</strong><span class="pill">'+fmtNum(n)+'</span></div>').join("")||'<div class="empty">No Creator Lab events yet.</div>';
+   $("anFeatures").innerHTML=[...featureEvents.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,n])=>'<div class="movie"><strong>'+escapeHtml(name.replaceAll("_"," "))+'</strong><span class="pill">'+fmtNum(n)+'</span></div>').join("")||'<div class="empty">No events recorded yet.</div>';
+   const days=[...daily.entries()].slice(-30),max=Math.max(1,...days.map(x=>x[1]));
+   $("anDaily").innerHTML=days.length?days.map(([day,n])=>'<div style="display:grid;grid-template-columns:75px minmax(0,1fr) 38px;gap:10px;align-items:center"><small style="color:#aaa">'+escapeHtml(day)+'</small><div style="height:10px;background:#252525;border-radius:8px;overflow:hidden"><div style="height:100%;width:'+Math.max(2,n/max*100)+'%;background:var(--accent);border-radius:8px"></div></div><small>'+fmtNum(n)+'</small></div>').join(""):'<div class="empty">No dated events yet.</div>';
+   $("anRecent").innerHTML=events.slice(0,25).map(e=>'<tr><td style="padding:9px;border-bottom:1px solid var(--line);white-space:nowrap">'+escapeHtml(e.createdAt?.toDate?e.createdAt.toDate().toLocaleString():"Pending")+'</td><td style="padding:9px;border-bottom:1px solid var(--line)">'+escapeHtml(e.eventName||"—")+'</td><td style="padding:9px;border-bottom:1px solid var(--line)">'+escapeHtml(e.props?.movieTitle||e.props?.movieId||e.props?.section||"—")+'</td><td style="padding:9px;border-bottom:1px solid var(--line)">'+escapeHtml(e.deviceType||"—")+'</td></tr>').join("");
+   statusEl.textContent="LIVE · "+fmtNum(events.length)+" events · "+fmtNum(activeUsers.size)+" distinct signed-in users · updates automatically when Firestore receives new events.";
+  },error=>{
+   statusEl.textContent="Could not load analytics: "+error.message+". Check that deployed Firestore rules allow the verified owner to read analyticsEvents.";
+   analyticsUnsubscribe=null;
+  });
+ }catch(e){statusEl.textContent="Could not connect analytics: "+e.message;analyticsUnsubscribe=null}
 }
 $("refreshAnalytics").addEventListener("click",loadAnalytics);
 
