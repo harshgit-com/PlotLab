@@ -120,7 +120,7 @@ else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(ap
 
 const fmtNum=n=>Number(n||0).toLocaleString();
 const fmtDuration=seconds=>{const n=Math.max(0,Math.round(seconds||0));if(n<60)return n+" sec";const m=Math.floor(n/60),h=Math.floor(m/60);return h?h+"h "+(m%60)+"m":m+"m"};
-let analyticsUnsubscribe=null,analyticsEventsCache=[],analyticsPage=0,analyticsFilterTimer=null;
+let analyticsEventsCache=[],analyticsPage=0,analyticsFilterTimer=null;
 const anPalette=["#35D0BA","#F5B942","#55B6E8","#A3D977","#FF8A50","#E78AC3","#FF6B6B","#B7C7D8"];
 const anEsc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function anCategory(name){
