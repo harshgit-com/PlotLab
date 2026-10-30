@@ -1,8 +1,8 @@
 # PlotLab Analytics Architecture
 
-## Current implementation: Stage 1 — event collection
+## Current implementation: Stage 2 — live collection and admin Analytics Centre
 
-The website now loads `analytics.js` on the main OTT site and Creator Lab. The collector writes first-party usage events to the Firestore `analyticsEvents` collection for authenticated users only.
+The website loads `analytics.js` on the main OTT site and Creator Lab. The collector writes first-party usage events to the Firestore `analyticsEvents` collection for authenticated users only. The private admin dashboard includes a live Analytics Centre that listens to this collection and calculates its KPIs and charts from stored events. The dashboard supports 7/30/90-day and all-time periods, custom date bounds, event type, device, and movie/context filters; all cards, charts, and recent-event rows use the same filtered set. It includes activity trends, event and device mix, most-played movies, Creator Lab engagement, feature usage, genre interest, and recent events.
 
 ### Event document schema
 
@@ -41,11 +41,10 @@ Authenticated users may create events only when `userId` matches their own Fireb
 
 ## Next implementation stages
 
-1. Wire stable IDs and explicit events into movie player, search, watchlist, reviews, and Creator Lab actions.
-2. Add admin-only Analytics Centre with date filters and KPI calculations.
-3. Add CSV and Excel exports with aggregation and pagination.
-4. Connect Firestore event data to BigQuery using a managed export/streaming pipeline; do not expose service credentials in browser code.
-5. Build a Power BI semantic model and scheduled refresh. The Power BI refresh frequency depends on the chosen connector, gateway, and licensing.
+1. Wire stable movie IDs and explicit events into movie player, search, watchlist, reviews, and Creator Lab actions so movie-level reporting is more reliable.
+2. Add CSV and Excel exports with aggregation and pagination.
+3. Connect Firestore event data to BigQuery using a managed export/streaming pipeline; do not expose service credentials in browser code.
+4. Build a Power BI semantic model and scheduled refresh only if an external BI report is still required. The Power BI refresh frequency depends on the chosen connector, gateway, and licensing.
 
 ## Metric definitions to use
 
