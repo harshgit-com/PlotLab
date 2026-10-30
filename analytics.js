@@ -146,7 +146,7 @@ if (!window.__plotlabAnalyticsInitialized) {
             track("movie_progress", {...movieContext(video), percent: video.duration ? Math.min(100, video.currentTime / video.duration * 100) : 0, watchSeconds: Math.round(watchedSeconds)});
           }
         });
-        video.addEventListener("visibilitychange", () => { if (document.hidden) flushWatchTime(); });
+        document.addEventListener("visibilitychange", () => { if (document.hidden) flushWatchTime(); });
         video.addEventListener("error", () => track("playback_error", {...movieContext(video), source: "html5-video"}));
       }
       document.querySelectorAll("video").forEach(bindVideo);
