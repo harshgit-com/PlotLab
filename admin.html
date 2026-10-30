@@ -146,7 +146,8 @@ let analyticsEventsCache=[],analyticsPage=0,analyticsFilterTimer=null;
 const anPalette=["#35D0BA","#F5B942","#55B6E8","#A3D977","#FF8A50","#E78AC3","#FF6B6B","#B7C7D8"];
 const anEsc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function anCategory(name){
- if(["movie_play","movie_complete","movie_progress","movie_pause","movie_open","trailer_play","playback_error"].includes(name))return "movie";
+ if(name==="playback_error")return "errors";
+ if(["movie_play","movie_complete","movie_progress","movie_pause","movie_open","trailer_play"].includes(name))return "movie";
  if(["creator_profile_view","creator_search","connection_request","message_sent"].includes(name))return "creator";
  if(["review_submitted","watchlist_add","watchlist_remove"].includes(name))return "community";
  if(["search_used","genre_selected"].includes(name))return "discovery";
