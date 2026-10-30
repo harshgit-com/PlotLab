@@ -873,6 +873,10 @@ function openMovie(name){
  const m=titles.find(x=>x.title===name);if(!m)return;
  try{let h=JSON.parse(localStorage.getItem(plotlabStorageKey('plotlabViewingHistory'))||'[]');h=h.filter(x=>x.title!==m.title);h.unshift({title:m.title,at:Date.now()});localStorage.setItem(plotlabStorageKey('plotlabViewingHistory'),JSON.stringify(h.slice(0,100)));}catch(e){}
  stopModalTrailer();closeMoviePlayer(false);activeModalMovie=m;
+ const analyticsMovieId=String(m.id||m.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));
+ const analyticsModal=document.getElementById('movieModal');
+ analyticsModal.dataset.analyticsMovieId=analyticsMovieId;
+ analyticsModal.dataset.analyticsMovieTitle=m.title;
  document.getElementById('modalTitle').textContent=m.title;
  document.getElementById('modalMeta').innerHTML=`<span>${m.year}</span><span>${m.genre}</span><span>FILM</span>`;
  document.getElementById('modalDescription').textContent=m.desc;
@@ -952,7 +956,7 @@ function playMovieNow(){
   window.setTimeout(()=>{ticket.classList.add('ticket-tearing');window.setTimeout(()=>{
   ticket.remove();
   const video=document.createElement('video');
-  video.className='plotlab-movie-video';video.src=activeModalMovie.movieUrl||'https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
+  video.className='plotlab-movie-video';video.dataset.analyticsMovieId=String(activeModalMovie.id||activeModalMovie.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));video.dataset.analyticsMovieTitle=activeModalMovie.title;video.src=activeModalMovie.movieUrl||'https://res.cloudinary.com/h56ve1kv/video/upload/jai_jai_Ram.mp4';
   video.preload='auto';video.playsInline=true;video.controls=false;video.autoplay=true;video.volume=1;
   const progressKey=plotlabStorageKey('plotlabPlaybackProgress');
   const readProgress=()=>{try{return JSON.parse(localStorage.getItem(progressKey)||'{}')}catch{return {}}};
