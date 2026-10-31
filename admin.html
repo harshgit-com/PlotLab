@@ -176,7 +176,17 @@ document.addEventListener("DOMContentLoaded", () => {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc, addDoc, serverTimestamp, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { firebaseConfig, PLOTLAB_ADMIN_EMAIL } from "./firebase-config.js";
+// Keep the admin web config local to this page so a missing/mis-served
+// firebase-config.js file cannot prevent the login module from starting.
+const firebaseConfig = {
+  apiKey: "AIzaSyDpZnZP7WxtspEIbpODiyeO7k_YugO62WQ",
+  authDomain: "plotlab-22f4b.firebaseapp.com",
+  projectId: "plotlab-22f4b",
+  storageBucket: "plotlab-22f4b.firebasestorage.app",
+  messagingSenderId: "780600065112",
+  appId: "1:780600065112:web:9a8722a1a6afe795a59e2d"
+};
+const PLOTLAB_ADMIN_EMAIL = "plotlab29@gmail.com";
 const $=id=>document.getElementById(id);let app,auth,db,currentUser=null,movies=[],analyticsUnsubscribe=null,settings={genres:["All","Sci-Fi","Adventure","Drama","Thriller","Animation","Action"],trendingIds:[],featuredIds:[]};
 const configured=Object.values(firebaseConfig).every(v=>typeof v==="string"&&v.length>0&&!v.includes("REPLACE_"));
 function status(message,type=""){const el=$("globalStatus");el.textContent=message;el.className="status "+type}
