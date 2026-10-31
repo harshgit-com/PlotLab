@@ -992,7 +992,7 @@ video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','')
   video.addEventListener('play',()=>{pause.innerHTML='<span class="control-symbol">Ⅱ</span><span class="control-label">PAUSE</span>';pause.setAttribute('aria-label','Pause movie');pause.classList.remove('is-paused')});
   video.addEventListener('pause',()=>{pause.innerHTML='<span class="control-symbol">▶</span><span class="control-label">PLAY</span>';pause.setAttribute('aria-label','Play movie');pause.classList.add('is-paused');showPlayerControls()});
   row.append(back,pause,forward);controls.append(row,timeline);fullscreen.classList.add('movie-fullscreen-corner');
-  stage.replaceChildren(video,controls,fullscreen,adContainer);
+  stage.append(controls,fullscreen);
   let adManager=null,adLoader=null,adBreakQueue=[],adBreakIndex=0,adBreakInProgress=false,adSdkPromise=null;
   const adSettings=window.plotlabAdSettings||{enabled:false};const movieAds=activeModalMovie||{};
   const rightsValid=!!movieAds.adRightsVerified&&!!movieAds.adMonetizationEnabled&&movieAds.rightsType!=="unverified"&&(!movieAds.adRightsExpiresAt||movieAds.adRightsExpiresAt>=new Date().toISOString().slice(0,10));
