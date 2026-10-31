@@ -65,7 +65,7 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
  <p class="an-note" style="margin:6px 0 0">Analytics currently reflects events collected from signed-in users only. Metrics are calculated from recorded events; no sample or estimated audience data is added.</p>
 </div>
 <div class="panel an-business" style="margin-top:13px">
- <div class="an-head"><div><h3 class="an-section-title">Business overview</h3><p class="hint" style="margin:0">The numbers that help you make content, growth and advertising decisions.</p></div><span class="an-chip">Live summary</span></div>
+ <div class="an-head"><div><h3 class="an-section-title">Business overview</h3><p class="hint" style="margin:0">The numbers that help you make content, growth and advertising decisions.</p></div><div class="an-toolbar"><div class="field"><label for="bizRange">Reporting period</label><select id="bizRange"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last 12 months</option><option value="all">All time</option></select></div><span class="an-chip">Live summary</span></div></div>
  <div class="an-kpis">
   <div class="an-kpi"><small>Total registered users</small><strong id="bizTotalUsers">—</strong><em>Saved PlotLab viewer and creator profiles</em></div>
   <div class="an-kpi"><small>New users</small><strong id="bizNewUsers">—</strong><em>Accounts created in the selected period</em></div>
@@ -77,6 +77,7 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
   <div class="an-kpi"><small>Ad impressions</small><strong id="bizAdImpressions">—</strong><em>Recorded video ad impressions</em></div>
  </div>
  <div class="an-grid">
+  <div class="panel"><h3>New user growth</h3><div id="bizUserGrowth" class="an-chart"></div></div>
   <div class="panel"><h3>Most played movies</h3><div id="bizTopMovies" class="an-chart"></div></div>
   <div class="panel"><h3>Most unfinished movies</h3><div id="bizUnfinishedMovies" class="an-chart"></div><p class="an-note">A session is unfinished when a start exists without a recorded completion. It is not proof the viewer abandoned the film.</p></div>
   <div class="panel"><h3>Audience age ranges</h3><div id="bizAgeRanges" class="an-chart"></div><p class="an-note">Optional age ranges shared by users who consented to anonymous aggregate insights. Under-18 audiences must not be used for personalised ad targeting.</p></div>
@@ -218,7 +219,7 @@ function anDonut(id,items,empty){
 function anSessionKey(e){const p=e.props||{};return [e.userId||"anonymous",e.sessionId||e.id||"",p.movieId||p.movieTitle||"unknown"].join("|")}
 function renderBusinessAnalytics(){
  const events=anFiltered(),plays=events.filter(e=>e.eventName==="movie_play"),active=new Set(events.map(e=>e.userId).filter(Boolean));
- const range=$("anRange").value,from=$("anFrom").value,to=$("anTo").value,now=new Date();let start=null,end=null;
+ const range=$("bizRange")?.value||"30",from="",to="",now=new Date();$("anRange").value=range;let start=null,end=null;
  if(range==="custom"){if(from)start=new Date(from+"T00:00:00");if(to)end=new Date(to+"T23:59:59.999")}else if(range!=="all")start=new Date(now.getTime()-Number(range)*86400000);
  const users=analyticsUsersCache||[],created=u=>u.createdAt?.toDate?u.createdAt.toDate():u.createdAt?.seconds?new Date(u.createdAt.seconds*1000):u.createdAt?new Date(u.createdAt):null;
  const newUsers=users.filter(u=>{const d=created(u);return d&&(!start||d>=start)&&(!end||d<=end)}).length;
@@ -235,6 +236,8 @@ function renderBusinessAnalytics(){
  const set=(id,value)=>{const el=$(id);if(el)el.textContent=value};
  set("bizTotalUsers",fmtNum(users.length));set("bizNewUsers",fmtNum(newUsers));set("bizSignIns",fmtNum(count("login")));set("bizActiveViewers",fmtNum(active.size));set("bizMovieStarts",fmtNum(played.length));set("bizIncomplete",fmtNum(incomplete.length));set("bizCompletionRate",played.length?(completed/played.length*100).toFixed(1)+"%":"—");set("bizAdImpressions",fmtNum(impressions));set("bizAdRequests",fmtNum(requests));set("bizAdFill",requests?(impressions/requests*100).toFixed(1)+"%":"—");
  const ageLabels={under_18:"Under 18",18_24:"18–24",25_34:"25–34",35_44:"35–44",45_plus:"45+"};const ageMap=new Map();users.filter(u=>u.ageInsightsConsent===true&&ageLabels[u.ageRange]).forEach(u=>ageMap.set(ageLabels[u.ageRange],(ageMap.get(ageLabels[u.ageRange])||0)+1));
+ const growth=new Map();users.forEach(u=>{const d=created(u);if(!d||start&&d<start||end&&d>end)return;const key=range==="all"||range==="365"?d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"):d.toISOString().slice(0,10);growth.set(key,(growth.get(key)||0)+1)});
+ anBars("bizUserGrowth",[...growth.entries()].sort((x,y)=>x[0].localeCompare(y[0])).slice(-12).map(([name,value])=>({name,value})),"No new user profiles in this period.");
  anBars("bizTopMovies",[...movieNames.values()].sort((x,y)=>y.value-x.value).slice(0,6),"No movie starts recorded for this period.");
  anBars("bizUnfinishedMovies",[...unfinished.values()].sort((x,y)=>y.value-x.value).slice(0,6),"No unfinished movie sessions recorded.");
  anDonut("bizAgeRanges",[...ageMap.entries()].map(([name,value])=>({name,value})),"No users have shared an age range for anonymous insights yet.");
@@ -318,6 +321,7 @@ function exportAnalyticsCSV(){
  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="plotlab-analytics-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
+$("bizRange")?.addEventListener("change",()=>{if($("anRange"))$("anRange").value=$("bizRange").value;renderAnalytics()});
 $("refreshAnalytics").addEventListener("click",loadAnalytics);
 $("exportAnalytics").addEventListener("click",exportAnalyticsCSV);
 $("clearAnalyticsFilters").addEventListener("click",resetAnalyticsFilters);
