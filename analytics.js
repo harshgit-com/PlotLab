@@ -36,7 +36,7 @@ if (!window.__plotlabAnalyticsInitialized) {
       async function track(eventName, props={}) {
         if (!activeUser) return;
         const safeProps = {};
-        for (const key of ["movieId","movieTitle","genre","percent","watchSeconds","action","section","source","adBreakType","adRevenue","adUnit"]) {
+        for (const key of ["movieId","movieTitle","genre","percent","watchSeconds","action","section","source","adBreakType","adRevenue","adUnit","playbackId"]) {
           const value = props[key];
           if (value === undefined || value === null) continue;
           safeProps[key] = typeof value === "number" ? Math.max(0, Math.min(1000000, Math.round(value*100)/100)) : clean(value, key === "movieTitle" ? 100 : 120);
@@ -109,6 +109,8 @@ if (!window.__plotlabAnalyticsInitialized) {
         if (boundVideos.has(video) || video.closest("#detailTrailerBg,[data-analytics-ignore='true']")) return;
         boundVideos.add(video);
         video.dataset.plotlabAnalyticsBound = "1";
+        const playbackId = window.crypto?.randomUUID?.() || ("play-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,10));
+        const playbackContext = () => ({...movieContext(video), playbackId});
         let playEventSent = false;
         let watchedSeconds = 0;
         let lastTick = 0;
@@ -123,8 +125,7 @@ if (!window.__plotlabAnalyticsInitialized) {
           if (video.dataset.plotlabAdPlaying === "1") return;
           if (!playEventSent) {
             playEventSent = true;
-            const context = movieContext(video);
-            track("movie_play", context);
+            track("movie_play", playbackContext());
           }
           lastTick = Date.now();
         });
@@ -132,12 +133,12 @@ if (!window.__plotlabAnalyticsInitialized) {
         video.addEventListener("pause", () => {
           if (video.dataset.plotlabAdPlaying === "1") return;
           flushWatchTime();
-          if (!video.ended) track("movie_pause", {...movieContext(video), watchSeconds: Math.round(watchedSeconds)});
+          if (!video.ended) track("movie_pause", {...playbackContext(), watchSeconds: Math.round(watchedSeconds)});
         });
         video.addEventListener("ended", () => {
           if (video.dataset.plotlabAdPlaying === "1") return;
           flushWatchTime();
-          track("movie_complete", {...movieContext(video), percent: 100, watchSeconds: Math.round(watchedSeconds)});
+          track("movie_complete", {...playbackContext(), percent: 100, watchSeconds: Math.round(watchedSeconds)});
         });
         video.addEventListener("timeupdate", () => {
           if (video.dataset.plotlabAdPlaying === "1") { lastTick = 0; return; }
@@ -147,7 +148,7 @@ if (!window.__plotlabAnalyticsInitialized) {
           lastTick = Date.now();
           if (watchedSeconds - lastProgressAt >= 25) {
             lastProgressAt = watchedSeconds;
-            track("movie_progress", {...movieContext(video), percent: video.duration ? Math.min(100, video.currentTime / video.duration * 100) : 0, watchSeconds: Math.round(watchedSeconds)});
+            track("movie_progress", {...playbackContext(), percent: video.duration ? Math.min(100, video.currentTime / video.duration * 100) : 0, watchSeconds: Math.round(watchedSeconds)});
           }
         });
         document.addEventListener("visibilitychange", () => { if (document.hidden) flushWatchTime(); });
