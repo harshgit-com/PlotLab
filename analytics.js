@@ -36,7 +36,7 @@ if (!window.__plotlabAnalyticsInitialized) {
       async function track(eventName, props={}) {
         if (!activeUser) return;
         const safeProps = {};
-        for (const key of ["movieId","movieTitle","genre","percent","watchSeconds","action","section","source"]) {
+        for (const key of ["movieId","movieTitle","genre","percent","watchSeconds","action","section","source","adBreakType","adRevenue","adUnit"]) {
           const value = props[key];
           if (value === undefined || value === null) continue;
           safeProps[key] = typeof value === "number" ? Math.max(0, Math.min(1000000, Math.round(value*100)/100)) : clean(value, key === "movieTitle" ? 100 : 120);
@@ -120,6 +120,7 @@ if (!window.__plotlabAnalyticsInitialized) {
           lastTick = 0;
         };
         video.addEventListener("play", () => {
+          if (video.dataset.plotlabAdPlaying === "1") return;
           if (!playEventSent) {
             playEventSent = true;
             const context = movieContext(video);
@@ -129,14 +130,17 @@ if (!window.__plotlabAnalyticsInitialized) {
         });
         video.addEventListener("playing", () => { if (!lastTick) lastTick = Date.now(); });
         video.addEventListener("pause", () => {
+          if (video.dataset.plotlabAdPlaying === "1") return;
           flushWatchTime();
           if (!video.ended) track("movie_pause", {...movieContext(video), watchSeconds: Math.round(watchedSeconds)});
         });
         video.addEventListener("ended", () => {
+          if (video.dataset.plotlabAdPlaying === "1") return;
           flushWatchTime();
           track("movie_complete", {...movieContext(video), percent: 100, watchSeconds: Math.round(watchedSeconds)});
         });
         video.addEventListener("timeupdate", () => {
+          if (video.dataset.plotlabAdPlaying === "1") { lastTick = 0; return; }
           if (video.paused || video.seeking || document.hidden) { lastTick = 0; return; }
           if (!lastTick) { lastTick = Date.now(); return; }
           flushWatchTime();
