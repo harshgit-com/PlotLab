@@ -48,6 +48,12 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
 #analytics .an-chip{display:inline-flex;padding:4px 8px;border:1px solid #394550;border-radius:20px;color:#c8d2dc;font-size:10px;white-space:nowrap}
 #analytics .an-note{color:#98a5b2;font-size:11px;line-height:1.6}
 #analytics .an-section-title{margin:0 0 4px}
+#analytics .an-legacy{display:none}
+#analytics .an-business .an-grid{margin-top:12px}
+#analytics .an-business .an-grid>.panel{min-width:0}
+#analytics .an-business .an-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:850px){#analytics .an-business .an-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#analytics .an-business .an-grid{grid-template-columns:1fr}#analytics .an-business .an-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 #analytics .an-progress{height:8px;background:#28313b;border-radius:9px;overflow:hidden}
 #analytics .an-progress span{display:block;height:100%;background:#35d0ba;border-radius:9px}
 @media(max-width:850px){#analytics .an-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -58,6 +64,28 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
  <p id="analyticsStatus" class="hint" style="margin:13px 0 0">Waiting for secure Firebase connection…</p>
  <p class="an-note" style="margin:6px 0 0">Analytics currently reflects events collected from signed-in users only. Metrics are calculated from recorded events; no sample or estimated audience data is added.</p>
 </div>
+<div class="panel an-business" style="margin-top:13px">
+ <div class="an-head"><div><h3 class="an-section-title">Business overview</h3><p class="hint" style="margin:0">The numbers that help you make content, growth and advertising decisions.</p></div><span class="an-chip">Live summary</span></div>
+ <div class="an-kpis">
+  <div class="an-kpi"><small>Total registered users</small><strong id="bizTotalUsers">—</strong><em>Saved PlotLab viewer and creator profiles</em></div>
+  <div class="an-kpi"><small>New users</small><strong id="bizNewUsers">—</strong><em>Accounts created in the selected period</em></div>
+  <div class="an-kpi"><small>Sign-ins</small><strong id="bizSignIns">—</strong><em>Successful recorded sign-in events</em></div>
+  <div class="an-kpi"><small>Active viewers</small><strong id="bizActiveViewers">—</strong><em>Distinct signed-in users active in this period</em></div>
+  <div class="an-kpi"><small>Movie starts</small><strong id="bizMovieStarts">—</strong><em>Recorded movie play sessions</em></div>
+  <div class="an-kpi"><small>Incomplete views</small><strong id="bizIncomplete">—</strong><em>Started sessions without a completion event</em></div>
+  <div class="an-kpi"><small>Completion rate</small><strong id="bizCompletionRate">—</strong><em>Completed starts ÷ all recorded starts</em></div>
+  <div class="an-kpi"><small>Ad impressions</small><strong id="bizAdImpressions">—</strong><em>Recorded video ad impressions</em></div>
+ </div>
+ <div class="an-grid">
+  <div class="panel"><h3>Most played movies</h3><div id="bizTopMovies" class="an-chart"></div></div>
+  <div class="panel"><h3>Most unfinished movies</h3><div id="bizUnfinishedMovies" class="an-chart"></div><p class="an-note">A session is unfinished when a start exists without a recorded completion. It is not proof the viewer abandoned the film.</p></div>
+  <div class="panel"><h3>Audience age ranges</h3><div id="bizAgeRanges" class="an-chart"></div><p class="an-note">Optional age ranges shared by users who consented to anonymous aggregate insights. Under-18 audiences must not be used for personalised ad targeting.</p></div>
+  <div class="panel"><h3>Genres viewers explore</h3><div id="bizGenres" class="an-chart"></div></div>
+  <div class="panel"><h3>Devices used</h3><div id="bizDevices" class="an-chart"></div></div>
+  <div class="panel"><h3>Ad delivery</h3><div class="an-kpis" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="an-kpi"><small>Ad requests</small><strong id="bizAdRequests">—</strong></div><div class="an-kpi"><small>Fill rate</small><strong id="bizAdFill">—</strong></div></div><p class="an-note">Actual ad revenue and eCPM must come from Google Ad Manager reports, not estimated event counts.</p></div>
+ </div>
+</div>
+<div class="an-legacy">
 <div class="panel" style="margin-top:13px">
  <div class="an-head" style="margin-bottom:13px"><div><h3 class="an-section-title">Report filters</h3><p class="hint" style="margin:0">Filters apply to every KPI, chart and activity row.</p></div><span id="anResultCount" class="an-chip">0 events</span></div>
  <div class="an-filters">
@@ -98,6 +126,7 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
  <div class="an-head" style="margin-bottom:12px"><div><h3 class="an-section-title">Event explorer</h3><p class="hint" style="margin:0">Inspect matching events, sort results and export the filtered report.</p></div><div class="an-toolbar"><div class="field"><label for="anSort">Sort by</label><select id="anSort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="event">Event A–Z</option><option value="device">Device A–Z</option><option value="title">Title / context A–Z</option></select></div><div class="field"><label for="anRows">Rows per page</label><select id="anRows"><option value="25">25</option><option value="50">50</option><option value="100">100</option></select></div></div></div>
  <div style="overflow:auto;max-height:560px"><table class="an-table"><thead><tr><th>Date & time</th><th>Event</th><th>Title / context</th><th>Area</th><th>Device</th><th>Browser</th></tr></thead><tbody id="anRecent"></tbody></table></div>
  <div class="an-head" style="margin-top:12px;align-items:center"><span id="anPageInfo" class="hint">Showing 0 rows</span><div class="an-toolbar"><button id="anPrev" class="btn ghost mini" type="button" disabled>Previous</button><button id="anNext" class="btn ghost mini" type="button" disabled>Next</button></div></div>
+</div>
 </div>
 </section>
 <section class="section" id="editor"><div class="layout"><div class="panel"><h2 id="editorHeading">Create a movie card</h2><form id="movieForm">
@@ -143,7 +172,7 @@ else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(ap
 
 const fmtNum=n=>Number(n||0).toLocaleString();
 const fmtDuration=seconds=>{const n=Math.max(0,Math.round(seconds||0));if(n<60)return n+"s";const m=Math.floor(n/60),h=Math.floor(m/60);return h?h+"h "+(m%60)+"m":m+"m"};
-let analyticsEventsCache=[],analyticsPage=0,analyticsFilterTimer=null;
+let analyticsEventsCache=[],analyticsUsersCache=[],analyticsUsersUnsubscribe=null,analyticsPage=0,analyticsFilterTimer=null;
 const anPalette=["#35D0BA","#F5B942","#55B6E8","#A3D977","#FF8A50","#E78AC3","#FF6B6B","#B7C7D8"];
 const anEsc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function anCategory(name){
@@ -187,7 +216,33 @@ function anDonut(id,items,empty){
  host.innerHTML='<div style="display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:12px"><div style="width:142px;height:142px;border-radius:50%;background:conic-gradient('+stops+');position:relative;flex:none"><div style="position:absolute;inset:27px;border-radius:50%;background:#141920;display:grid;place-items:center;text-align:center"><div><b style="font-size:22px">'+fmtNum(total)+'</b><div style="font-size:10px;color:#aab3bf">EVENTS</div></div></div></div><div style="display:grid;gap:8px;min-width:120px">'+items.map((x,i)=>'<div style="display:flex;gap:7px;align-items:center;font-size:11px"><i style="width:9px;height:9px;border-radius:50%;background:'+anPalette[i%anPalette.length]+'"></i><span>'+anEsc(x.name)+'</span><b style="margin-left:auto">'+fmtNum(x.value)+'</b></div>').join("")+'</div></div>';
 }
 function anSessionKey(e){const p=e.props||{};return [e.userId||"anonymous",e.sessionId||e.id||"",p.movieId||p.movieTitle||"unknown"].join("|")}
+function renderBusinessAnalytics(){
+ const events=anFiltered(),plays=events.filter(e=>e.eventName==="movie_play"),active=new Set(events.map(e=>e.userId).filter(Boolean));
+ const range=$("anRange").value,from=$("anFrom").value,to=$("anTo").value,now=new Date();let start=null,end=null;
+ if(range==="custom"){if(from)start=new Date(from+"T00:00:00");if(to)end=new Date(to+"T23:59:59.999")}else if(range!=="all")start=new Date(now.getTime()-Number(range)*86400000);
+ const users=analyticsUsersCache||[],created=u=>u.createdAt?.toDate?u.createdAt.toDate():u.createdAt?.seconds?new Date(u.createdAt.seconds*1000):u.createdAt?new Date(u.createdAt):null;
+ const newUsers=users.filter(u=>{const d=created(u);return d&&(!start||d>=start)&&(!end||d<=end)}).length;
+ const sessions=new Map(),movieNames=new Map(),genres=new Map(),devices=new Map();
+ for(const e of events){const p=e.props||{},key=anSessionKey(e),movieKey=p.movieId||p.movieTitle||"unknown",movieName=p.movieTitle||p.movieId||"Unknown movie";
+  if(e.eventName==="movie_play"){const v=sessions.get(key)||{movieKey,movieName,completed:false};sessions.set(key,v);movieNames.set(movieKey,{name:movieName,value:(movieNames.get(movieKey)?.value||0)+1})}
+  if(e.eventName==="movie_complete"){const v=sessions.get(key)||{movieKey,movieName,completed:false};v.completed=true;sessions.set(key,v)}
+  if(e.eventName==="genre_selected"&&p.genre)genres.set(String(p.genre),(genres.get(String(p.genre))||0)+1);
+  if(e.deviceType)devices.set(e.deviceType,(devices.get(e.deviceType)||0)+1);
+ }
+ const played=[...sessions.values()],completed=played.filter(s=>s.completed).length,incomplete=played.filter(s=>!s.completed),unfinished=new Map();
+ incomplete.forEach(s=>unfinished.set(s.movieKey,{name:s.movieName,value:(unfinished.get(s.movieKey)?.value||0)+1}));
+ const count=name=>events.filter(e=>e.eventName===name).length,requests=count("ad_request"),impressions=count("ad_impression");
+ const set=(id,value)=>{const el=$(id);if(el)el.textContent=value};
+ set("bizTotalUsers",fmtNum(users.length));set("bizNewUsers",fmtNum(newUsers));set("bizSignIns",fmtNum(count("login")));set("bizActiveViewers",fmtNum(active.size));set("bizMovieStarts",fmtNum(played.length));set("bizIncomplete",fmtNum(incomplete.length));set("bizCompletionRate",played.length?(completed/played.length*100).toFixed(1)+"%":"—");set("bizAdImpressions",fmtNum(impressions));set("bizAdRequests",fmtNum(requests));set("bizAdFill",requests?(impressions/requests*100).toFixed(1)+"%":"—");
+ const ageLabels={under_18:"Under 18",18_24:"18–24",25_34:"25–34",35_44:"35–44",45_plus:"45+"};const ageMap=new Map();users.filter(u=>u.ageInsightsConsent===true&&ageLabels[u.ageRange]).forEach(u=>ageMap.set(ageLabels[u.ageRange],(ageMap.get(ageLabels[u.ageRange])||0)+1));
+ anBars("bizTopMovies",[...movieNames.values()].sort((x,y)=>y.value-x.value).slice(0,6),"No movie starts recorded for this period.");
+ anBars("bizUnfinishedMovies",[...unfinished.values()].sort((x,y)=>y.value-x.value).slice(0,6),"No unfinished movie sessions recorded.");
+ anDonut("bizAgeRanges",[...ageMap.entries()].map(([name,value])=>({name,value})),"No users have shared an age range for anonymous insights yet.");
+ anBars("bizGenres",[...genres.entries()].sort((x,y)=>y[1]-x[1]).slice(0,6).map(([name,value])=>({name,value})),"No genre selections recorded yet.");
+ anDonut("bizDevices",[...devices.entries()].map(([name,value])=>({name,value})),"No device information recorded yet.");
+}
 function renderAnalytics(){
+ renderBusinessAnalytics();
  const events=anFiltered(),plays=events.filter(e=>e.eventName==="movie_play"),active=new Set(events.map(e=>e.userId).filter(Boolean)),viewers=new Set(plays.map(e=>e.userId).filter(Boolean));
  const watch=new Map(),completed=new Set(),movieMap=new Map(),deviceMap=new Map(),browserMap=new Map(),dayMap=new Map(),dayUsers=new Map(),creatorMap=new Map(),featureMap=new Map(),genreMap=new Map(),areaMap=new Map();
  for(const e of events){
@@ -243,11 +298,12 @@ function renderAnalyticsTable(events){
 }
 async function loadAnalytics(){
  const statusEl=$("analyticsStatus");if(!db||!currentUser){statusEl.textContent="Sign in with the verified PlotLab owner account to view analytics.";return}
- if(analyticsUnsubscribe){analyticsUnsubscribe();analyticsUnsubscribe=null}
+ if(analyticsUnsubscribe){analyticsUnsubscribe();analyticsUnsubscribe=null}if(analyticsUsersUnsubscribe){analyticsUsersUnsubscribe();analyticsUsersUnsubscribe=null}
  statusEl.textContent="Connecting securely to Firestore…";
  try{
   const q=query(collection(db,"analyticsEvents"),orderBy("createdAt","desc"));
-  analyticsUnsubscribe=onSnapshot(q,snap=>{analyticsEventsCache=snap.docs.map(d=>({id:d.id,...d.data()}));renderAnalytics();statusEl.textContent="LIVE · "+fmtNum(analyticsEventsCache.length)+" stored events · auto-refreshes when new events arrive."},err=>{statusEl.textContent="Analytics could not load ("+(err.code||"error")+"): "+err.message+" · Check that deployed Firestore rules allow the owner to read analyticsEvents.";analyticsUnsubscribe=null});
+  analyticsUnsubscribe=onSnapshot(q,snap=>{analyticsEventsCache=snap.docs.map(d=>({id:d.id,...d.data()}));renderAnalytics();statusEl.textContent="LIVE · audience and viewing metrics update when Firebase records change."},err=>{statusEl.textContent="Analytics could not load ("+(err.code||"error")+"): "+err.message+" · Check that deployed Firestore rules allow the owner to read analyticsEvents.";analyticsUnsubscribe=null});
+  analyticsUsersUnsubscribe=onSnapshot(collection(db,"users"),snap=>{analyticsUsersCache=snap.docs.map(d=>({id:d.id,...d.data()}));renderBusinessAnalytics();},err=>{statusEl.textContent+=" User summary unavailable ("+(err.code||"error")+").";analyticsUsersUnsubscribe=null});
  }catch(e){statusEl.textContent="Analytics connection failed: "+e.message;analyticsUnsubscribe=null}
 }
 function resetAnalyticsFilters(){
