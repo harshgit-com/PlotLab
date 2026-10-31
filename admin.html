@@ -169,7 +169,96 @@ function go(tab){document.querySelectorAll(".nav button").forEach(b=>b.classList
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.tab)));
 document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.goto)));
 if(!configured){$("googleLogin").disabled=true;status("Firebase is not configured yet. Fill firebase-config.js with your own Firebase web app config, enable Google sign-in, create Firestore, and deploy firestore.rules. Setup steps are in PLOTLAB_FIREBASE_SETUP.md.","bad")}
-else {try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);await setPersistence(auth,browserSessionPersistence);let rejectingUnauthorized=false;$("googleLogin").addEventListener("click",async()=>{try{const provider=new GoogleAuthProvider();provider.setCustomParameters({prompt:"select_account"});await signInWithPopup(auth,provider)}catch(e){status("Sign-in failed: "+e.message,"bad")}});onAuthStateChanged(auth,async user=>{if(rejectingUnauthorized)return;currentUser=user;if(!user){$("loginPanel").classList.remove("hidden");$("appPanel").classList.add("hidden");$("logout").classList.add("hidden");$("userEmail").textContent="";return}try{await user.getIdToken(true);const token=await user.getIdTokenResult();const claims=token.claims||{};const provider=claims.firebase?.sign_in_provider;const owner=claims.email===PLOTLAB_ADMIN_EMAIL&&claims.email_verified===true&&provider==="google.com";if(!owner){rejectingUnauthorized=true;currentUser=null;document.body.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;background:#090909;color:#f5f0e8;font:16px Arial,sans-serif;text-align:center;padding:24px"><div><h1>Private area</h1><p>This dashboard is restricted to its authorized owner.</p><p>Returning to PlotLab…</p></div></main>';try{await signOut(auth)}catch(_){}location.replace("index.html");return}currentUser=user;$("loginPanel").classList.add("hidden");$("appPanel").classList.remove("hidden");$("logout").classList.remove("hidden");$("userEmail").textContent=user.email;status("Verified owner session. Loading private catalogue…");try{await loadData();status("Connected to Firebase. Changes are saved to the live catalogue when published.","good")}catch(e){status("Could not load data: "+e.message+". Confirm Firestore is created and firestore.rules are deployed.","bad")}}catch(e){rejectingUnauthorized=true;currentUser=null;try{await signOut(auth)}catch(_){}location.replace("index.html")}});$("logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")})}catch(e){status("Firebase initialization error: "+e.message,"bad")}}
+else {
+  try {
+    app=initializeApp(firebaseConfig);
+    auth=getAuth(app);
+    db=getFirestore(app);
+
+    // Attach the click handler immediately so a persistence delay cannot leave
+    // the visible Google button without an action.
+    const loginButton=$("googleLogin");
+    loginButton.type="button";
+    loginButton.disabled=false;
+    loginButton.addEventListener("click",async()=>{
+      if(loginButton.disabled)return;
+      loginButton.disabled=true;
+      status("Opening Google sign-in…");
+      try {
+        const provider=new GoogleAuthProvider();
+        provider.setCustomParameters({prompt:"select_account"});
+        await signInWithPopup(auth,provider);
+      } catch(e) {
+        console.error("[PlotLab Admin] Google sign-in failed:",e);
+        const code=e?.code||"unknown";
+        let help=e?.message||"Please try again.";
+        if(code==="auth/unauthorized-domain") help="This Live Server address is not authorized in Firebase. Add localhost and 127.0.0.1 under Firebase Authentication → Settings → Authorized domains.";
+        else if(code==="auth/popup-blocked") help="Your browser blocked the Google sign-in popup. Allow pop-ups for this localhost site and retry.";
+        else if(code==="auth/operation-not-allowed") help="Google sign-in is not enabled in Firebase Authentication → Sign-in method.";
+        status("Sign-in failed ("+code+"): "+help,"bad");
+        loginButton.disabled=false;
+      }
+    });
+
+    try {
+      await setPersistence(auth,browserSessionPersistence);
+    } catch(persistenceError) {
+      console.warn("[PlotLab Admin] Session persistence unavailable; continuing with Firebase default:",persistenceError);
+    }
+
+    let rejectingUnauthorized=false;
+    onAuthStateChanged(auth,async user=>{
+      if(rejectingUnauthorized)return;
+      currentUser=user;
+      if(!user){
+        $("loginPanel").classList.remove("hidden");
+        $("appPanel").classList.add("hidden");
+        $("logout").classList.add("hidden");
+        $("userEmail").textContent="";
+        return;
+      }
+      try {
+        await user.getIdToken(true);
+        const token=await user.getIdTokenResult();
+        const claims=token.claims||{};
+        const provider=claims.firebase?.sign_in_provider;
+        const owner=claims.email===PLOTLAB_ADMIN_EMAIL&&claims.email_verified===true&&provider==="google.com";
+        if(!owner){
+          rejectingUnauthorized=true;
+          currentUser=null;
+          document.body.innerHTML='<main style="min-height:100vh;display:grid;place-items:center;background:#090909;color:#f5f0e8;font:16px Arial,sans-serif;text-align:center;padding:24px"><div><h1>Private area</h1><p>This dashboard is restricted to its authorized owner.</p><p>Returning to PlotLab…</p></div></main>';
+          try{await signOut(auth)}catch(_){}
+          location.replace("index.html");
+          return;
+        }
+        currentUser=user;
+        $("loginPanel").classList.add("hidden");
+        $("appPanel").classList.remove("hidden");
+        $("logout").classList.remove("hidden");
+        $("userEmail").textContent=user.email;
+        status("Verified owner session. Loading private catalogue…");
+        try {
+          await loadData();
+          status("Connected to Firebase. Changes are saved to the live catalogue when published.","good");
+        } catch(e) {
+          status("Could not load data: "+e.message+". Confirm Firestore is created and firestore.rules are deployed.","bad");
+        }
+      } catch(e) {
+        console.error("[PlotLab Admin] Owner verification failed:",e);
+        rejectingUnauthorized=true;
+        currentUser=null;
+        try{await signOut(auth)}catch(_){}
+        location.replace("index.html");
+      }
+    });
+    $("logout").addEventListener("click",async()=>{await signOut(auth);location.replace("index.html")});
+  } catch(e) {
+    console.error("[PlotLab Admin] Firebase initialization failed:",e);
+    status("Firebase initialization error: "+(e?.message||e),"bad");
+    const loginButton=$("googleLogin");
+    if(loginButton)loginButton.disabled=true;
+  }
+}
 
 const fmtNum=n=>Number(n||0).toLocaleString();
 const fmtDuration=seconds=>{const n=Math.max(0,Math.round(seconds||0));if(n<60)return n+"s";const m=Math.floor(n/60),h=Math.floor(m/60);return h?h+"h "+(m%60)+"m":m+"m"};
