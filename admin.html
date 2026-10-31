@@ -157,6 +157,21 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
 <section class="section" id="settings"><div class="panel"><h2>Public catalogue settings</h2><p class="hint">Drag movies to set the public Trending order. The first movie appears first. Press Save publishing settings to publish the order.</p><h3 style="font-size:14px;margin:22px 0 6px">Trending order</h3><div class="field"><label for="trendingPosterZoom">Trending poster zoom <span id="trendingZoomValue">100%</span></label><input id="trendingPosterZoom" type="range" min="100" max="160" step="5" value="100"></div><div class="field"><label for="findPosterZoom">Find section poster zoom <span id="findZoomValue">100%</span></label><input id="findPosterZoom" type="range" min="100" max="160" step="5" value="100"></div><div id="trendingDragList" class="drag-list"><div class="empty">Sign in to load movies.</div></div><p class="hint">The list and text field stay in sync. You can also edit the order manually.</p><div class="field"><label for="genresSetting">Genres (one per line)</label><textarea id="genresSetting" placeholder="All&#10;Sci-Fi&#10;Adventure"></textarea></div><div class="field"><label for="trendingSetting">Trending movie IDs or exact titles (one per line, in order)</label><textarea id="trendingSetting"></textarea></div><div class="field"><label for="featuredSetting">Featured movie IDs or exact titles (one per line, in order)</label><textarea id="featuredSetting"></textarea></div></div><div class="panel" style="margin-top:22px;border-color:#514137"><h2>Video advertising controls</h2><p class="hint">Global automatic rules apply to eligible movies. Per-movie settings can override the schedule. Both global enablement and verified movie rights are required.</p><div class="checks"><label><input id="adsEnabled" type="checkbox"> Enable video advertising globally</label><label><input id="adsTestMode" type="checkbox" checked> Test mode — Google's sample VAST tag</label><label><input id="adsGlobalPreRoll" type="checkbox" checked> Allow global pre-roll</label><label><input id="adsGlobalMidRoll" type="checkbox" checked> Allow global mid-roll</label></div><div class="field"><label for="adsVastTag">Production VAST tag URL</label><input id="adsVastTag" type="url" placeholder="Paste the VAST tag from Google Ad Manager after setup"><span class="hint">Production ads stay inactive until a valid HTTPS VAST tag is provided.</span></div><div class="two"><div class="field"><label for="adsMaxMidroll">Maximum automatic mid-roll breaks</label><select id="adsMaxMidroll"><option value="0">0 — pre-roll only</option><option value="1">1</option><option value="2" selected>2</option></select></div><div class="field"><label for="adsMinGap">Minimum spacing between breaks (minutes)</label><input id="adsMinGap" type="number" min="5" max="90" value="15"></div></div><p class="hint">Automatic policy: under 30 min = no mid-roll; 30–59 min = one near halfway; 60+ min = up to two near one-third and two-thirds. The opening 15 and final 10 minutes are protected. Custom positions override this schedule.</p><button id="saveSettings" class="btn">Save publishing &amp; ad settings</button></div></section>
 </div>
 </main></div>
+<script>
+/* Early login diagnostic: this runs even if Firebase's ES module fails to load. */
+window.__plotLabAdminFirebaseReady = false;
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document.getElementById("googleLogin");
+  const statusBox = document.getElementById("globalStatus");
+  if (!button || !statusBox) return;
+  button.addEventListener("click", () => {
+    if (window.__plotLabAdminFirebaseReady) return;
+    statusBox.textContent = "The Google login code has not loaded yet. Check that admin.html and firebase-config.js are being served from the same PlotLab folder, then refresh. If this message remains, the Firebase module failed before connecting.";
+    statusBox.className = "status bad";
+    button.disabled = false;
+  }, true);
+});
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -174,6 +189,7 @@ else {
     app=initializeApp(firebaseConfig);
     auth=getAuth(app);
     db=getFirestore(app);
+    window.__plotLabAdminFirebaseReady = true;
 
     // Attach the click handler immediately so a persistence delay cannot leave
     // the visible Google button without an action.
