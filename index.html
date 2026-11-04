@@ -1381,7 +1381,7 @@ document.getElementById("accountMode")?.addEventListener("change",e=>{
    const provider=new GoogleAuthProvider();provider.setCustomParameters({prompt:"select_account"});
    const cred=await signInWithPopup(auth,provider);
    const snap=await getDoc(doc(db,"users",cred.user.uid));
-   if(!snap.exists())await saveProfile(cred.user,{name:cred.user.displayName||cred.user.email?.split("@")[0]||"PlotLab viewer",role:"viewer"});
+   if(!snap.exists()){const choice=window.prompt("To create your PlotLab account, select your age range:\n1 = Under 18\n2 = 18–24\n3 = 25–34\n4 = 35–44\n5 = 45+");const ageRange=({"1":"under_18","2":"18_24","3":"25_34","4":"35_44","5":"45_plus"})[String(choice||"").trim()];if(!ageRange){await signOut(auth);throw new Error("Google sign-up requires an age range. Please try again and select an option.");}const ageInsightsConsent=window.confirm("May PlotLab use this age range for anonymous, aggregated audience insights? Choose Cancel to keep this optional setting off.");await saveProfile(cred.user,{name:cred.user.displayName||cred.user.email?.split("@")[0]||"PlotLab viewer",role:"viewer",ageRange,ageInsightsConsent});}
    else window.plotlabCurrentRole=snap.data().role||"viewer";
    const creatorSnap=await getDoc(doc(db,"creatorProfiles",cred.user.uid));
    location.href=creatorSnap.exists()?"creator-lab.html":"index.html#home";
