@@ -45,6 +45,43 @@ body{-webkit-font-smoothing:antialiased}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
 
+<style id="plotlab-v2-visual-system">
+:root{--bg:#090909;--panel:#121212;--panel2:#191919;--line:#ffffff20;--text:#f5f0e8;--muted:#a5a19b;--accent:#ff5738;--green:#82d6a0;--v2-ease:cubic-bezier(.2,.75,.25,1)}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;background:radial-gradient(ellipse at 85% -10%,#ff57380b,transparent 34%),#090909}
+::selection{background:#ff5738;color:#090909}
+:focus-visible{outline:2px solid #ff8068!important;outline-offset:3px}
+.shell{grid-template-columns:clamp(215px,18vw,250px) minmax(0,1fr)}
+.side{background:linear-gradient(180deg,#101010,#0b0b0b);border-right-color:#ffffff20;gap:28px}
+.nav{gap:6px}
+.nav button{border:1px solid transparent;border-radius:6px;transition:background .22s,border-color .22s,color .22s,transform .22s}
+.nav button.active{background:#ff573814;border-color:#ff573844;color:#ff9a86}
+.nav button:hover{background:#ffffff0a;border-color:#ffffff18;transform:translateX(2px)}
+.main{padding:clamp(22px,3vw,42px) clamp(18px,4vw,58px) 64px}
+.top{padding-bottom:22px;margin-bottom:28px;border-bottom-color:#ffffff20}
+.top h1{letter-spacing:-.065em}
+.btn{border-radius:5px;min-height:40px;transition:transform .22s var(--v2-ease),box-shadow .22s,border-color .22s,background .22s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 22px #ff57381b;border-color:#ff8068}
+.cards{gap:clamp(10px,1.4vw,16px);margin:22px 0 30px}
+.stat,.panel,.login{border-radius:9px;border-color:#ffffff20;background:linear-gradient(145deg,#151515,#101010);box-shadow:0 12px 32px #0004}
+.stat{padding:clamp(14px,1.7vw,21px);min-height:112px;transition:transform .25s var(--v2-ease),border-color .25s,box-shadow .25s}
+.stat:hover{transform:translateY(-3px);border-color:#ff806855;box-shadow:0 15px 32px #0007,0 0 18px #ff573812}
+.stat strong{letter-spacing:-.055em}
+.panel{padding:clamp(16px,2vw,23px)}
+.layout{gap:clamp(14px,1.8vw,22px)}
+.field input,.field textarea,.field select{border-radius:5px;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#ff8068;box-shadow:0 0 0 3px #ff573817}
+.movie,.review-card,.drag-row{border-radius:7px;border-color:#ffffff20;transition:border-color .2s,background .2s}
+.movie:hover,.review-card:hover{border-color:#ff806855;background:#ff573806}
+#analytics{--an-accent:#ff8068}
+#analytics .an-kpi{background:linear-gradient(145deg,#191513,#111);border-color:#ffffff20;border-radius:9px}
+#analytics .an-kpi strong{letter-spacing:-.05em}
+#analytics .an-chart{border-radius:9px}
+#analytics .an-table th{background:#191513;color:#ffb3a4}
+#analytics .an-progress span{background:linear-gradient(90deg,#ff5738,#ff9a78)}
+@media(max-width:1050px){.shell{grid-template-columns:205px minmax(0,1fr)}}
+@media(max-width:650px){.shell{grid-template-columns:1fr}.side{padding:12px 14px;gap:10px}.nav{gap:5px}.nav button.active{border-color:#ff573855}.main{padding:18px 13px 40px}.top{gap:10px;padding-bottom:18px;margin-bottom:22px}.cards{gap:8px}.stat{min-height:96px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
 <div class="shell">
