@@ -14,6 +14,37 @@ html,body{max-width:100%;overflow-x:hidden}input,select,textarea{font-size:16px}
 @media(max-width:650px){.top{gap:12px;flex-wrap:wrap}.top h1{font-size:clamp(25px,8vw,32px);line-height:1.05}.side{min-width:0}.nav{max-width:100%;scrollbar-width:none}.nav button{min-height:44px}.main{min-width:0}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:minmax(0,1fr)}.movie{min-width:0;grid-template-columns:44px minmax(0,1fr)}.movie-actions{display:flex;flex-wrap:wrap;gap:6px}.movie-actions button{min-height:42px}.crop-workspace{grid-template-columns:minmax(0,1fr);min-width:0}.crop-stage,.crop-live{width:100%;max-width:100%;min-width:0}}
 @media(max-width:380px){.cards{grid-template-columns:1fr}.main{padding-inline:10px}}
 </style>
+
+<style id="plotlab-admin-ux-refinement-2026">
+/* Admin refinement — preserve private studio functionality and existing coral accent */
+:root{--accent:#ff5738}
+html{scroll-behavior:smooth}
+body{-webkit-font-smoothing:antialiased}
+::selection{background:#ff5738;color:#090909}
+:focus-visible{outline:2px solid #ff8068!important;outline-offset:3px}
+.shell{grid-template-columns:248px minmax(0,1fr)}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right-color:#ffffff1c}
+.logo img{width:176px;height:68px}
+.nav button{border:1px solid transparent;transition:background .2s,border-color .2s,color .2s}
+.nav button.active,.nav button:hover{background:#ff573814;border-color:#ff573844;color:#fff}
+.main{max-width:1700px;width:100%;margin:0 auto;padding-top:34px}
+.top{align-items:flex-end}
+.top h1{letter-spacing:-.055em}
+.stat,.panel{border-radius:7px;border-color:#ffffff20;box-shadow:0 10px 28px #0003}
+.stat{transition:border-color .2s,transform .2s}
+.stat:hover{border-color:#ff806866;transform:translateY(-2px)}
+.btn{border-radius:4px;transition:transform .2s,border-color .2s}
+.btn:hover{transform:translateY(-1px)}
+.field input,.field textarea,.field select{border-radius:4px}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#ff8068;box-shadow:0 0 0 2px #ff57381c}
+.movie,.review-card,.drag-row{border-radius:6px;border-color:#ffffff20}
+.movie:hover,.review-card:hover{border-color:#ff806866}
+.section{scroll-margin-top:20px}
+@media(max-width:850px){.shell{grid-template-columns:1fr}.side{position:relative;height:auto;overflow:visible}.logo{min-height:58px}.nav{display:flex;overflow-x:auto;scrollbar-width:none}.nav button{white-space:nowrap;flex:0 0 auto}.sidefoot{display:none}}
+@media(max-width:650px){.main{padding-top:18px}.top{align-items:flex-start}.side{padding:12px}.logo img{width:150px;height:56px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+
 </head>
 <body>
 <div class="shell">
