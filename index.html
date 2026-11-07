@@ -796,10 +796,12 @@ header{min-height:82px;background:#080808ed;border-bottom-color:#ffffff20;box-sh
 .section-head{align-items:end;gap:28px;margin-bottom:clamp(20px,2.5vw,30px)}
 .section h2{letter-spacing:-.065em}
 .kicker{color:var(--v2-accent-soft)}
-.trending-track{gap:clamp(12px,1.5vw,18px);padding-bottom:16px}
+.trending-track{gap:14px;padding-bottom:12px}
 .trending-track .movie-card{border-radius:7px;border-color:#ffffff24}
 .movie-card{border-radius:6px;border-color:#ffffff20;box-shadow:0 12px 32px #0004}
 .movie-card:hover{border-color:#ff806877;box-shadow:0 18px 42px #0008,0 0 24px #ff573814}
+.trending-track .movie-card{flex:0 0 100%;aspect-ratio:16/7;min-height:300px}
+.trending-track .movie-card .poster-art:after{background:linear-gradient(90deg,#0005,transparent 65%)}
 .movie-card .poster-art img{transition:transform .75s var(--v2-ease),filter .5s}
 .movie-card:hover .poster-art img{transform:scale(1.055)}
 .movie-card .card-info{padding:clamp(14px,1.6vw,21px)}
