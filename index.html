@@ -1673,7 +1673,7 @@ function renderUpcoming(records){
     const poster=m.poster||m.backdropUrl||'';
     const style=poster?'background-image:linear-gradient(0deg,#080808dd,#08080822),url('+JSON.stringify(poster)+');background-size:cover;background-position:center':'';
     const title=String(m.title||'Untitled');
-    return '<article class="upcoming-card" data-upcoming-title="'+title.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'"><div class="upcoming-art ua-'+['one','two','three'][i%3]+'" style="'+style+'"><span>'+String(i+1).padStart(2,'0')+' / '+(m.genre||'UPCOMING')+'</span><b>'+title+'</b><small>'+(m.tag||'')+'</small></div><div class="upcoming-copy"><strong>'+title+'</strong><span>'+(m.genre||'Film')+'</span></div></article>';
+    return '<article class="upcoming-card" data-upcoming-title="'+title.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'"><div class="upcoming-art ua-'+['one','two','three'][i%3]+'" style="'+style+'"><span>COMING SOON'+(date?' · '+date:'')+'</span><b>'+title+'</b><small>'+(m.tag||'')+'</small></div><div class="upcoming-copy"><strong>'+title+'</strong><span>'+(m.genre||'Film')+'</span></div></article>';
   }).join('');
   grid.querySelectorAll('[data-upcoming-title]').forEach(card=>card.addEventListener('click',()=>openMovie(card.getAttribute('data-upcoming-title'))));
 };
