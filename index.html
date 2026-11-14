@@ -2144,22 +2144,16 @@ async function renderPlotlabAccount(tab='watchlater'){
 <style id="plotlab-navbar-polish-2026">
 /* Desktop header: balanced spacing, calm navigation, clear sign-in action */
 @media(min-width:761px){
-  header{height:82px!important;min-height:82px!important;background:rgba(8,8,8,.94)!important;border-bottom:1px solid #ffffff14!important}
-  header .nav{width:min(1320px,calc(100% - 56px))!important;gap:clamp(14px,2vw,28px)!important}
-  header .brand{flex:0 0 auto!important}
-  header .navlinks{
-    display:flex!important;align-items:center!important;justify-content:center!important;
-    gap:clamp(3px,.55vw,9px)!important;padding:5px!important;
-    border:1px solid #ffffff12!important;border-radius:999px!important;
-    background:#ffffff06!important;color:#bdbdbd!important;
-    font-size:10px!important;letter-spacing:1px!important
-  }
-  header .navlinks a{padding:11px 13px!important;border-radius:999px!important;transition:background .2s ease,color .2s ease!important}
-  header .navlinks a:after{display:none!important}
-  header .navlinks a:hover{background:#ffffff0d!important;color:#fff!important}
-  header .nav-actions{gap:8px!important}
-  header .nav-actions .btn{border-radius:999px!important;padding:12px 20px!important;font-size:10px!important;letter-spacing:1.1px!important;background:#ff5738!important;border-color:#ff5738!important;color:#080808!important}
-  header .nav-actions .btn:hover{background:#ff806d!important;border-color:#ff806d!important}
+  /* Preserve the established desktop navbar: standard horizontal layout, no pill container. */
+  header{height:auto!important;min-height:84px!important;background:#080808e8!important}
+  header .nav{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:24px!important;width:min(1280px,calc(100% - 64px))!important;min-height:84px!important}
+  header .brand{flex:0 0 auto!important;width:auto!important;min-width:0!important}
+  header .navlinks{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:24px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#b7b7b7!important;font-size:11px!important;letter-spacing:1.1px!important}
+  header .navlinks a{padding:10px 0!important;border-radius:0!important;transition:color .25s!important}
+  header .navlinks a:after{display:block!important}
+  header .navlinks a:hover{background:transparent!important;color:#fff!important}
+  header .nav-actions{width:auto!important;gap:10px!important}
+  header .account-nav-button{border-radius:999px!important}
 }
 @media(min-width:761px) and (max-width:1050px){
   header .navlinks a{padding:10px 8px!important;font-size:9px!important}
@@ -2223,21 +2217,14 @@ header .account-nav-button .account-nav-label{display:block!important;max-width:
 header .account-nav-button .account-nav-label small{display:none!important}
 header .account-nav-button .account-chevron{display:inline!important;color:#ff806d!important;font-size:14px!important}
 @media(min-width:761px){
-  header{height:96px!important;min-height:96px!important}
-  header .nav{
-    width:min(1360px,calc(100% - 64px))!important;min-height:96px!important;
-    display:grid!important;grid-template-columns:210px minmax(0,1fr) 190px!important;
-    align-items:center!important;column-gap:24px!important
-  }
-  header .brand{width:210px!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important}
-  header .brand-logo{width:190px!important;height:auto!important;max-height:82px!important;object-fit:contain!important;object-position:left center!important}
-  header .navlinks{
-    justify-self:center!important;display:flex!important;align-items:center!important;
-    justify-content:center!important;gap:clamp(4px,.7vw,12px)!important;
-    padding:5px!important;white-space:nowrap!important
-  }
-  header .navlinks a{padding:11px clamp(8px,1vw,14px)!important}
-  header .nav-actions{width:190px!important}
+  /* Keep desktop in its original flex layout; enlarge only the brand image. */
+  header{height:auto!important;min-height:88px!important}
+  header .nav{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:24px!important;width:min(1280px,calc(100% - 64px))!important;min-height:88px!important}
+  header .brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;flex:0 0 auto!important;width:auto!important;min-width:0!important}
+  header .brand-logo{display:block!important;width:230px!important;height:auto!important;max-height:none!important;max-width:none!important;object-fit:contain!important;object-position:left center!important}
+  header .navlinks{flex:0 1 auto!important;justify-content:flex-start!important;gap:24px!important;padding:0!important;white-space:nowrap!important}
+  header .navlinks a{padding:10px 0!important}
+  header .nav-actions{width:auto!important;flex:0 0 auto!important}
 }
 @media(max-width:760px){
   header{height:76px!important;min-height:76px!important}
