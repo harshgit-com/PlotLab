@@ -1013,22 +1013,12 @@ footer{border-top:1px solid var(--v2-line)}
 /* 16:9 Trending cards stay consistent; trailers of other shapes are never stretched. */
 #trending .trending-track .movie-card{aspect-ratio:16/9!important;min-height:0!important}
 #trending .trending-track .movie-card .trailer-layer{background:transparent!important;isolation:isolate}
-#trending .trending-track .movie-card .trailer-adaptive-backdrop{
-  position:absolute;inset:-8%;z-index:0;overflow:hidden;pointer-events:none;background:#080808
-}
-#trending .trending-track .movie-card .trailer-adaptive-backdrop img{
-  width:100%;height:100%;object-fit:cover;filter:blur(22px) brightness(.48) saturate(.82);
-  transform:scale(1.12);opacity:.9
-}
 #trending .trending-track .movie-card .trailer-layer iframe,
 #trending .trending-track .movie-card .trailer-layer video{
   z-index:1
 }
 #trending .trending-track .movie-card .trailer-layer video{
   object-fit:contain!important;object-position:center!important;background:transparent!important
-}
-@media(prefers-reduced-motion:reduce){
-  #trending .trending-track .movie-card .trailer-adaptive-backdrop img{filter:brightness(.55)}
 }
 </style>
 </head>
@@ -1113,10 +1103,6 @@ function startTrailer(card,id){
   const movie=titles.find(x=>x.title===card.dataset.title);
   const embedUrl=movie&&movie.trailerEmbedUrl;
   const hostedSrc=(movie&&movie.trailerUrl)||card.dataset.trailerUrl;
-  /* Keep the full trailer visible while a soft poster backdrop fills unused space. */
-  const backdrop=document.createElement('div');backdrop.className='trailer-adaptive-backdrop';
-  const backdropImage=document.createElement('img');backdropImage.alt='';backdropImage.src=(movie&&(movie.landscapePoster||movie.backdropUrl||movie.poster))||card.querySelector('.poster-art img')?.src||'';
-  backdrop.appendChild(backdropImage);layer.appendChild(backdrop);
   if(embedUrl){
     const frame=document.createElement('iframe');let src=embedUrl;
     try{const u=new URL(embedUrl,location.href);if(u.hostname.includes('youtube.com')||u.hostname.includes('youtube-nocookie.com')){u.searchParams.set('autoplay','1');u.searchParams.set('mute','0');u.searchParams.set('controls','0');u.searchParams.set('disablekb','1');u.searchParams.set('fs','0');u.searchParams.set('playsinline','1');u.searchParams.set('modestbranding','1');u.searchParams.set('rel','0');src=u.toString()}}catch(e){}
