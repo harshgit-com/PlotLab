@@ -2075,9 +2075,9 @@ async function renderPlotlabAccount(tab='watchlater'){
 
   function setActive(key){
     items.forEach(item=>{
-      const active=(key==='discover'&&!item.dataset.mobileTarget&&!item.hasAttribute('onclick'))
+      const active=(key==='discover'&&item.getAttribute('aria-label')==='Discover')
         ||item.dataset.mobileTarget===key
-        ||(key==='creators'&&item.getAttribute('href')==='#creator');
+        ||(key==='creators'&&item.getAttribute('aria-label')==='Creators');
       item.classList.toggle('active',active);
       if(active)item.setAttribute('aria-current','page');
       else item.removeAttribute('aria-current');
