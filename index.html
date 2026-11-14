@@ -1192,6 +1192,13 @@ header .brand:hover .brand-logo,header .brand:focus-visible .brand-logo{transfor
 </style>
 <script>try{window.__plotlabCachedLogo=localStorage.getItem("plotlab-public-logo")||""}catch(e){window.__plotlabCachedLogo=""}</script>
 <style>@keyframes plotlabWelcomeIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}</style>
+<style id="plotlab-unified-logo-v3">
+/* Identical PlotLab logo scale across the main site, admin and Creator Lab. No glow or hover animation. */
+header .brand{display:flex!important;align-items:center!important;flex:0 0 174px!important;width:174px!important;min-width:174px!important;max-width:174px!important;height:64px!important;overflow:hidden!important}
+header .brand-logo{display:block!important;flex:0 0 174px!important;width:174px!important;min-width:174px!important;max-width:174px!important;height:64px!important;min-height:64px!important;max-height:64px!important;object-fit:contain!important;object-position:center!important;transform:scale(2.1)!important;filter:none!important;transition:none!important}
+header .brand:hover .brand-logo,header .brand:focus-visible .brand-logo{transform:scale(2.1)!important;filter:none!important}
+@media(max-width:760px){header .brand{flex-basis:156px!important;width:156px!important;min-width:156px!important;max-width:156px!important;height:58px!important}.brand-logo{flex-basis:156px!important;width:156px!important;min-width:156px!important;max-width:156px!important;height:58px!important;min-height:58px!important;max-height:58px!important}}
+</style>
 </head>
 <body><div id="app">
 <header><div class="wrap nav"><a href="#home" class="brand" aria-label="Plotlab home"><img class="brand-logo" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="PlotLab — Create, Collaborate, Stream"></a><script>if(window.__plotlabCachedLogo){const logo=document.querySelector(".brand-logo");if(logo){logo.src=window.__plotlabCachedLogo;logo.style.visibility="visible"}}</script><nav class="navlinks" id="navlinks"><a href="#home">Discover</a><a href="#home" data-scroll="trending">Trending</a><a href="#home" data-scroll="genres">Genres</a><a href="#home" data-scroll="upcoming">Upcoming</a><a href="creator-lab.html">Creators</a></nav><div class="nav-actions"><button class="btn solid login-text" onclick="navigate('login')">Sign in</button><button class="iconbtn mobile-menu" onclick="const n=document.getElementById('navlinks');const open=n.classList.toggle('open');this.setAttribute('aria-expanded',String(open))" aria-label="Open navigation" aria-expanded="false">☰</button></div></div></header>
