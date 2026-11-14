@@ -1810,7 +1810,9 @@ if (configured) {
     ]);
     const records = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     const settings = settingsSnap.exists() ? settingsSnap.data() : null;
-    
+    const activeLogo=settings?.logoUrl||"./assets/plotlab-logo.svg",activeFavicon=settings?.faviconUrl||"./assets/plotlab-favicon.svg";
+    document.querySelectorAll(".brand-logo,.footer-logo").forEach(img=>img.src=activeLogo);
+    document.querySelectorAll('link[rel="icon"],link[rel="apple-touch-icon"]').forEach(link=>link.href=activeFavicon);
     window.plotlabAdSettings = settings?.adSettings || {enabled:false,testMode:true,preRoll:true,midRoll:true,maxMidroll:2,minGapMinutes:15};
     window.plotlabTitles=records; console.info("[PlotLab] Published Firebase movies found:", records.length, records.map(m => ({id:m.id,title:m.title,genre:m.genre,published:m.published})));
     if (window.plotlabApplyCatalog) window.plotlabApplyCatalog(records, settings);
