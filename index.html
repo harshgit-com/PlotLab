@@ -1140,8 +1140,9 @@ img[style*="border-radius:50%"],img[style*="border-radius: 50%"]{
     width:25px;height:23px;display:grid;place-items:center;font-size:20px;line-height:1;
     color:inherit;font-weight:500;
   }
-  .plotlab-mobile-bottom-nav .mobile-nav-item.active,
-  .plotlab-mobile-bottom-nav .mobile-nav-item:focus-visible{color:#ff7659}
+  .plotlab-mobile-bottom-nav .mobile-nav-item.active{color:#080808!important;background:#ff5738!important;border-radius:12px;box-shadow:0 3px 14px #ff573855;}
+  .plotlab-mobile-bottom-nav .mobile-nav-item.active .mobile-nav-icon{color:#080808!important}
+  .plotlab-mobile-bottom-nav .mobile-nav-item:focus-visible{outline:2px solid #ff5738;outline-offset:2px;border-radius:12px}
   .plotlab-mobile-bottom-nav .mobile-nav-item:active{transform:scale(.94)}
   body{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
   .movie-play-screen,.movie-detail-screen{z-index:150}
@@ -1166,8 +1167,8 @@ img[style*="border-radius:50%"],img[style*="border-radius: 50%"]{
 <section class="page active" id="homePage">
 <section class="section wrap" id="trending"><div class="section-head"><div><div class="kicker">PLOTLAB / NOW PLAYING</div><h2>Trending now<span style="color:#777">.</span></h2></div><div class="slider-controls"><button aria-label="Previous trending titles" onclick="moveTrending(-1)">←</button><button aria-label="Next trending titles" onclick="moveTrending(1)">→</button></div></div><div class="trending-shell"><div class="trending-track" id="trendingTrack"></div><div class="slider-progress"><span id="progress"></span></div></div><div style="display:flex;justify-content:space-between;margin-top:12px;color:#666;font-size:9px;letter-spacing:1.5px;text-transform:uppercase"><span></span><span id="slideCount">01 — 04</span></div></section>
 <section class="section wrap" id="discoverContinueSection" style="display:none"><div class="section-head"><div><div class="kicker">PLOTLAB / PICK UP WHERE YOU LEFT OFF</div><h2>Continue watching<span style="color:#777">.</span></h2></div></div><div id="discoverContinueGrid" class="account-movie-grid"></div></section>
-<section class="section wrap" id="upcoming"><div class="section-head"><div><div class="kicker">02 / On the horizon</div><h2>Coming soon<span style="color:var(--accent)">.</span></h2></div><div class="section-sub">Upcoming stories and originals.</div></div><div class="upcoming-grid" id="upcomingGrid"><article class="upcoming-card"><div class="upcoming-art ua-one"><span>01 / EPIC</span><b>RAMAYANA</b><small>THE LEGEND RETURNS</small></div><div class="upcoming-copy"><strong>Ramayana</strong><span>Epic · In development</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-two"><span>02 / SCI-FI</span><b>BEYOND<br>THE STARS</b><small>THE UNKNOWN CALLS</small></div><div class="upcoming-copy"><strong>Beyond the Stars</strong><span>Science fiction · Coming soon</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-three"><span>03 / ORIGINAL</span><b>AFTER<br>MIDNIGHT</b><small>EVERY SECRET HAS A SHADOW</small></div><div class="upcoming-copy"><strong>After Midnight</strong><span>Mystery · In the lab</span></div></article></div></section>
-<section class="section wrap" id="genres"><div class="section-head"><div><div class="kicker">02 / Pick your mood</div><h2>Find your genre<span style="color:#777">.</span></h2></div><div class="section-sub">Browse by genre.</div></div><div class="genre-nav" id="genreNav"></div><div class="genre-grid" id="genreGrid"></div></section>
+<section class="section wrap" id="upcoming"><div class="section-head"><div><div class="kicker">On the horizon</div><h2>Coming soon<span style="color:var(--accent)">.</span></h2></div><div class="section-sub">Upcoming stories and originals.</div></div><div class="upcoming-grid" id="upcomingGrid"><article class="upcoming-card"><div class="upcoming-art ua-one"><span>01 / EPIC</span><b>RAMAYANA</b><small>THE LEGEND RETURNS</small></div><div class="upcoming-copy"><strong>Ramayana</strong><span>Epic · In development</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-two"><span>02 / SCI-FI</span><b>BEYOND<br>THE STARS</b><small>THE UNKNOWN CALLS</small></div><div class="upcoming-copy"><strong>Beyond the Stars</strong><span>Science fiction · Coming soon</span></div></article><article class="upcoming-card"><div class="upcoming-art ua-three"><span>03 / ORIGINAL</span><b>AFTER<br>MIDNIGHT</b><small>EVERY SECRET HAS A SHADOW</small></div><div class="upcoming-copy"><strong>After Midnight</strong><span>Mystery · In the lab</span></div></article></div></section>
+<section class="section wrap" id="genres"><div class="section-head"><div><div class="kicker">Pick your mood</div><h2>Find your genre<span style="color:#777">.</span></h2></div><div class="section-sub">Browse by genre.</div></div><div class="genre-nav" id="genreNav"></div><div class="genre-grid" id="genreGrid"></div></section>
 
 
 </section>
@@ -1200,9 +1201,9 @@ img[style*="border-radius:50%"],img[style*="border-radius: 50%"]{
       <div class="detail-scroll-cue">SCROLL TO EXPLORE <span>↓</span></div>
     </div>
     <section class="detail-info-section">
-      <div class="detail-section-heading"><div><span class="kicker">THE PEOPLE BEHIND THE STORY</span><h3>Cast &amp; crew</h3></div><span class="detail-section-index">01 / CAST</span></div>
+      <div class="detail-section-heading"><div><span class="kicker">THE PEOPLE BEHIND THE STORY</span><h3>Cast &amp; crew</h3></div><span class="detail-section-index">CAST</span></div>
       <div class="detail-cast-grid" id="detailCast"></div>
-      <div class="detail-section-heading review-heading"><div><span class="kicker">AUDIENCE NOTES</span><h3>Reviews</h3></div><span class="detail-section-index">02 / REVIEWS</span></div>
+      <div class="detail-section-heading review-heading"><div><span class="kicker">AUDIENCE NOTES</span><h3>Reviews</h3></div><span class="detail-section-index">REVIEWS</span></div>
       <div class="detail-reviews-grid" id="detailReviews"></div><form id="reviewForm" class="detail-review-form" style="display:grid;visibility:visible;opacity:1;position:relative;z-index:2;"><h4>Write a review</h4><div class="review-form-row"><label>Your name<input id="reviewName" maxlength="40" placeholder="Name (optional)"></label><label>Your rating<select id="reviewStars" required><option value="5">★★★★★ — Loved it</option><option value="4">★★★★☆ — Great</option><option value="3">★★★☆☆ — Good</option><option value="2">★★☆☆☆ — Fair</option><option value="1">★☆☆☆☆ — Poor</option></select></label></div><label>Your review<textarea id="reviewText" minlength="5" maxlength="600" required placeholder="What did you think of this film?"></textarea></label><button class="detail-play-btn" type="submit">POST REVIEW</button><p id="reviewStatus" class="review-status" aria-live="polite"></p></form>
     </section>
   </div>
@@ -2039,7 +2040,7 @@ async function renderPlotlabAccount(tab='watchlater'){
   if(!nav||nav.dataset.activeReady==='1')return;
   nav.dataset.activeReady='1';
   const items=[...nav.querySelectorAll('.mobile-nav-item')];
-  const targets={trending:'trending',genres:'genres',upcoming:'upcoming',creators:'creators'};
+  const sectionIds=['trending','genres','upcoming'];
   function setActive(key){
     items.forEach(item=>{
       const match=(key==='discover'&&item.getAttribute('href')==='#home'&&!item.hasAttribute('data-scroll')&&!item.getAttribute('onclick'))
@@ -2055,18 +2056,28 @@ async function renderPlotlabAccount(tab='watchlater'){
       setActive(key);
     });
   });
-  if('IntersectionObserver' in window){
-    const observer=new IntersectionObserver(entries=>{
-      const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
-      if(visible)setActive(visible.target.id);
-    },{rootMargin:'-18% 0px -62% 0px',threshold:[0,.15,.35,.6]});
-    Object.values(targets).forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el)});
+  function updateFromScroll(){
+    const marker=window.scrollY+Math.min(210,window.innerHeight*.32);
+    let current='discover';
+    sectionIds.forEach(id=>{
+      const section=document.getElementById(id);
+      if(section&&section.getBoundingClientRect().top+window.scrollY<=marker)current=id;
+    });
+    setActive(current);
   }
-  const onScroll=()=>{
-    if(window.scrollY<180)setActive('discover');
-  };
-  window.addEventListener('scroll',onScroll,{passive:true});
-  setActive('discover');
+  let ticking=false;
+  window.addEventListener('scroll',()=>{
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(()=>{updateFromScroll();ticking=false;});
+  },{passive:true});
+  window.addEventListener('resize',updateFromScroll,{passive:true});
+  window.addEventListener('hashchange',()=>{
+    const hash=location.hash.replace('#','').toLowerCase();
+    if(sectionIds.includes(hash))setActive(hash);
+    else if(hash==='home'||!hash)setActive('discover');
+  });
+  updateFromScroll();
 })();
 </script>
 </body></html>
