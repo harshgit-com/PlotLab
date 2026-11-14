@@ -1974,7 +1974,7 @@ onAuthStateChanged(auth,async user=>{
  const b=document.createElement("button"); b.id="plotlabAccountButton"; b.className="account-nav-button"; b.style.cssText="max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
  if(user){let role="viewer";try{const p=await getDoc(doc(db,"users",user.uid));if(p.exists()){const d=p.data();const roles=Array.isArray(d.roles)?d.roles:[d.role||"viewer"];role=roles.join(" + ");if(roles.includes("creator")){const cp=await getDoc(doc(db,"creatorProfiles",user.uid));window.plotlabHasCreatorAccess=cp.exists();}}}catch(err){console.warn("[PlotLab] Could not load creator access",err);} window.plotlabCurrentRole=role;
  b.innerHTML="<span class=\"account-avatar\">"+((user.displayName||user.email||"P").trim().charAt(0).toUpperCase())+"</span><span class=\"account-nav-label\"><small>YOUR ACCOUNT</small>"+(user.displayName||user.email.split("@")[0])+"</span><span class=\"account-chevron\">↗</span>";b.title="Open your PlotLab account";b.addEventListener("click",()=>{if(location.hash!=="#account")location.hash="account";navigate("account");});
- }else{window.plotlabCurrentRole="viewer";b.innerHTML="<span class=\"account-avatar\">↗</span><span class=\"account-nav-label\">Sign in</span>";b.addEventListener("click",()=>location.hash="login");}
+ }else{window.plotlabCurrentRole="viewer";b.innerHTML="<span class=\"account-avatar\">♙</span><span class=\"account-nav-label\">Profile</span><span class=\"account-chevron\">↗</span>";b.title="Open your PlotLab profile";b.addEventListener("click",()=>{location.hash="login";navigate("login");});}
  nav.appendChild(b);
  if(user&&location.hash.toLowerCase()==="#join"){try{const existingCreator=await getDoc(doc(db,"creatorProfiles",user.uid));if(existingCreator.exists()){window.location.href="creator-lab.html";return}}catch(err){console.warn("[PlotLab] Creator application redirect check failed",err)}}
  if(user){try{const seenKey="plotlab_seen_notifications_"+user.uid;const seen=new Set(JSON.parse(localStorage.getItem(seenKey)||"[]"));if(window.__plotlabNotificationUnsub)window.__plotlabNotificationUnsub();let inbox=document.getElementById("plotlabNotificationInbox");if(!inbox){inbox=document.createElement("section");inbox.id="plotlabNotificationInbox";inbox.style.cssText="position:fixed;right:18px;top:86px;z-index:99990;width:min(390px,calc(100vw - 28px));max-height:min(70vh,620px);overflow:auto;background:#101010;border:1px solid #ffffff2b;border-radius:14px;box-shadow:0 22px 70px #000c;color:#f5f0e8;padding:16px;display:none";document.body.appendChild(inbox)}const actions=document.querySelector(".nav-actions");let bell=document.getElementById("plotlabNotificationBell");if(!bell&&actions){bell=document.createElement("button");bell.id="plotlabNotificationBell";bell.type="button";bell.className="iconbtn";bell.setAttribute("aria-label","Notifications");bell.style.position="relative";bell.innerHTML="♧<span id='plotlabNotificationCount' style='position:absolute;right:-4px;top:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:20px;background:#ff5738;color:#080808;font-size:10px;font-weight:900;display:none;place-items:center'></span>";bell.addEventListener("click",()=>{inbox.style.display=inbox.style.display==="none"?"block":"none"});actions.insertBefore(bell,document.getElementById("plotlabAccountButton"))}window.__plotlabNotificationUnsub=onSnapshot(query(collection(db,"notifications"),where("active","==",true)),snap=>{const role=String(window.plotlabCurrentRole||"viewer").includes("creator")?"creator":"viewer";const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>!n.audience||n.audience==="all"||n.audience===role).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));const unread=rows.filter(n=>!seen.has(n.id));const count=document.getElementById("plotlabNotificationCount");if(count){count.textContent=unread.length>9?"9+":String(unread.length);count.style.display=unread.length?"grid":"none"}inbox.innerHTML="";const top=document.createElement("div");top.style.cssText="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px";const heading=document.createElement("strong");heading.textContent="Notifications";heading.style.fontSize="16px";const close=document.createElement("button");close.type="button";close.textContent="×";close.setAttribute("aria-label","Close notifications");close.style.cssText="background:none;border:0;color:#aaa;font-size:24px;cursor:pointer";close.addEventListener("click",()=>inbox.style.display="none");top.append(heading,close);inbox.append(top);if(!rows.length){const empty=document.createElement("p");empty.textContent="You're all caught up.";empty.style.color="#999";inbox.append(empty)}rows.forEach(n=>{const card=document.createElement("article");card.style.cssText="padding:12px 0;border-top:1px solid #ffffff18";const title=document.createElement("strong");title.textContent=n.title||"PlotLab update";title.style.cssText="display:block;font-size:13px";const message=document.createElement("p");message.textContent=n.message||"";message.style.cssText="margin:5px 0;color:#bbb;font-size:12px;line-height:1.5";const meta=document.createElement("small");meta.textContent=n.createdAt?.toDate?n.createdAt.toDate().toLocaleString():"PlotLab announcement";meta.style.color="#888";card.append(title,message,meta);if(!seen.has(n.id)){const mark=document.createElement("button");mark.type="button";mark.textContent="Mark as read";mark.style.cssText="display:block;margin-top:8px;background:none;border:0;padding:0;color:#ff806d;font-size:11px;cursor:pointer";mark.addEventListener("click",()=>{seen.add(n.id);localStorage.setItem(seenKey,JSON.stringify([...seen]));card.remove();if(count){const left=rows.filter(x=>!seen.has(x.id)).length;count.textContent=left>9?"9+":String(left);count.style.display=left?"grid":"none"}});card.append(mark)}inbox.append(card)});},err=>{console.error("[PlotLab] Notification listener failed:",err);inbox.innerHTML="<strong>Notifications</strong><p style=\"color:#ff9b88;font-size:12px\">Could not load notifications. Please refresh and sign in again.</p>";});}catch(err){console.error("[PlotLab] Notifications unavailable",err);const actions=document.querySelector(".nav-actions");if(actions&&!document.getElementById("plotlabNotificationBell")){const fallback=document.createElement("button");fallback.id="plotlabNotificationBell";fallback.type="button";fallback.className="iconbtn";fallback.textContent="♧";fallback.setAttribute("aria-label","Notifications");fallback.addEventListener("click",()=>{const box=document.getElementById("plotlabNotificationInbox");if(box)box.style.display=box.style.display==="none"?"block":"none"});actions.appendChild(fallback)}}else{if(window.__plotlabNotificationUnsub){window.__plotlabNotificationUnsub();window.__plotlabNotificationUnsub=null}document.getElementById("plotlabNotificationBell")?.remove();document.getElementById("plotlabNotificationInbox")?.remove()}
@@ -2203,6 +2203,57 @@ async function renderPlotlabAccount(tab='watchlater'){
   header .brand-logo{width:120px!important}
   .plotlab-mobile-bottom-nav .mobile-nav-item{font-size:8px!important}
   .plotlab-mobile-bottom-nav .mobile-nav-icon{font-size:17px!important}
+}
+</style>
+
+
+<style id="plotlab-navbar-alignment-final">
+/* One profile entry point; no separate Sign in button */
+header .nav-actions .login-text{display:none!important}
+header .nav-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex:0 0 auto!important;gap:10px!important}
+header .account-nav-button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:9px!important;min-height:44px!important;max-width:190px!important;
+  padding:5px 13px 5px 5px!important;border:1px solid #ffffff2b!important;
+  border-radius:999px!important;background:#141414!important;color:#f5f0e8!important;
+  white-space:nowrap!important;box-shadow:0 4px 18px #0005!important
+}
+header .account-nav-button .account-avatar{width:32px!important;height:32px!important}
+header .account-nav-button .account-nav-label{display:block!important;max-width:112px!important;font-size:11px!important;line-height:1.2!important;overflow:hidden!important;text-overflow:ellipsis!important}
+header .account-nav-button .account-nav-label small{display:none!important}
+header .account-nav-button .account-chevron{display:inline!important;color:#ff806d!important;font-size:14px!important}
+@media(min-width:761px){
+  header{height:96px!important;min-height:96px!important}
+  header .nav{
+    width:min(1360px,calc(100% - 64px))!important;min-height:96px!important;
+    display:grid!important;grid-template-columns:210px minmax(0,1fr) 190px!important;
+    align-items:center!important;column-gap:24px!important
+  }
+  header .brand{width:210px!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important}
+  header .brand-logo{width:190px!important;height:auto!important;max-height:82px!important;object-fit:contain!important;object-position:left center!important}
+  header .navlinks{
+    justify-self:center!important;display:flex!important;align-items:center!important;
+    justify-content:center!important;gap:clamp(4px,.7vw,12px)!important;
+    padding:5px!important;white-space:nowrap!important
+  }
+  header .navlinks a{padding:11px clamp(8px,1vw,14px)!important}
+  header .nav-actions{width:190px!important}
+}
+@media(max-width:760px){
+  header{height:76px!important;min-height:76px!important}
+  header .nav{height:76px!important;min-height:76px!important;width:calc(100% - 28px)!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important}
+  header .brand{display:flex!important;align-items:center!important;justify-content:flex-start!important;flex:0 1 auto!important;min-width:0!important}
+  header .brand-logo{width:164px!important;height:auto!important;max-height:68px!important;object-fit:contain!important;object-position:left center!important}
+  header .nav-actions{width:auto!important;min-width:0!important;margin-left:auto!important}
+  header .account-nav-button{min-height:42px!important;padding:4px 10px 4px 4px!important;gap:7px!important}
+  header .account-nav-button .account-avatar{width:31px!important;height:31px!important}
+  header .account-nav-button .account-nav-label{max-width:66px!important;font-size:10px!important}
+  header .account-nav-button .account-chevron{font-size:12px!important}
+}
+@media(max-width:380px){
+  header .brand-logo{width:145px!important;max-height:62px!important}
+  header .account-nav-button .account-nav-label{display:none!important}
+  header .account-nav-button{padding-right:5px!important}
 }
 </style>
 
