@@ -1810,6 +1810,7 @@ if (configured) {
     ]);
     const records = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     const settings = settingsSnap.exists() ? settingsSnap.data() : null;
+    if(settings?.logoUrl){document.querySelectorAll(".brand-logo,.footer-logo,.creator-brand-logo").forEach(img=>{img.src=settings.logoUrl});let icon=document.querySelector('link[rel="icon"]');if(!icon){icon=document.createElement("link");icon.rel="icon";document.head.appendChild(icon)}icon.href=settings.logoUrl;}
     window.plotlabAdSettings = settings?.adSettings || {enabled:false,testMode:true,preRoll:true,midRoll:true,maxMidroll:2,minGapMinutes:15};
     window.plotlabTitles=records; console.info("[PlotLab] Published Firebase movies found:", records.length, records.map(m => ({id:m.id,title:m.title,genre:m.genre,published:m.published})));
     if (window.plotlabApplyCatalog) window.plotlabApplyCatalog(records, settings);
@@ -1971,7 +1972,8 @@ onAuthStateChanged(auth,async user=>{
  }else{window.plotlabCurrentRole="viewer";b.innerHTML="<span class=\"account-avatar\">↗</span><span class=\"account-nav-label\">Sign in</span>";b.addEventListener("click",()=>location.hash="login");}
  nav.appendChild(b);
  if(user&&location.hash.toLowerCase()==="#join"){try{const existingCreator=await getDoc(doc(db,"creatorProfiles",user.uid));if(existingCreator.exists()){window.location.href="creator-lab.html";return}}catch(err){console.warn("[PlotLab] Creator application redirect check failed",err)}}
- renderDiscoverContinueWatching();setTimeout(loadCreatorDirectory,100);
+ if(user){try{const seenKey="plotlab_seen_notifications_"+user.uid;const seen=new Set(JSON.parse(localStorage.getItem(seenKey)||"[]"));if(window.__plotlabNotificationUnsub)window.__plotlabNotificationUnsub();window.__plotlabNotificationUnsub=onSnapshot(query(collection(db,"notifications"),where("active","==",true)),snap=>{const unseen=snap.docs.map(d=>({id:d.id,...d.data()})).filter(n=>!seen.has(n.id)).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));if(!unseen.length)return;const n=unseen[0];let box=document.getElementById("plotlabUserNotification");if(!box){box=document.createElement("aside");box.id="plotlabUserNotification";box.style.cssText="position:fixed;right:20px;top:96px;z-index:99999;width:min(360px,calc(100vw - 32px));padding:18px 46px 18px 18px;background:#151515;border:1px solid #ff5738;border-radius:10px;box-shadow:0 18px 55px #000b;color:#f5f0e8;font:13px/1.6 Arial,sans-serif";document.body.appendChild(box)}box.innerHTML="";const heading=document.createElement("strong");heading.textContent=n.title||"PlotLab update";heading.style.cssText="display:block;font-size:14px;margin-bottom:6px";const body=document.createElement("div");body.textContent=n.message||"";body.style.color="#c8c8c8";const close=document.createElement("button");close.type="button";close.textContent="×";close.setAttribute("aria-label","Dismiss notification");close.style.cssText="position:absolute;right:12px;top:8px;background:none;border:0;color:#aaa;font-size:24px;cursor:pointer";close.addEventListener("click",()=>{seen.add(n.id);localStorage.setItem(seenKey,JSON.stringify([...seen]));box.remove()});box.append(heading,body,close);});}catch(err){console.warn("[PlotLab] Notifications unavailable",err)}}else if(window.__plotlabNotificationUnsub){window.__plotlabNotificationUnsub();window.__plotlabNotificationUnsub=null;}
+renderDiscoverContinueWatching();setTimeout(loadCreatorDirectory,100);
 });
 </script>
 <style>
