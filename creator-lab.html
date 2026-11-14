@@ -207,6 +207,7 @@ import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs
 import { firebaseConfig } from "./firebase-config.js";
 const app = getApps().find(a => a.name === "plotlab-user-auth") || initializeApp(firebaseConfig, "plotlab-user-auth");
 const auth = getAuth(app), db = getFirestore(app);
+try{const branding=await getDoc(doc(db,"siteSettings","public"));if(branding.exists()){const d=branding.data();if(d.logoUrl){document.querySelectorAll(".creator-brand-logo").forEach(img=>img.src=d.logoUrl)}if(d.faviconUrl){let icon=document.querySelector('link[rel="icon"]');if(!icon){icon=document.createElement("link");icon.rel="icon";document.head.appendChild(icon)}icon.href=d.faviconUrl}}}catch(err){console.warn("[PlotLab] Dynamic branding unavailable",err)}
 // Session persistence keeps different PlotLab test accounts isolated across browser tabs.
 await setPersistence(auth,browserSessionPersistence);
 window.plotlabAuth = auth; window.plotlabDb=db; window.plotlabCurrentRole='viewer';
