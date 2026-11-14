@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<link rel="shortcut icon" href="/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=3">
+<link rel="shortcut icon" type="image/svg+xml" href="./favicon.svg?v=3">
+<link rel="apple-touch-icon" href="./favicon.svg?v=3">
 <title>PLOTLAB — Stories live here</title>
 <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
 <style>
@@ -1120,7 +1121,8 @@ img[style*="border-radius:50%"],img[style*="border-radius: 50%"]{
   header .navlinks{display:none!important}
   header .mobile-menu{display:none!important}
   header .nav-actions{margin-left:auto!important;flex:0 0 auto!important}
-  header .nav-actions .login-text{display:inline-flex!important;min-height:38px!important;padding:8px 12px!important;font-size:9px!important;white-space:nowrap!important}
+  /* Keep the existing Firebase account button as the only account entry point. */
+  header .nav-actions .login-text{display:none!important}
   .plotlab-mobile-bottom-nav{
     position:fixed;left:0;right:0;bottom:0;z-index:130;
     display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
@@ -2031,4 +2033,40 @@ async function renderPlotlabAccount(tab='watchlater'){
 @media(max-width:900px){.creator-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.creator-discover-tools{grid-template-columns:1fr}.creator-directory-grid{grid-template-columns:1fr}.creator-person-card{padding:15px}.creator-chat-panel{padding:12px}.creator-chat-messages{height:260px}.creator-chat-compose{gap:6px}.creator-chat-compose .btn{padding:10px}.creator-chat-head h3{font-size:17px}}
 </style><script type="module" src="./analytics.js"></script>
+<script id="plotlab-mobile-nav-active-state">
+(function(){
+  const nav=document.getElementById('plotlab-mobile-bottom-nav');
+  if(!nav||nav.dataset.activeReady==='1')return;
+  nav.dataset.activeReady='1';
+  const items=[...nav.querySelectorAll('.mobile-nav-item')];
+  const targets={trending:'trending',genres:'genres',upcoming:'upcoming',creators:'creators'};
+  function setActive(key){
+    items.forEach(item=>{
+      const match=(key==='discover'&&item.getAttribute('href')==='#home'&&!item.hasAttribute('data-scroll')&&!item.getAttribute('onclick'))
+        || item.dataset.scroll===key
+        || (key==='creators'&&item.getAttribute('href')==='#creator');
+      item.classList.toggle('active',!!match);
+      if(match)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');
+    });
+  }
+  items.forEach(item=>{
+    item.addEventListener('click',()=>{
+      const key=item.dataset.scroll||(item.getAttribute('href')==='#creator'?'creators':'discover');
+      setActive(key);
+    });
+  });
+  if('IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>{
+      const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+      if(visible)setActive(visible.target.id);
+    },{rootMargin:'-18% 0px -62% 0px',threshold:[0,.15,.35,.6]});
+    Object.values(targets).forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el)});
+  }
+  const onScroll=()=>{
+    if(window.scrollY<180)setActive('discover');
+  };
+  window.addEventListener('scroll',onScroll,{passive:true});
+  setActive('discover');
+})();
+</script>
 </body></html>
