@@ -1153,6 +1153,7 @@ img[style*="border-radius:50%"],img[style*="border-radius: 50%"]{
 
 <style id="plotlab-mobile-nav-stable-styles">
 @media(max-width:760px){
+  #trending,#upcoming,#genres{scroll-margin-top:78px!important}
   .plotlab-mobile-bottom-nav .mobile-nav-item{
     box-sizing:border-box!important;
     min-width:0!important;
@@ -2099,6 +2100,7 @@ async function renderPlotlabAccount(tab='watchlater'){
   function updateFromScroll(){
     if(manualTarget&&Date.now()<manualUntil)return;
     manualTarget='';
+    if(window.scrollY<110){setActive('discover');return;}
     const marker=window.scrollY+Math.min(window.innerHeight*.38,260);
     let current='discover';
     for(const id of sectionIds){
