@@ -332,10 +332,11 @@ img[style*="border-radius:50%"],img[style*="border-radius: 50%"]{
 <style id="creator-lab-mobile-header-final">
 /* Mobile header rebuilt as a deliberate two-row app header, not compressed desktop buttons */
 @media(max-width:760px){
-  .top{position:sticky!important;top:0!important;z-index:40!important;background:rgba(9,9,9,.97)!important;border-bottom:1px solid #ffffff20!important;backdrop-filter:blur(18px)!important}
+  /* Let the header grow to its content; older desktop rules fixed it at 96px. */
+  .top{position:relative!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;z-index:30!important;background:rgba(9,9,9,.98)!important;border-bottom:1px solid #ffffff20!important;backdrop-filter:blur(18px)!important}
   .top .nav{
     width:calc(100% - 28px)!important;max-width:none!important;
-    min-height:0!important;height:auto!important;max-height:none!important;
+    height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;
     display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
     grid-template-rows:50px 42px!important;align-items:center!important;
     column-gap:12px!important;row-gap:7px!important;padding:7px 0 10px!important;
