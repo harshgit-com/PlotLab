@@ -2098,6 +2098,8 @@ async function renderPlotlabAccount(tab='watchlater'){
 .creator-chat-compose .btn{flex-shrink:0}
 @media(max-width:900px){.creator-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.creator-discover-tools{grid-template-columns:1fr}.creator-directory-grid{grid-template-columns:1fr}.creator-person-card{padding:15px}.creator-chat-panel{padding:12px}.creator-chat-messages{height:260px}.creator-chat-compose{gap:6px}.creator-chat-compose .btn{padding:10px}.creator-chat-head h3{font-size:17px}}
+.navlinks a.active{color:#ff5738!important}
+.navlinks a.active:after{right:0!important}
 </style><script type="module" src="./analytics.js"></script>
 <script id="plotlab-mobile-nav-active-state">
 (function(){
@@ -2105,7 +2107,9 @@ async function renderPlotlabAccount(tab='watchlater'){
   if(!nav||nav.dataset.activeReady==='stable')return;
   nav.dataset.activeReady='stable';
   const items=Array.from(nav.querySelectorAll('.mobile-nav-item'));
-  const sectionIds=['trending','genres','upcoming'];
+  const desktopNav=document.getElementById('navlinks');
+  const desktopItems=desktopNav?Array.from(desktopNav.querySelectorAll('a')):[];
+  const sectionIds=['trending','upcoming','genres'];
   let manualTarget='';
   let manualUntil=0;
 
@@ -2118,7 +2122,32 @@ async function renderPlotlabAccount(tab='watchlater'){
       if(active)item.setAttribute('aria-current','page');
       else item.removeAttribute('aria-current');
     });
+    desktopItems.forEach(item=>{
+      const target=item.dataset.scroll;
+      const active=(key==='discover'&&!target&&item.getAttribute('href')==='#home')
+        ||target===key
+        ||(key==='creators'&&item.getAttribute('href')==='creator-lab.html');
+      item.classList.toggle('active',active);
+      if(active)item.setAttribute('aria-current','page');
+      else item.removeAttribute('aria-current');
+    });
   }
+
+  desktopItems.forEach(item=>{
+    item.addEventListener('click',()=>{
+      if(item.dataset.scroll){
+        manualTarget=item.dataset.scroll;
+        manualUntil=Date.now()+1100;
+        setActive(manualTarget);
+      }else if(item.getAttribute('href')==='#home'){
+        manualTarget='discover';
+        manualUntil=Date.now()+500;
+        setActive('discover');
+      }else if(item.getAttribute('href')==='creator-lab.html'){
+        setActive('creators');
+      }
+    });
+  });
 
   items.forEach(item=>{
     item.addEventListener('click',function(event){
