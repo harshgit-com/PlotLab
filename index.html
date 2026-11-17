@@ -1304,14 +1304,25 @@ function startTrailer(card,id){
   const status=document.createElement('span');status.className='trailer-status';status.textContent='TRAILER PREVIEW';layer.appendChild(status);card.classList.add('is-previewing');
 }
 function stopTrailer(card){
-  if(!card) return;
-  card.dataset.hoverActive='0';
-  const layer=card.querySelector('.trailer-layer');
-  if(layer) {
-    layer.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});
-    layer.replaceChildren();
-  }
-  card.classList.remove('is-previewing');
+   if(!card) return;
+   card.dataset.hoverActive='0';
+   const layer=card.querySelector('.trailer-layer');
+   if(layer) {
+     layer.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});
+     layer.replaceChildren();
+   }
+   card.classList.remove('is-previewing');
+}
+function stopTrendingCardPreviews(){
+  const track=document.getElementById('trendingTrack');
+  if(!track)return;
+  track.querySelectorAll('.movie-card').forEach(card=>{
+    const timer=mobileTrailerTimers.get(card);
+    if(timer){clearTimeout(timer);mobileTrailerTimers.delete(card);}
+    card.dataset.mobileInView='0';
+    card.dataset.mobileTrailerStarted='1';
+    stopTrailer(card);
+  });
 }
 const mobileTrailerTimers=new WeakMap();
 let mobileTrailerObserver=null;
@@ -1398,6 +1409,7 @@ function plotlabStorageKey(key){const user=window.plotlabAuth?.currentUser;retur
 let watchLaterItems=JSON.parse(localStorage.getItem(plotlabStorageKey('plotlabWatchLater'))||'[]');
 function openMovie(name){
  const m=titles.find(x=>x.title===name);if(!m)return;
+ stopTrendingCardPreviews();
  try{let h=JSON.parse(localStorage.getItem(plotlabStorageKey('plotlabViewingHistory'))||'[]');h=h.filter(x=>x.title!==m.title);h.unshift({title:m.title,at:Date.now()});localStorage.setItem(plotlabStorageKey('plotlabViewingHistory'),JSON.stringify(h.slice(0,100)));}catch(e){}
  stopModalTrailer();closeMoviePlayer(false);activeModalMovie=m;
  const analyticsMovieId=String(m.id||m.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''));
