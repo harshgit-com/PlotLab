@@ -1283,7 +1283,7 @@ document.addEventListener('pointerdown',()=>{
 },{capture:true});
 function cardHTML(m,i,section='genre'){const releaseText=m.releaseDate?new Date(m.releaseDate+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):(m.releaseLabel||'');const statusMarkup=m.upcoming?`<div class="movie-status-badge">COMING SOON${releaseText?' · '+releaseText:''}</div>`:'';const releaseMarkup=m.upcoming?'':(m.releaseDate||m.releaseLabel)?`<span class="movie-release-date">${releaseText}</span>`:'';return `<article class="movie-card" data-section="${section}" data-title="${m.title}" data-trailer-url="${m.trailerUrl||''}" style="--c1:${m.c1};--c2:${m.c2}" tabindex="0" role="button" aria-label="Open ${m.title} details" onclick="openMovie('${m.title}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMovie('${m.title}')}" onpointerenter="if(this.dataset.section==='trending'&&event.pointerType!=='touch'){const m=titles.find(x=>x.title===this.dataset.title);if(m)startTrailer(this,m.trailer)}" onpointerleave="if(this.dataset.section==='trending'&&event.pointerType!=='touch')stopTrailer(this)"><div class="poster-art">${statusMarkup}<img src="${section==='trending'?(m.landscapePoster||m.backdropUrl||m.poster):m.poster}" alt="${m.title} movie poster" loading="lazy" decoding="async" style="object-position:${Number(section==="trending"?(m.landscapeCropX??m.cropX??50):(m.cropX??50))}% ${Number(section==="trending"?(m.landscapeCropY??m.cropY??50):(m.cropY??50))}%;scale:${Math.max(1,Math.min(2.5,Number(section==="trending"?(m.landscapeCropZoom??m.cropZoom??1):(m.cropZoom??1))||1))}" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(120deg,#171717,#3a2115)'"><div class="art-word" style="text-shadow:0 2px 12px #000">${m.title}<small>${m.tag}</small></div></div><div class="trailer-layer"></div><div class="card-info"><div class="movie-title">${m.title}</div><div class="movie-meta"><span>${m.upcoming?'Upcoming':m.year}</span><span>${m.genre}</span><span>Film</span>${releaseMarkup}</div></div></article>`}
 function startTrailer(card,id){
-  if(!card || card.dataset.hoverActive==='1') return;
+  if(!card || card.dataset.hoverActive==='1' || document.getElementById('movieModal')?.classList.contains('show')) return;
   const layer=card.querySelector('.trailer-layer');if(!layer)return;
   card.dataset.hoverActive='1';layer.replaceChildren();
   const movie=titles.find(x=>x.title===card.dataset.title);
@@ -1308,21 +1308,22 @@ function stopTrailer(card){
    card.dataset.hoverActive='0';
    const layer=card.querySelector('.trailer-layer');
    if(layer) {
-     layer.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('src');v.load()});
+     layer.querySelectorAll('video').forEach(v=>{try{v.pause();v.currentTime=0;v.removeAttribute('src');v.load()}catch(e){}});
+     layer.querySelectorAll('iframe').forEach(frame=>{try{frame.contentWindow?.postMessage(JSON.stringify({event:'command',func:'stopVideo',args:[]}), '*');frame.src='about:blank'}catch(e){}});
      layer.replaceChildren();
    }
    card.classList.remove('is-previewing');
 }
 function stopTrendingCardPreviews(){
-  const track=document.getElementById('trendingTrack');
-  if(!track)return;
-  track.querySelectorAll('.movie-card').forEach(card=>{
+  document.querySelectorAll('#trendingTrack .movie-card').forEach(card=>{
     const timer=mobileTrailerTimers.get(card);
     if(timer){clearTimeout(timer);mobileTrailerTimers.delete(card);}
     card.dataset.mobileInView='0';
     card.dataset.mobileTrailerStarted='1';
     stopTrailer(card);
   });
+  document.querySelectorAll('#trendingTrack .trailer-layer video').forEach(v=>{try{v.pause();v.removeAttribute('src');v.load()}catch(e){}});
+  document.querySelectorAll('#trendingTrack .trailer-layer iframe').forEach(frame=>{try{frame.src='about:blank';frame.remove()}catch(e){}});
 }
 const mobileTrailerTimers=new WeakMap();
 let mobileTrailerObserver=null;
@@ -1338,7 +1339,7 @@ function setupMobileTrailerAutoplay(root=document){
           if(card.dataset.mobileTrailerStarted==='1' || mobileTrailerTimers.has(card)) return;
           const timer=setTimeout(()=>{
             mobileTrailerTimers.delete(card);
-            if(card.isConnected && card.dataset.mobileInView==='1'){
+            if(card.isConnected && card.dataset.mobileInView==='1' && !document.getElementById('movieModal')?.classList.contains('show')){
               const movie=titles.find(x=>x.title===card.dataset.title);
               if(movie) startTrailer(card,movie.trailer);
               card.dataset.mobileTrailerStarted='1';
