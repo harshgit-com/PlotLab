@@ -2236,19 +2236,22 @@ input:focus,select:focus,textarea:focus{
 
 
 <style id="plotlab-logo-signature-glow">
-/* Keep the OG logo intact; add only a soft orange light halo. */
-.brand-logo{
-  filter:drop-shadow(0 0 5px rgba(255,87,56,.22))
-         drop-shadow(0 0 15px rgba(255,87,56,.12))!important;
-  transition:filter .35s ease,transform .35s ease!important;
+/* Visible coral halo for the original logo. Higher-specificity selectors override the logo sizing reset above. */
+header .brand-logo{
+  filter:drop-shadow(0 0 5px rgba(255,87,56,.72))
+         drop-shadow(0 0 13px rgba(255,87,56,.52))
+         drop-shadow(0 0 25px rgba(255,87,56,.30))!important;
+  transition:filter .35s ease!important;
 }
-.brand:hover .brand-logo{
-  filter:drop-shadow(0 0 7px rgba(255,87,56,.48))
-         drop-shadow(0 0 22px rgba(255,87,56,.28))!important;
-  transform:scale(1.015);
+header .brand:hover .brand-logo,
+header .brand:focus-visible .brand-logo{
+  filter:drop-shadow(0 0 7px rgba(255,245,238,.78))
+         drop-shadow(0 0 16px rgba(255,87,56,.82))
+         drop-shadow(0 0 32px rgba(255,87,56,.58))
+         drop-shadow(0 0 48px rgba(255,87,56,.32))!important;
 }
 @media(prefers-reduced-motion:reduce){
-  .brand-logo{transition:none!important}
+  header .brand-logo{transition:none!important}
 }
 </style>
 
