@@ -2234,4 +2234,22 @@ input:focus,select:focus,textarea:focus{
 }
 </style>
 
+
+<style id="plotlab-logo-signature-glow">
+/* Keep the OG logo intact; add only a soft orange light halo. */
+.brand-logo{
+  filter:drop-shadow(0 0 5px rgba(255,87,56,.22))
+         drop-shadow(0 0 15px rgba(255,87,56,.12))!important;
+  transition:filter .35s ease,transform .35s ease!important;
+}
+.brand:hover .brand-logo{
+  filter:drop-shadow(0 0 7px rgba(255,87,56,.48))
+         drop-shadow(0 0 22px rgba(255,87,56,.28))!important;
+  transform:scale(1.015);
+}
+@media(prefers-reduced-motion:reduce){
+  .brand-logo{transition:none!important}
+}
+</style>
+
 </body></html>
