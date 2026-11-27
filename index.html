@@ -1748,6 +1748,17 @@ setTimeout(forceTrendingVisible,1200);
 // Called by the Firebase module below after it reads published catalogue records.
 window.plotlabApplyCatalog = function(records, siteSettings) {
   const trendingZoom=Math.max(100,Math.min(125,Number(siteSettings?.trendingPosterZoom)||100));const findZoom=Math.max(100,Math.min(125,Number(siteSettings?.findPosterZoom)||100));document.documentElement.style.setProperty("--trending-poster-zoom",String(trendingZoom/100));document.documentElement.style.setProperty("--find-poster-zoom",String(findZoom/100));
+  if (siteSettings?.catalogueHidden === true) {
+    titles.splice(0, titles.length);
+    genres.splice(0, genres.length, 'All');
+    window.plotlabTrendingOrder = [];
+    renderTrending();
+    renderGenres();
+    renderUpcoming([]);
+    window.plotlabTitles = [];
+    console.info('[PlotLab] Public movie catalogue is temporarily hidden by the owner.');
+    return;
+  }
   if (!Array.isArray(records) || !records.length) return;
   const convert = r => ({
     title: String(r.title || 'Untitled').toUpperCase(),
