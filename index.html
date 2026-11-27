@@ -2273,4 +2273,25 @@ body{
   }
 }
 </style>
+
+<style id="plotlab-trailer-color-halo">
+/* The trailer card picks up its own film palette while the preview is hovered. */
+#trending .trending-track .movie-card{
+  position:relative;
+  isolation:isolate;
+  transition:box-shadow .42s ease, border-color .42s ease, transform .42s ease;
+}
+#trending .trending-track .movie-card:is(:hover,.is-previewing){
+  border-color:color-mix(in srgb,var(--c2,#ff5738) 72%,transparent)!important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--c2,#ff5738) 30%,transparent),
+    0 0 22px color-mix(in srgb,var(--c1,#ff5738) 42%,transparent),
+    0 0 48px color-mix(in srgb,var(--c2,#ff5738) 30%,transparent),
+    0 12px 34px rgba(0,0,0,.42)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #trending .trending-track .movie-card{transition:none!important}
+}
+</style>
+
 </body></html>
