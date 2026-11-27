@@ -2236,23 +2236,41 @@ input:focus,select:focus,textarea:focus{
 
 
 <style id="plotlab-logo-signature-glow">
-/* Visible coral halo for the original logo. Higher-specificity selectors override the logo sizing reset above. */
+/* Keep the OG logo clean; the ambient lighting belongs to the whole page, not the PNG edges. */
 header .brand-logo{
-  filter:drop-shadow(0 0 5px rgba(255,87,56,.72))
-         drop-shadow(0 0 13px rgba(255,87,56,.52))
-         drop-shadow(0 0 25px rgba(255,87,56,.30))!important;
+  filter:drop-shadow(0 0 3px rgba(255,87,56,.20))!important;
   transition:filter .35s ease!important;
 }
 header .brand:hover .brand-logo,
 header .brand:focus-visible .brand-logo{
-  filter:drop-shadow(0 0 7px rgba(255,245,238,.78))
-         drop-shadow(0 0 16px rgba(255,87,56,.82))
-         drop-shadow(0 0 32px rgba(255,87,56,.58))
-         drop-shadow(0 0 48px rgba(255,87,56,.32))!important;
-}
-@media(prefers-reduced-motion:reduce){
-  header .brand-logo{transition:none!important}
+  filter:drop-shadow(0 0 6px rgba(255,87,56,.32))!important;
 }
 </style>
 
+<style id="plotlab-full-page-ambient-light">
+/* Wide, diffused coral ambience across the entire page viewport and scroll length. */
+html{
+  background:#080808!important;
+}
+body{
+  background-color:#080808!important;
+  background-image:
+    radial-gradient(ellipse 78vw 58vw at 88% 7%,rgba(255,87,56,.105),transparent 70%),
+    radial-gradient(ellipse 70vw 64vw at 4% 42%,rgba(255,87,56,.075),transparent 72%),
+    radial-gradient(ellipse 85vw 60vw at 92% 78%,rgba(255,87,56,.085),transparent 72%),
+    radial-gradient(ellipse 72vw 58vw at 38% 112%,rgba(255,87,56,.055),transparent 72%)!important;
+  background-attachment:scroll!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%!important;
+}
+#app{background:transparent!important}
+@media(max-width:760px){
+  body{
+    background-image:
+      radial-gradient(ellipse 130vw 82vw at 100% 5%,rgba(255,87,56,.095),transparent 70%),
+      radial-gradient(ellipse 120vw 86vw at 0% 48%,rgba(255,87,56,.065),transparent 72%),
+      radial-gradient(ellipse 130vw 90vw at 100% 96%,rgba(255,87,56,.075),transparent 72%)!important;
+  }
+}
+</style>
 </body></html>
