@@ -2194,4 +2194,44 @@ async function renderPlotlabAccount(tab='watchlater'){
   updateFromScroll();
 })();
 </script>
+
+<style id="plotlab-black-nav-and-ambient-glow">
+/* PlotLab: true-black navigation and restrained signature glow */
+header{
+  background:rgba(5,5,5,.96)!important;
+  border-bottom:1px solid rgba(255,87,56,.18)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.28);
+}
+.navlinks.open{background:#050505!important;border-bottom-color:rgba(255,87,56,.2)!important}
+body{
+  background-color:#080808;
+  background-image:
+    radial-gradient(ellipse 58% 34% at 82% 0%,rgba(255,87,56,.105),transparent 72%),
+    radial-gradient(ellipse 42% 30% at 0% 54%,rgba(255,87,56,.055),transparent 72%),
+    radial-gradient(ellipse 48% 32% at 100% 88%,rgba(255,87,56,.045),transparent 74%);
+  background-attachment:fixed;
+}
+#app{background:transparent!important}
+.hero{background:radial-gradient(ellipse at 78% 42%,rgba(255,87,56,.075),transparent 48%)}
+.navlinks a.active{
+  text-shadow:0 0 13px rgba(255,87,56,.34);
+}
+.navlinks a.active:after{box-shadow:0 0 9px rgba(255,87,56,.65)}
+.movie-card:hover,.creator-person-card:hover{
+  box-shadow:0 0 0 1px rgba(255,87,56,.22),0 14px 38px rgba(255,87,56,.09);
+}
+.btn:hover,.iconbtn:hover,.slider-controls button:hover{
+  box-shadow:0 0 18px rgba(255,87,56,.18);
+}
+input:focus,select:focus,textarea:focus{
+  box-shadow:0 0 0 3px rgba(255,87,56,.09);
+}
+@media(max-width:620px){
+  .navlinks{background:#050505!important}
+}
+@media(prefers-reduced-motion:reduce){
+  header,.movie-card,.btn{box-shadow:none}
+}
+</style>
+
 </body></html>
